@@ -1,0 +1,18 @@
+platform :ios, '9.0'
+
+def myPods
+    use_frameworks!
+    if ENV['TRAVIS']
+        pod 'Leash', :git => 'https://github.com/lucianopolit/Leash.git', :branch => ENV['TRAVIS_BRANCH']
+    else
+        pod 'Leash', :path => '../'
+    end
+end
+
+target 'Example' do
+    myPods
+end
+
+target 'Tests' do
+    myPods
+end
