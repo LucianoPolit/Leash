@@ -1,5 +1,5 @@
 //
-//  Leash.swift
+//  Manager.swift
 //  Pods-Example
 //
 //  Created by Luciano Polit on 11/11/17.
@@ -8,7 +8,7 @@
 import Foundation
 import Alamofire
 
-public class Leash {
+public class Manager {
     
     public let scheme: String
     public let host: String
@@ -128,8 +128,8 @@ public class Leash {
             return self
         }
         
-        public func build() -> Leash {
-            return Leash(builder: self)
+        public func build() -> Manager {
+            return Manager(builder: self)
         }
         
     }

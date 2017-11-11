@@ -12,12 +12,12 @@ open class Client {
     
     // MARK: - Properties
     
-    public let leash: Leash
+    public let manager: Manager
     
     // MARK: - Initializers
     
-    public init(leash: Leash) {
-        self.leash = leash
+    public init(manager: Manager) {
+        self.manager = manager
     }
     
     // MARK: - Methods
@@ -26,7 +26,7 @@ open class Client {
     open func execute<T: Decodable>(endpoint: Endpoint, completion: @escaping (Response<T>) -> Void) -> DataRequest? {
         do {
             let request = try self.request(for: endpoint)
-            request.response(leash, endpoint, completion)
+            request.response(manager, endpoint, completion)
             return request
         } catch let error as Error {
             completion(.failure(error))
@@ -38,16 +38,16 @@ open class Client {
     }
     
     open func request(for endpoint: Endpoint) throws -> DataRequest {
-        return leash.sessionManager.request(try urlRequest(for: endpoint))
+        return manager.sessionManager.request(try urlRequest(for: endpoint))
     }
     
     open func urlRequest(for endpoint: Endpoint) throws -> URLRequest {
-        guard let url = URL(string: leash.baseURL) else { throw Error.invalidURL }
+        guard let url = URL(string: manager.baseURL) else { throw Error.invalidURL }
         
         var urlRequest = URLRequest(url: url.appendingPathComponent(endpoint.path))
         urlRequest.httpMethod = endpoint.method.rawValue
-        try urlRequest.encode(endpoint: endpoint, with: leash.jsonEncoder)
-        urlRequest.addAuthenticator(leash.authenticator)
+        try urlRequest.encode(endpoint: endpoint, with: manager.jsonEncoder)
+        urlRequest.addAuthenticator(manager.authenticator)
 
         return urlRequest
     }
@@ -56,7 +56,7 @@ open class Client {
 
 // MARK: - Utils
 
-private extension Leash {
+private extension Manager {
     
     var baseURL: String {
         var baseURL = scheme + "://" + host

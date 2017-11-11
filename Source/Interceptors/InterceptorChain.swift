@@ -11,7 +11,7 @@ import Alamofire
 typealias InterceptorCompletion<T> = ((response: Response<T>, finish: Bool)?) -> ()
 
 public struct InterceptorChain<T> {
-    public let leash: Leash
+    public let manager: Manager
     public let endpoint: Endpoint
     public let request: DataRequest
     let completion: InterceptorCompletion<T>

@@ -10,23 +10,23 @@ import Alamofire
 
 extension DataRequest {
     
-    public func response<T: Decodable>(_ leash: Leash, _ endpoint: Endpoint, _ completion: @escaping (Response<T>) -> Void) {
+    public func response<T: Decodable>(_ manager: Manager, _ endpoint: Endpoint, _ completion: @escaping (Response<T>) -> Void) {
         let preCompletion = { (response: Response<T>) in
-            let interceptions: Leash.Interceptions<T> = leash.completionInterceptions(endpoint: endpoint, request: self, response: response)
+            let interceptions: Manager.Interceptions<T> = manager.completionInterceptions(endpoint: endpoint, request: self, response: response)
             InterceptorsExecutor(queue: interceptions, completion: completion) { $0(response) }
         }
         
-        let interceptions: Leash.Interceptions<T> = leash.executionInterceptions(endpoint: endpoint, request: self)
+        let interceptions: Manager.Interceptions<T> = manager.executionInterceptions(endpoint: endpoint, request: self)
         InterceptorsExecutor(queue: interceptions, completion: preCompletion) { [weak self] callback in
             guard let `self` = self else { return }
             
             self.response { response in
                 if let error = response.error {
-                    let interceptions: Leash.Interceptions<T> = leash.failureInterceptions(endpoint: endpoint, request: self, error: error)
+                    let interceptions: Manager.Interceptions<T> = manager.failureInterceptions(endpoint: endpoint, request: self, error: error)
                     InterceptorsExecutor(queue: interceptions, completion: callback) { $0(.failure(error)) }
                 } else {
-                    let interceptions: Leash.Interceptions<T> = leash.successInterceptions(endpoint: endpoint, request: self, response: response)
-                    InterceptorsExecutor(queue: interceptions, completion: callback) { $0(response.decoded(with: leash.jsonDecoder)) }
+                    let interceptions: Manager.Interceptions<T> = manager.successInterceptions(endpoint: endpoint, request: self, response: response)
+                    InterceptorsExecutor(queue: interceptions, completion: callback) { $0(response.decoded(with: manager.jsonDecoder)) }
                 }
             }
             
@@ -51,14 +51,14 @@ private extension DefaultDataResponse {
     
 }
 
-private extension Leash {
+private extension Manager {
     
     typealias Interceptions<T> = [(@escaping InterceptorCompletion<T>) -> ()]
     
     func executionInterceptions<T>(endpoint: Endpoint, request: DataRequest) -> Interceptions<T> {
         return executionInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(leash: self, endpoint: endpoint, request: request, completion: completion)
+                let chain = InterceptorChain(manager: self, endpoint: endpoint, request: request, completion: completion)
                 interceptor.intercept(chain: chain)
             }
         }
@@ -67,7 +67,7 @@ private extension Leash {
     func failureInterceptions<T>(endpoint: Endpoint, request: DataRequest, error: Swift.Error) -> Interceptions<T> {
         return failureInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(leash: self, endpoint: endpoint, request: request, completion: completion)
+                let chain = InterceptorChain(manager: self, endpoint: endpoint, request: request, completion: completion)
                 interceptor.intercept(chain: chain, error: error)
             }
         }
@@ -76,7 +76,7 @@ private extension Leash {
     func successInterceptions<T>(endpoint: Endpoint, request: DataRequest, response: DefaultDataResponse) -> Interceptions<T> {
         return successInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(leash: self, endpoint: endpoint, request: request, completion: completion)
+                let chain = InterceptorChain(manager: self, endpoint: endpoint, request: request, completion: completion)
                 interceptor.intercept(chain: chain, response: response)
             }
         }
@@ -85,7 +85,7 @@ private extension Leash {
     func completionInterceptions<T>(endpoint: Endpoint, request: DataRequest, response: Response<T>) -> Interceptions<T> {
         return completionInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(leash: self, endpoint: endpoint, request: request, completion: completion)
+                let chain = InterceptorChain(manager: self, endpoint: endpoint, request: request, completion: completion)
                 interceptor.intercept(chain: chain, response: response)
             }
         }
