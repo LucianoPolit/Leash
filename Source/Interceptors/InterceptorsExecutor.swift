@@ -35,7 +35,7 @@ class InterceptorsExecutor<T> {
                 }
                 
                 self?.completion(result.response)
-                if result.finish { self?.startNext() }
+                if !result.finish { self?.startNext() }
             }
         }
     }
