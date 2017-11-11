@@ -106,6 +106,7 @@ public class Leash {
         
         public func sessionManager(_ sessionManager: SessionManager) -> Builder {
             self.sessionManager = sessionManager
+            self.sessionManager.startRequestsImmediately = false
             return self
         }
         
