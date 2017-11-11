@@ -16,11 +16,14 @@ public class Leash {
     public let path: String?
     public let authenticator: Authenticator?
     
-    public let sessionManager: SessionManager
     public let executionInterceptors: [ExecutionInterceptor]
     public let failureInterceptors: [FailureInterceptor]
     public let successInterceptors: [SuccessInterceptor]
     public let completionInterceptors: [CompletionInterceptor]
+    
+    public let sessionManager: SessionManager
+    public let jsonEncoder: JSONEncoder
+    public let jsonDecoder: JSONDecoder
     
     init?(builder: Builder) {
         guard let builderScheme = builder.scheme, let builderHost = builder.host else { return nil }
@@ -31,11 +34,14 @@ public class Leash {
         path = builder.path
         authenticator = builder.authenticator
         
-        sessionManager = builder.sessionManager
         executionInterceptors = builder.executionInterceptors
         failureInterceptors = builder.failureInterceptors
         successInterceptors = builder.successInterceptors
         completionInterceptors = builder.completionInterceptors
+        
+        sessionManager = builder.sessionManager
+        jsonEncoder = builder.jsonEncoder
+        jsonDecoder = builder.jsonDecoder
     }
     
     public class Builder {
@@ -46,11 +52,14 @@ public class Leash {
         var path: String?
         var authenticator: Authenticator?
         
-        var sessionManager = SessionManager.default
         var executionInterceptors: [ExecutionInterceptor] = []
         var failureInterceptors: [FailureInterceptor] = []
         var successInterceptors: [SuccessInterceptor] = []
         var completionInterceptors: [CompletionInterceptor] = []
+        
+        var sessionManager = SessionManager.default
+        var jsonEncoder = JSONEncoder()
+        var jsonDecoder = JSONDecoder()
         
         func scheme(_ scheme: String) -> Builder {
             self.scheme = scheme
@@ -77,11 +86,6 @@ public class Leash {
             return self
         }
         
-        func sessionManager(_ sessionManager: SessionManager) -> Builder {
-            self.sessionManager = sessionManager
-            return self
-        }
-        
         func add(interceptor: ExecutionInterceptor) {
             executionInterceptors.append(interceptor)
         }
@@ -96,6 +100,27 @@ public class Leash {
         
         func add(interceptor: CompletionInterceptor) {
             completionInterceptors.append(interceptor)
+        }
+        
+        func sessionManager(_ sessionManager: SessionManager) -> Builder {
+            self.sessionManager = sessionManager
+            return self
+        }
+        
+        func jsonEncoder(_ configuration: (JSONEncoder) -> ()) -> Builder {
+            configuration(jsonEncoder)
+            return self
+        }
+        
+        func jsonDecoder(_ configuration: (JSONDecoder) -> ()) -> Builder {
+            configuration(jsonDecoder)
+            return self
+        }
+        
+        func jsonDateFormatter(_ dateFormatter: DateFormatter) -> Builder {
+            jsonEncoder.dateEncodingStrategy = .formatted(dateFormatter)
+            jsonDecoder.dateDecodingStrategy = .formatted(dateFormatter)
+            return self
         }
         
         func build() -> Leash? {

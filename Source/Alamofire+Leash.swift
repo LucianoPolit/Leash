@@ -11,7 +11,7 @@ import Alamofire
 extension DataRequest {
     
     @discardableResult
-    public func response<T: Decodable>(_ completion: @escaping (Response<T>) -> Void) -> Self {
+    public func response<T: Decodable>(_ leash: Leash, _ completion: @escaping (Response<T>) -> Void) -> Self {
         return response { response in
             
         }
@@ -19,15 +19,15 @@ extension DataRequest {
     
 }
 
-extension DataResponse {
+private extension DataResponse {
     
-    public func decodedResponse<T: Decodable>() -> Response<T> {
+    func decoded<T: Decodable>(with jsonDecoder: JSONDecoder) -> Response<T> {
         guard let data = data else {
             return .failure(error: .dataUnavailable)
         }
         
         do {
-            let value = try JSONDecoder().decode(T.self, from: data)
+            let value = try jsonDecoder.decode(T.self, from: data)
             return .success(value: value, extra: nil)
         } catch {
             return .failure(error: .decoding(error))

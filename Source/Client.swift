@@ -25,7 +25,7 @@ class Client {
     @discardableResult
     public func execute<T: Decodable>(router: Router, completion: @escaping (Response<T>) -> Void) -> DataRequest? {
         do {
-            return try self.request(for: router).response(completion)
+            return try self.request(for: router).response(leash, completion)
         } catch let error as Error {
             completion(.failure(error: error))
         } catch {
@@ -46,7 +46,7 @@ class Client {
         
         var urlRequest = URLRequest(url: url.appendingPathComponent(router.path))
         urlRequest.httpMethod = router.method.rawValue
-        try urlRequest.encode(router: router)
+        try urlRequest.encode(router: router, with: leash.jsonEncoder)
         urlRequest.addAuthenticator(leash.authenticator)
 
         return urlRequest
@@ -90,12 +90,12 @@ private extension URLRequest {
 
 private extension URLRequest {
     
-    mutating func encode(router: Router) throws {
+    mutating func encode(router: Router, with jsonEncoder: JSONEncoder) throws {
         guard let parameters = router.parameters else { return }
         
         if router.method.isBodyEncodable,
             let encodable = parameters as? Encodable {
-            httpBody = try encodable.encoded()
+            httpBody = try encodable.encoded(with: jsonEncoder)
         }
         
         if router.method.isQueryEncodable,
@@ -112,9 +112,8 @@ private extension URLRequest {
 
 private extension Encodable {
     
-    // TODO: Encoded from leash.
-    func encoded() throws -> Data {
-        return try JSONEncoder().encode(self)
+    func encoded(with jsonEncoder: JSONEncoder) throws -> Data {
+        return try jsonEncoder.encode(self)
     }
     
 }
