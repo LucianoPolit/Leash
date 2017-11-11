@@ -25,7 +25,9 @@ class Client {
     @discardableResult
     public func execute<T: Decodable>(router: Router, completion: @escaping (Response<T>) -> Void) -> DataRequest? {
         do {
-            return try self.request(for: router).response(leash, completion)
+            let request = try self.request(for: router)
+            request.response(leash, router, completion)
+            return request
         } catch let error as Error {
             completion(.failure(error))
         } catch {
@@ -40,9 +42,7 @@ class Client {
     }
     
     public func urlRequest(for router: Router) throws -> URLRequest {
-        guard let url = URL(string: leash.baseURL) else {
-            throw Error.invalidURL
-        }
+        guard let url = URL(string: leash.baseURL) else { throw Error.invalidURL }
         
         var urlRequest = URLRequest(url: url.appendingPathComponent(router.path))
         urlRequest.httpMethod = router.method.rawValue

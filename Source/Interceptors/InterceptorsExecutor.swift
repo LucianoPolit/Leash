@@ -9,31 +9,33 @@ import Foundation
 
 class InterceptorsExecutor<T> {
     
-    private var interceptions: [(InterceptorCompletion<T>) -> ()]
+    private var queue: [(@escaping InterceptorCompletion<T>) -> ()]
     private let completion: (Response<T>) -> ()
-    private let finally: ((Response<T>) -> ()) -> ()
+    private let finally: (@escaping (Response<T>) -> ()) -> ()
     
-    init(interceptions: [(InterceptorCompletion<T>) -> ()],
+    @discardableResult
+    init(queue: [(@escaping InterceptorCompletion<T>) -> ()],
          completion: @escaping (Response<T>) -> (),
-         finally: @escaping ((Response<T>) -> ()) -> ()) {
-        self.interceptions = interceptions
+         finally: @escaping (@escaping (Response<T>) -> ()) -> ()) {
+        self.queue = queue
         self.completion = completion
         self.finally = finally
+        startNext()
     }
     
     private func startNext() {
-        if (interceptions.isEmpty) {
+        if (queue.isEmpty) {
             finally(completion)
         } else {
-            let interception = interceptions.removeFirst()
-            interception { result in
+            let interception = queue.removeFirst()
+            interception { [weak self] result in
                 guard let result = result else {
-                    startNext()
+                    self?.startNext()
                     return
                 }
                 
-                completion(result.response)
-                if result.finish { startNext() }
+                self?.completion(result.response)
+                if result.finish { self?.startNext() }
             }
         }
     }

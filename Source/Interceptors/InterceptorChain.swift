@@ -31,7 +31,7 @@ extension InterceptorChain {
         complete(with: Response.success(value, extra: extra), finish: finish)
     }
     
-    func complete(with error: Error, finish: Bool = true) {
+    func complete(with error: Swift.Error, finish: Bool = true) {
         complete(with: Response.failure(error), finish: finish)
     }
     
