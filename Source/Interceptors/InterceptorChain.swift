@@ -28,11 +28,11 @@ extension InterceptorChain {
     }
     
     func complete(with value: T, extra: Any?, finish: Bool = true) {
-        complete(with: Response.success(value: value, extra: extra), finish: finish)
+        complete(with: Response.success(value, extra: extra), finish: finish)
     }
     
     func complete(with error: Error, finish: Bool = true) {
-        complete(with: Response.failure(error: error), finish: finish)
+        complete(with: Response.failure(error), finish: finish)
     }
     
 }

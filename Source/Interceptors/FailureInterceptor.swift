@@ -8,5 +8,5 @@
 import Foundation
 
 public protocol FailureInterceptor {
-    func intercept<T>(chain: InterceptorChain<T>, error: Error)
+    func intercept<T>(chain: InterceptorChain<T>, error: Swift.Error)
 }

@@ -27,9 +27,9 @@ class Client {
         do {
             return try self.request(for: router).response(leash, completion)
         } catch let error as Error {
-            completion(.failure(error: error))
+            completion(.failure(error))
         } catch {
-            completion(.failure(error: .encoding(error)))
+            completion(.failure(Error.encoding(error)))
         }
         
         return nil

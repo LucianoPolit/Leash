@@ -8,6 +8,6 @@
 import Foundation
 
 public enum Response<T> {
-    case success(value: T, extra: Any?)
-    case failure(error: Error)
+    case success(T, extra: Any?)
+    case failure(Swift.Error)
 }
