@@ -59,7 +59,7 @@ class Client {
 private extension Leash {
     
     var baseURL: String {
-        var baseURL = scheme + host
+        var baseURL = scheme + "://" + host
         
         if let port = port {
             baseURL += ":\(port)"
