@@ -10,5 +10,6 @@ Pod::Spec.new do |s|
   s.author           = { 'Luciano Polit' => 'lucianopolit@gmail.com' }
   s.source           = { :git => 'https://github.com/lucianopolit/Leash.git', :tag => s.version.to_s }
   s.platform         = :ios, "9.0"
-  s.source_files = 'Source/*.swift'
+  s.source_files = 'Source/**/*.swift'
+  s.dependency 'Alamofire', '~> 4.5'
 end
