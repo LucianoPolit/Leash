@@ -82,8 +82,7 @@ private extension URLRequest {
     }
     
     mutating func addAuthenticator(_ authenticator: Authenticator?) {
-        addValueIfPossible(value: authenticator?.authentication,
-                           forHTTPHeaderField: authenticator?.header)
+        addValueIfPossible(value: authenticator?.authentication, forHTTPHeaderField: authenticator?.header)
     }
     
 }
@@ -98,10 +97,24 @@ private extension URLRequest {
             httpBody = try encodable.encoded(with: jsonEncoder)
         }
         
+        if endpoint.method.isBodyEncodable,
+            let json = parameters as? [String : Any] {
+            try encode(json: json)
+        }
+        
         if endpoint.method.isQueryEncodable,
             let querySerializable = parameters as? QuerySerializable {
             try encode(query: querySerializable.toQuery())
         }
+        
+        if endpoint.method.isQueryEncodable,
+            let query = parameters as? [String : CustomStringConvertible] {
+            try encode(query: query)
+        }
+    }
+    
+    mutating func encode(json: [String : Any]) throws {
+        self = try JSONEncoding().encode(self, with: json)
     }
     
     mutating func encode(query: [String : CustomStringConvertible]) throws {
