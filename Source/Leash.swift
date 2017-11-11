@@ -25,11 +25,9 @@ public class Leash {
     public let jsonEncoder: JSONEncoder
     public let jsonDecoder: JSONDecoder
     
-    public init?(builder: Builder) {
-        guard let builderScheme = builder.scheme, let builderHost = builder.host else { return nil }
-        
-        scheme = builderScheme
-        host = builderHost
+    public init(builder: Builder) {
+        scheme = builder.scheme
+        host = builder.host
         port = builder.port
         path = builder.path
         authenticator = builder.authenticator
@@ -46,8 +44,8 @@ public class Leash {
     
     public class Builder {
         
-        var scheme: String?
-        var host: String?
+        var scheme: String = "http"
+        var host: String = "localhost"
         var port: Int?
         var path: String?
         var authenticator: Authenticator?
@@ -88,20 +86,24 @@ public class Leash {
             return self
         }
         
-        public func add(interceptor: ExecutionInterceptor) {
+        public func add(interceptor: ExecutionInterceptor) -> Builder {
             executionInterceptors.append(interceptor)
+            return self
         }
         
-        public func add(interceptor: FailureInterceptor) {
+        public func add(interceptor: FailureInterceptor) -> Builder {
             failureInterceptors.append(interceptor)
+            return self
         }
         
-        public func add(interceptor: SuccessInterceptor) {
+        public func add(interceptor: SuccessInterceptor) -> Builder {
             successInterceptors.append(interceptor)
+            return self
         }
         
-        public func add(interceptor: CompletionInterceptor) {
+        public func add(interceptor: CompletionInterceptor) -> Builder {
             completionInterceptors.append(interceptor)
+            return self
         }
         
         public func sessionManager(_ sessionManager: SessionManager) -> Builder {
@@ -126,7 +128,7 @@ public class Leash {
             return self
         }
         
-        public func build() -> Leash? {
+        public func build() -> Leash {
             return Leash(builder: self)
         }
         

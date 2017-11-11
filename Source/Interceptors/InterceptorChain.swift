@@ -19,19 +19,19 @@ public struct InterceptorChain<T> {
 
 extension InterceptorChain {
     
-    func proceed() {
+    public func proceed() {
         completion(nil)
     }
     
-    func complete(with response: Response<T>, finish: Bool = true) {
+    public func complete(with response: Response<T>, finish: Bool = true) {
         completion((response, finish))
     }
     
-    func complete(with value: T, extra: Any?, finish: Bool = true) {
+    public func complete(with value: T, extra: Any?, finish: Bool = true) {
         complete(with: Response.success(value, extra: extra), finish: finish)
     }
     
-    func complete(with error: Swift.Error, finish: Bool = true) {
+    public func complete(with error: Swift.Error, finish: Bool = true) {
         complete(with: Response.failure(error), finish: finish)
     }
     

@@ -19,6 +19,7 @@ extension DataRequest {
         let interceptions: Leash.Interceptions<T> = leash.executionInterceptions(endpoint: endpoint, request: self)
         InterceptorsExecutor(queue: interceptions, completion: preCompletion) { [weak self] callback in
             guard let `self` = self else { return }
+            
             self.response { response in
                 if let error = response.error {
                     let interceptions: Leash.Interceptions<T> = leash.failureInterceptions(endpoint: endpoint, request: self, error: error)
@@ -28,6 +29,7 @@ extension DataRequest {
                     InterceptorsExecutor(queue: interceptions, completion: callback) { $0(response.decoded(with: leash.jsonDecoder)) }
                 }
             }
+            
             self.resume()
         }
     }

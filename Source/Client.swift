@@ -8,22 +8,22 @@
 import Foundation
 import Alamofire
 
-class Client {
+open class Client {
     
     // MARK: - Properties
     
-    let leash: Leash
+    public let leash: Leash
     
     // MARK: - Initializers
     
-    init(leash: Leash) {
+    public init(leash: Leash) {
         self.leash = leash
     }
     
     // MARK: - Methods
     
     @discardableResult
-    public func execute<T: Decodable>(endpoint: Endpoint, completion: @escaping (Response<T>) -> Void) -> DataRequest? {
+    open func execute<T: Decodable>(endpoint: Endpoint, completion: @escaping (Response<T>) -> Void) -> DataRequest? {
         do {
             let request = try self.request(for: endpoint)
             request.response(leash, endpoint, completion)
@@ -37,11 +37,11 @@ class Client {
         return nil
     }
     
-    public func request(for endpoint: Endpoint) throws -> DataRequest {
+    open func request(for endpoint: Endpoint) throws -> DataRequest {
         return leash.sessionManager.request(try urlRequest(for: endpoint))
     }
     
-    public func urlRequest(for endpoint: Endpoint) throws -> URLRequest {
+    open func urlRequest(for endpoint: Endpoint) throws -> URLRequest {
         guard let url = URL(string: leash.baseURL) else { throw Error.invalidURL }
         
         var urlRequest = URLRequest(url: url.appendingPathComponent(endpoint.path))
@@ -76,6 +76,11 @@ private extension Leash {
 
 private extension URLRequest {
     
+    mutating func setDefaultValue(value: String, forHTTPHeaderField field: String) {
+        guard self.value(forHTTPHeaderField: field) == nil else { return }
+        setValue(value, forHTTPHeaderField: field)
+    }
+    
     mutating func addValueIfPossible(value: String?, forHTTPHeaderField field: String?) {
         guard let value = value, let field = field else { return }
         addValue(value, forHTTPHeaderField: field)
@@ -92,23 +97,20 @@ private extension URLRequest {
     mutating func encode(endpoint: Endpoint, with jsonEncoder: JSONEncoder) throws {
         guard let parameters = endpoint.parameters else { return }
         
-        if endpoint.method.isBodyEncodable,
-            let encodable = parameters as? Encodable {
+        if endpoint.method.isBodyEncodable, let encodable = parameters as? Encodable {
+            setDefaultValue(value: "application/json", forHTTPHeaderField: "Content-Type")
             httpBody = try encodable.encoded(with: jsonEncoder)
         }
         
-        if endpoint.method.isBodyEncodable,
-            let json = parameters as? [String : Any] {
+        if endpoint.method.isBodyEncodable, let json = parameters as? [String : Any] {
             try encode(json: json)
         }
         
-        if endpoint.method.isQueryEncodable,
-            let querySerializable = parameters as? QuerySerializable {
+        if endpoint.method.isQueryEncodable, let querySerializable = parameters as? QuerySerializable {
             try encode(query: querySerializable.toQuery())
         }
         
-        if endpoint.method.isQueryEncodable,
-            let query = parameters as? [String : CustomStringConvertible] {
+        if endpoint.method.isQueryEncodable, let query = parameters as? [String : CustomStringConvertible] {
             try encode(query: query)
         }
     }
