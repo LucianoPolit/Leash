@@ -23,10 +23,10 @@ class Client {
     // MARK: - Methods
     
     @discardableResult
-    public func execute<T: Decodable>(router: Router, completion: @escaping (Response<T>) -> Void) -> DataRequest? {
+    public func execute<T: Decodable>(endpoint: Endpoint, completion: @escaping (Response<T>) -> Void) -> DataRequest? {
         do {
-            let request = try self.request(for: router)
-            request.response(leash, router, completion)
+            let request = try self.request(for: endpoint)
+            request.response(leash, endpoint, completion)
             return request
         } catch let error as Error {
             completion(.failure(error))
@@ -37,16 +37,16 @@ class Client {
         return nil
     }
     
-    public func request(for router: Router) throws -> DataRequest {
-        return leash.sessionManager.request(try urlRequest(for: router))
+    public func request(for endpoint: Endpoint) throws -> DataRequest {
+        return leash.sessionManager.request(try urlRequest(for: endpoint))
     }
     
-    public func urlRequest(for router: Router) throws -> URLRequest {
+    public func urlRequest(for endpoint: Endpoint) throws -> URLRequest {
         guard let url = URL(string: leash.baseURL) else { throw Error.invalidURL }
         
-        var urlRequest = URLRequest(url: url.appendingPathComponent(router.path))
-        urlRequest.httpMethod = router.method.rawValue
-        try urlRequest.encode(router: router, with: leash.jsonEncoder)
+        var urlRequest = URLRequest(url: url.appendingPathComponent(endpoint.path))
+        urlRequest.httpMethod = endpoint.method.rawValue
+        try urlRequest.encode(endpoint: endpoint, with: leash.jsonEncoder)
         urlRequest.addAuthenticator(leash.authenticator)
 
         return urlRequest
@@ -90,15 +90,15 @@ private extension URLRequest {
 
 private extension URLRequest {
     
-    mutating func encode(router: Router, with jsonEncoder: JSONEncoder) throws {
-        guard let parameters = router.parameters else { return }
+    mutating func encode(endpoint: Endpoint, with jsonEncoder: JSONEncoder) throws {
+        guard let parameters = endpoint.parameters else { return }
         
-        if router.method.isBodyEncodable,
+        if endpoint.method.isBodyEncodable,
             let encodable = parameters as? Encodable {
             httpBody = try encodable.encoded(with: jsonEncoder)
         }
         
-        if router.method.isQueryEncodable,
+        if endpoint.method.isQueryEncodable,
             let querySerializable = parameters as? QuerySerializable {
             try encode(query: querySerializable.toQuery())
         }

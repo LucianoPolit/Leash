@@ -10,21 +10,21 @@ import Alamofire
 
 extension DataRequest {
     
-    public func response<T: Decodable>(_ leash: Leash, _ router: Router, _ completion: @escaping (Response<T>) -> Void) {
+    public func response<T: Decodable>(_ leash: Leash, _ endpoint: Endpoint, _ completion: @escaping (Response<T>) -> Void) {
         let preCompletion = { (response: Response<T>) in
-            let interceptions: Leash.Interceptions<T> = leash.completionInterceptions(router: router, request: self, response: response)
+            let interceptions: Leash.Interceptions<T> = leash.completionInterceptions(endpoint: endpoint, request: self, response: response)
             InterceptorsExecutor(queue: interceptions, completion: completion) { $0(response) }
         }
         
-        let interceptions: Leash.Interceptions<T> = leash.executionInterceptions(router: router, request: self)
+        let interceptions: Leash.Interceptions<T> = leash.executionInterceptions(endpoint: endpoint, request: self)
         InterceptorsExecutor(queue: interceptions, completion: preCompletion) { [weak self] callback in
             guard let `self` = self else { return }
             self.response { response in
                 if let error = response.error {
-                    let interceptions: Leash.Interceptions<T> = leash.failureInterceptions(router: router, request: self, error: error)
+                    let interceptions: Leash.Interceptions<T> = leash.failureInterceptions(endpoint: endpoint, request: self, error: error)
                     InterceptorsExecutor(queue: interceptions, completion: callback) { $0(.failure(error)) }
                 } else {
-                    let interceptions: Leash.Interceptions<T> = leash.successInterceptions(router: router, request: self, response: response)
+                    let interceptions: Leash.Interceptions<T> = leash.successInterceptions(endpoint: endpoint, request: self, response: response)
                     InterceptorsExecutor(queue: interceptions, completion: callback) { $0(response.decoded(with: leash.jsonDecoder)) }
                 }
             }
@@ -53,37 +53,37 @@ private extension Leash {
     
     typealias Interceptions<T> = [(@escaping InterceptorCompletion<T>) -> ()]
     
-    func executionInterceptions<T>(router: Router, request: DataRequest) -> Interceptions<T> {
+    func executionInterceptions<T>(endpoint: Endpoint, request: DataRequest) -> Interceptions<T> {
         return executionInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(leash: self, router: router, request: request, completion: completion)
+                let chain = InterceptorChain(leash: self, endpoint: endpoint, request: request, completion: completion)
                 interceptor.intercept(chain: chain)
             }
         }
     }
     
-    func failureInterceptions<T>(router: Router, request: DataRequest, error: Swift.Error) -> Interceptions<T> {
+    func failureInterceptions<T>(endpoint: Endpoint, request: DataRequest, error: Swift.Error) -> Interceptions<T> {
         return failureInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(leash: self, router: router, request: request, completion: completion)
+                let chain = InterceptorChain(leash: self, endpoint: endpoint, request: request, completion: completion)
                 interceptor.intercept(chain: chain, error: error)
             }
         }
     }
     
-    func successInterceptions<T>(router: Router, request: DataRequest, response: DefaultDataResponse) -> Interceptions<T> {
+    func successInterceptions<T>(endpoint: Endpoint, request: DataRequest, response: DefaultDataResponse) -> Interceptions<T> {
         return successInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(leash: self, router: router, request: request, completion: completion)
+                let chain = InterceptorChain(leash: self, endpoint: endpoint, request: request, completion: completion)
                 interceptor.intercept(chain: chain, response: response)
             }
         }
     }
     
-    func completionInterceptions<T>(router: Router, request: DataRequest, response: Response<T>) -> Interceptions<T> {
+    func completionInterceptions<T>(endpoint: Endpoint, request: DataRequest, response: Response<T>) -> Interceptions<T> {
         return completionInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(leash: self, router: router, request: request, completion: completion)
+                let chain = InterceptorChain(leash: self, endpoint: endpoint, request: request, completion: completion)
                 interceptor.intercept(chain: chain, response: response)
             }
         }
