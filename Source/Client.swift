@@ -26,8 +26,7 @@ open class Client {
     open func execute<T: Decodable>(endpoint: Endpoint, completion: @escaping (Response<T>) -> Void) -> DataRequest? {
         do {
             let request = try self.request(for: endpoint)
-            request.response(manager, endpoint, completion)
-            return request
+            return request.response(manager, endpoint, completion)
         } catch let error as Error {
             completion(.failure(error))
         } catch {

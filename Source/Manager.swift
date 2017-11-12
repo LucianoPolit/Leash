@@ -61,68 +61,68 @@ public class Manager {
         
         public init() { }
         
-        public func scheme(_ scheme: String) -> Builder {
+        public func scheme(_ scheme: String) -> Self {
             self.scheme = scheme
             return self
         }
         
-        public func host(_ host: String) -> Builder {
+        public func host(_ host: String) -> Self {
             self.host = host
             return self
         }
         
-        public func port(_ port: Int) -> Builder {
+        public func port(_ port: Int) -> Self {
             self.port = port
             return self
         }
         
-        public func path(_ path: String) -> Builder {
+        public func path(_ path: String) -> Self {
             self.path = path
             return self
         }
         
-        public func authenticator(_ authenticator: Authenticator) -> Builder {
+        public func authenticator(_ authenticator: Authenticator) -> Self {
             self.authenticator = authenticator
             return self
         }
         
-        public func add(interceptor: ExecutionInterceptor) -> Builder {
+        public func add(interceptor: ExecutionInterceptor) -> Self {
             executionInterceptors.append(interceptor)
             return self
         }
         
-        public func add(interceptor: FailureInterceptor) -> Builder {
+        public func add(interceptor: FailureInterceptor) -> Self {
             failureInterceptors.append(interceptor)
             return self
         }
         
-        public func add(interceptor: SuccessInterceptor) -> Builder {
+        public func add(interceptor: SuccessInterceptor) -> Self {
             successInterceptors.append(interceptor)
             return self
         }
         
-        public func add(interceptor: CompletionInterceptor) -> Builder {
+        public func add(interceptor: CompletionInterceptor) -> Self {
             completionInterceptors.append(interceptor)
             return self
         }
         
-        public func sessionManager(_ sessionManager: SessionManager) -> Builder {
+        public func sessionManager(_ sessionManager: SessionManager) -> Self {
             self.sessionManager = sessionManager
             self.sessionManager.startRequestsImmediately = false
             return self
         }
         
-        public func jsonEncoder(_ configuration: (JSONEncoder) -> ()) -> Builder {
+        public func jsonEncoder(_ configuration: (JSONEncoder) -> ()) -> Self {
             configuration(jsonEncoder)
             return self
         }
         
-        public func jsonDecoder(_ configuration: (JSONDecoder) -> ()) -> Builder {
+        public func jsonDecoder(_ configuration: (JSONDecoder) -> ()) -> Self {
             configuration(jsonDecoder)
             return self
         }
         
-        public func jsonDateFormatter(_ dateFormatter: DateFormatter) -> Builder {
+        public func jsonDateFormatter(_ dateFormatter: DateFormatter) -> Self {
             jsonEncoder.dateEncodingStrategy = .formatted(dateFormatter)
             jsonDecoder.dateDecodingStrategy = .formatted(dateFormatter)
             return self

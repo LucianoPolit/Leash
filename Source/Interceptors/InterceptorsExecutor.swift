@@ -29,13 +29,16 @@ class InterceptorsExecutor<T> {
         } else {
             let interception = queue.removeFirst()
             interception { [weak self] result in
+                guard let `self` = self else { return }
                 guard let result = result else {
-                    self?.startNext()
+                    self.startNext()
                     return
                 }
                 
-                self?.completion(result.response)
-                if !result.finish { self?.startNext() }
+                self.completion(result.response)
+                if !result.finish {
+                    self.startNext()
+                }
             }
         }
     }
