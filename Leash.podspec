@@ -1,9 +1,10 @@
 Pod::Spec.new do |s|
   s.name             = 'Leash'
-  s.version          = '0.0.1'
+  s.version          = '1.0.0'
   s.summary          = 'Networking Abstraction Layer'
   s.description      = <<-DESC
-                          Networking Abstraction Layer in Swift. Alamofire, Encodable and Decodable, Wrap and Unbox, Interceptors, Customizable.
+                          Networking Abstraction Layer in Swift.
+                          Alamofire, Encodable, Decodable, Interceptors, Customization.
                           DESC
   s.homepage         = 'https://github.com/lucianopolit/Leash'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
