@@ -13,8 +13,9 @@ To run the example project there are two possibilities:
 
 ## Requirements
 
-- iOS 9.0+
-- Swift 4.0+
+- iOS 8.0+
+- Xcode 9.0+
+- Swift 3.2+
 
 ## Installation
 

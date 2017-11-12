@@ -3,13 +3,13 @@ Pod::Spec.new do |s|
   s.version          = '0.0.1'
   s.summary          = 'Networking Abstraction Layer'
   s.description      = <<-DESC
-                          Networking Abstraction Layer in Swift. Alamofire, Codable or Unbox and Wrap, Interceptors, Customizable.
+                          Networking Abstraction Layer in Swift. Alamofire, Encodable and Decodable, Wrap and Unbox, Interceptors, Customizable.
                           DESC
   s.homepage         = 'https://github.com/lucianopolit/Leash'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Luciano Polit' => 'lucianopolit@gmail.com' }
   s.source           = { :git => 'https://github.com/lucianopolit/Leash.git', :tag => s.version.to_s }
-  s.platform         = :ios, "9.0"
+  s.platform         = :ios, "8.0"
   s.source_files = 'Source/**/*.swift'
   s.dependency 'Alamofire', '~> 4.5'
 end
