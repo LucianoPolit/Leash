@@ -96,17 +96,17 @@ private extension URLRequest {
     mutating func encode(endpoint: Endpoint, with jsonEncoder: JSONEncoder) throws {
         guard let parameters = endpoint.parameters else { return }
         
+        if endpoint.method.isBodyEncodable, let json = parameters as? [String : Any] {
+            return try encode(json: json)
+        }
+        
         if endpoint.method.isBodyEncodable, let encodable = parameters as? Encodable {
             setDefaultValue(value: "application/json", forHTTPHeaderField: "Content-Type")
             httpBody = try encodable.encoded(with: jsonEncoder)
         }
         
-        if endpoint.method.isBodyEncodable, let json = parameters as? [String : Any] {
-            try encode(json: json)
-        }
-        
-        if endpoint.method.isQueryEncodable, let querySerializable = parameters as? QuerySerializable {
-            try encode(query: querySerializable.toQuery())
+        if endpoint.method.isQueryEncodable, let queryEncodable = parameters as? QueryEncodable {
+            try encode(query: queryEncodable.toQuery())
         }
         
         if endpoint.method.isQueryEncodable, let query = parameters as? [String : CustomStringConvertible] {
