@@ -9,6 +9,7 @@
 import Foundation
 import Alamofire
 import XCTest
+import OHHTTPStubs
 @testable import Leash
 
 class ClientTests: XCTestCase {
@@ -18,12 +19,14 @@ class ClientTests: XCTestCase {
     static let port = 8080
     static let path = "api"
     
+    var sessionManager = MockSessionManager()
     var builder: Manager.Builder {
         return Manager.Builder()
             .scheme(ClientTests.scheme)
             .host(ClientTests.host)
             .port(ClientTests.port)
             .path(ClientTests.path)
+            .sessionManager(sessionManager)
     }
     var manager: Manager! {
         didSet {
@@ -46,7 +49,7 @@ extension ClientTests {
     
     func testMethod() {
         let endpoint = Endpoint()
-        assert {
+        assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
             XCTAssertEqual(urlRequest.httpMethod, endpoint.method.rawValue)
         }
@@ -55,20 +58,20 @@ extension ClientTests {
     // MARK: - URL
     
     func testURLWithoutPortAndPath() {
-        let endpoint = Endpoint(path: .somePath)
+        let endpoint = Endpoint(path: "some/another/123")
         manager = Manager.Builder()
             .scheme(ClientTests.scheme)
             .host(ClientTests.host)
             .build()
-        assert {
+        assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
             XCTAssertEqual(urlRequest.url?.absoluteString, "\(ClientTests.scheme)://\(ClientTests.host)/\(endpoint.path)")
         }
     }
     
     func testFullURL() {
-        let endpoint = Endpoint(path: .somePath)
-        assert {
+        let endpoint = Endpoint(path: "some/another/123")
+        assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
             XCTAssertEqual(urlRequest.url?.absoluteString, "\(baseURL)\(endpoint.path)")
         }
@@ -78,26 +81,27 @@ extension ClientTests {
     
     func testAuthorizatorWithoutAuthorization() {
         let endpoint = Endpoint()
-        let authenticator = MockAuthenticator()
+        let authenticator = Authenticator()
         manager = builder
             .authenticator(authenticator)
             .build()
-        assert {
+        assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
-            XCTAssertNil(urlRequest.value(forHTTPHeaderField: MockAuthenticator.header))
+            XCTAssertNil(urlRequest.value(forHTTPHeaderField: Authenticator.header))
         }
+        
     }
     
     func testAuthorizatorWithAuthorization() {
         let endpoint = Endpoint()
-        let authenticator = MockAuthenticator()
-        authenticator.mockAuthentication = "123"
+        let authenticator = Authenticator()
+        authenticator.authentication = "123"
         manager = builder
             .authenticator(authenticator)
             .build()
-        assert {
+        assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
-            let header = urlRequest.value(forHTTPHeaderField: MockAuthenticator.header)
+            let header = urlRequest.value(forHTTPHeaderField: Authenticator.header)
             XCTAssertNotNil(header)
             XCTAssertEqual(header, authenticator.authentication)
         }
@@ -107,7 +111,7 @@ extension ClientTests {
     
     func testEmptyBody() {
         let endpoint = Endpoint()
-        assert {
+        assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
             XCTAssertNil(urlRequest.httpBody)
         }
@@ -116,7 +120,7 @@ extension ClientTests {
     func testBodyWithEncodable() {
         let entity = PrimitiveEntity(first: "some", second: 10, third: true)
         let endpoint = Endpoint(method: .post, parameters: entity)
-        assert {
+        assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
             guard let body = urlRequest.httpBody else { return XCTFail() }
             let decoded = try manager.jsonDecoder.decode(PrimitiveEntity.self, from: body)
@@ -129,16 +133,17 @@ extension ClientTests {
         let endpoint = Endpoint(method: .post, parameters: entity)
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.S'Z'"
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
         manager = builder
             .jsonDateFormatter(formatter)
             .build()
-        assert {
+        assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
             guard let body = urlRequest.httpBody else { return XCTFail() }
             let decoded = try manager.jsonDecoder.decode(DatedEntity.self, from: body)
             let dictionary = try JSONSerialization.jsonObject(with: body) as? [String : Any]
             XCTAssertEqual(decoded, entity)
-            XCTAssertEqual(dictionary?["date"] as? String, "1970-01-01T01:01:40.0Z")
+            XCTAssertEqual(dictionary?["date"] as? String, "1970-01-01T00:01:40.0Z")
         }
     }
     
@@ -150,7 +155,7 @@ extension ClientTests {
         manager = builder
             .jsonEncoder { $0.dateEncodingStrategy = .iso8601 }
             .build()
-        assert {
+        assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
             guard let body = urlRequest.httpBody else { return XCTFail() }
             let dictionary = try JSONSerialization.jsonObject(with: body) as? [String : Any]
@@ -161,7 +166,7 @@ extension ClientTests {
     func testBodyWithDictionary() {
         let entity: [String : Any] = PrimitiveEntity(first: "some", second: 10, third: true).toJSON()
         let endpoint = Endpoint(method: .post, parameters: entity)
-        assert {
+        assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
             guard let body = urlRequest.httpBody else { return XCTFail() }
             let decoded = try manager.jsonDecoder.decode(PrimitiveEntity.self, from: body)
@@ -174,7 +179,7 @@ extension ClientTests {
     func testContentTypeWithEncodable() {
         let entity = PrimitiveEntity(first: "some", second: 10, third: true)
         let endpoint = Endpoint(method: .post, parameters: entity)
-        assert {
+        assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
             XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "Content-Type"), "application/json")
         }
@@ -183,7 +188,7 @@ extension ClientTests {
     func testContentTypeWithDictionary() {
         let entity = PrimitiveEntity(first: "some", second: 10, third: true).toJSON()
         let endpoint = Endpoint(method: .post, parameters: entity)
-        assert {
+        assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
             XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "Content-Type"), "application/json")
         }
@@ -194,7 +199,7 @@ extension ClientTests {
     func testQueryWithQueryEncodable() {
         let entity = QueryEntity(first: "some", second: 10, third: true)
         let endpoint = Endpoint(method: .get, parameters: entity)
-        assert {
+        assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
             XCTAssertEqual(urlRequest.url?.absoluteString, "\(baseURL)?first=some&second=10&third=1")
         }
@@ -203,10 +208,60 @@ extension ClientTests {
     func testQueryWithDictionary() {
         let entity = QueryEntity(first: "some", second: 10, third: true).toQuery()
         let endpoint = Endpoint(method: .get, parameters: entity)
-        assert {
+        assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
             XCTAssertEqual(urlRequest.url?.absoluteString, "\(baseURL)?first=some&second=10&third=1")
         }
+    }
+    
+}
+
+// MARK: - DataRequest
+
+extension ClientTests {
+    
+    func testRequestCallsSessionManager() {
+        let endpoint = Endpoint()
+        assertNoErrorThrown {
+            let dataRequest = try client.request(for: endpoint)
+            XCTAssertTrue(sessionManager.requestCalled)
+            XCTAssertTrue(dataRequest.request?.url?.absoluteString.contains(baseURL) ?? false)
+        }
+    }
+    
+    func testExecuteCallsResponse() {
+        let endpoint = Endpoint(path: "response/123")
+        let expectation = self.expectation(description: "Expected to succeed")
+        stub(condition: isEndpoint(endpoint)) { _ in
+            return OHHTTPStubsResponse(jsonObject: ["some" : "123"], statusCode: 200, headers: nil)
+        }
+        client.execute(endpoint: endpoint) { (response: Response<[String : String]>) in
+            guard case .success = response else {
+                XCTFail()
+                return
+            }
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 5)
+    }
+    
+}
+
+// MARK: - Error
+
+extension ClientTests {
+    
+    func testEncodingError() {
+        let endpoint = Endpoint(method: .post, parameters: Data())
+        let expectation = self.expectation(description: "Expected to fail")
+        client.execute(endpoint: endpoint) { (response: Response<Data>) in
+            guard case .failure(let error) = response, case Leash.Error.encoding(_) = error else {
+                XCTFail()
+                return
+            }
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 5)
     }
     
 }
@@ -215,25 +270,15 @@ extension ClientTests {
 
 private extension ClientTests {
     
-    var baseURL: String {
-        return "\(ClientTests.scheme)://\(ClientTests.host):\(ClientTests.port)/\(ClientTests.path)/"
+    func isEndpoint(_ endpoint: Endpoint) -> OHHTTPStubsTestBlock {
+        return {
+            return $0.url?.absoluteString == "\(self.baseURL)\(endpoint.path)"
+                && $0.httpMethod == endpoint.method.rawValue
+        }
     }
     
-}
-
-private extension String {
-    static var empty = ""
-    static var somePath = "some/another/123"
-}
-
-extension XCTestCase {
-    
-    func assert(_ closure: () throws -> ()) {
-        do {
-            try closure()
-        } catch {
-            XCTFail()
-        }
+    var baseURL: String {
+        return "\(ClientTests.scheme)://\(ClientTests.host):\(ClientTests.port)/\(ClientTests.path)/"
     }
     
 }

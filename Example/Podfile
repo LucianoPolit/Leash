@@ -15,4 +15,5 @@ end
 
 target 'Tests' do
     myPods
+    pod 'OHHTTPStubs/Swift', '~> 6.0'
 end
