@@ -37,11 +37,12 @@ open class Client {
     }
     
     open func request(for endpoint: Endpoint) throws -> DataRequest {
-        return manager.sessionManager.request(try urlRequest(for: endpoint))
+        let urlRequest = try self.urlRequest(for: endpoint)
+        return manager.sessionManager.request(urlRequest)
     }
     
     open func urlRequest(for endpoint: Endpoint) throws -> URLRequest {
-        guard let url = URL(string: manager.baseURL) else { throw Error.invalidURL }
+        guard let url = URL(manager: manager) else { fatalError("Leash -> Manager -> Invalid URL") }
         
         var urlRequest = URLRequest(url: url.appendingPathComponent(endpoint.path))
         urlRequest.httpMethod = endpoint.method.rawValue
@@ -55,30 +56,30 @@ open class Client {
 
 // MARK: - Utils
 
-private extension Manager {
+private extension URL {
     
-    var baseURL: String {
+    init?(manager: Manager) {
+        guard let scheme = manager.scheme,
+            let host = manager.host,
+            !scheme.isEmpty,
+            !host.isEmpty else { return nil }
+        
         var baseURL = scheme + "://" + host
         
-        if let port = port {
+        if let port = manager.port {
             baseURL += ":\(port)"
         }
         
-        if let path = path {
+        if let path = manager.path {
             baseURL += "/\(path)"
         }
-        
-        return baseURL
+
+        self.init(string: baseURL)
     }
     
 }
 
 private extension URLRequest {
-    
-    mutating func setDefaultValue(value: String, forHTTPHeaderField field: String) {
-        guard self.value(forHTTPHeaderField: field) == nil else { return }
-        setValue(value, forHTTPHeaderField: field)
-    }
     
     mutating func addValueIfPossible(value: String?, forHTTPHeaderField field: String?) {
         guard let value = value, let field = field else { return }
@@ -101,7 +102,7 @@ private extension URLRequest {
         }
         
         if endpoint.method.isBodyEncodable, let encodable = parameters as? Encodable {
-            setDefaultValue(value: "application/json", forHTTPHeaderField: "Content-Type")
+            setValue("application/json", forHTTPHeaderField: "Content-Type")
             httpBody = try encodable.encoded(with: jsonEncoder)
         }
         

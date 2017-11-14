@@ -10,8 +10,8 @@ import Alamofire
 
 public class Manager {
     
-    public let scheme: String
-    public let host: String
+    public let scheme: String?
+    public let host: String?
     public let port: Int?
     public let path: String?
     public let authenticator: Authenticator?
@@ -44,8 +44,8 @@ public class Manager {
     
     public class Builder {
         
-        var scheme: String = "http"
-        var host: String = "localhost"
+        var scheme: String?
+        var host: String?
         var port: Int?
         var path: String?
         var authenticator: Authenticator?

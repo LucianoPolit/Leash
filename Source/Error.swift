@@ -8,7 +8,6 @@
 import Foundation
 
 public enum Error: Swift.Error {
-    case invalidURL
     case dataUnavailable
     case encoding(Swift.Error)
     case decoding(Swift.Error)
