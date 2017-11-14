@@ -12,34 +12,7 @@ import XCTest
 import OHHTTPStubs
 @testable import Leash
 
-class ClientTests: XCTestCase {
-    
-    static let scheme = "http"
-    static let host = "localhost"
-    static let port = 8080
-    static let path = "api"
-    
-    var sessionManager = MockSessionManager()
-    var builder: Manager.Builder {
-        return Manager.Builder()
-            .scheme(ClientTests.scheme)
-            .host(ClientTests.host)
-            .port(ClientTests.port)
-            .path(ClientTests.path)
-            .sessionManager(sessionManager)
-    }
-    var manager: Manager! {
-        didSet {
-            client = Client(manager: manager)
-        }
-    }
-    var client: Client!
-    
-    override func setUp() {
-        manager = builder.build()
-    }
-    
-}
+class ClientTests: BaseTestCase { }
 
 // MARK: - URLRequest
 
@@ -222,6 +195,10 @@ extension ClientTests {
     
     func testRequestCallsSessionManager() {
         let endpoint = Endpoint()
+        let sessionManager = MockSessionManager()
+        manager = builder
+            .sessionManager(sessionManager)
+            .build()
         assertNoErrorThrown {
             let dataRequest = try client.request(for: endpoint)
             XCTAssertTrue(sessionManager.requestCalled)
@@ -232,14 +209,16 @@ extension ClientTests {
     func testExecuteCallsResponse() {
         let endpoint = Endpoint(path: "response/123")
         let expectation = self.expectation(description: "Expected to succeed")
+        let json = ["some" : "123"]
         stub(condition: isEndpoint(endpoint)) { _ in
-            return OHHTTPStubsResponse(jsonObject: ["some" : "123"], statusCode: 200, headers: nil)
+            return OHHTTPStubsResponse(jsonObject: json, statusCode: 200, headers: nil)
         }
         client.execute(endpoint: endpoint) { (response: Response<[String : String]>) in
-            guard case .success = response else {
+            guard case .success(let result) = response else {
                 XCTFail()
                 return
             }
+            XCTAssertEqual(result.value, ["some" : "123"])
             expectation.fulfill()
         }
         waitForExpectations(timeout: 5)
@@ -279,6 +258,19 @@ private extension ClientTests {
     
     var baseURL: String {
         return "\(ClientTests.scheme)://\(ClientTests.host):\(ClientTests.port)/\(ClientTests.path)/"
+    }
+    
+}
+
+private class MockSessionManager: SessionManager {
+    
+    var requestCalled = false
+    var requestParameterURLRequest: URLRequestConvertible?
+    
+    override func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
+        requestCalled = true
+        requestParameterURLRequest = urlRequest
+        return super.request(urlRequest)
     }
     
 }

@@ -36,7 +36,7 @@ extension InterceptorChain {
     }
     
     public func complete(with value: T, extra: Any?, finish: Bool = true) {
-        complete(with: .success(value, extra: extra), finish: finish)
+        complete(with: .success(value: value, extra: extra), finish: finish)
     }
     
     public func complete(with error: Swift.Error, finish: Bool = true) {

@@ -1,5 +1,5 @@
 //
-//  Authenticator.swift
+//  InterceptorExecutorTests.swift
 //  Example
 //
 //  Created by Luciano Polit on 11/14/17.
@@ -8,8 +8,3 @@
 
 import Foundation
 @testable import Leash
-
-class Authenticator: Leash.Authenticator {
-    static var header: String = "Authorization"
-    var authentication: String?
-}

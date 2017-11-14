@@ -46,7 +46,7 @@ private extension DefaultDataResponse {
         
         do {
             let value = try jsonDecoder.decode(T.self, from: data)
-            return .success(value, extra: nil)
+            return .success(value: value, extra: nil)
         } catch {
             return .failure(Error.decoding(error))
         }
