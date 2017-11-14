@@ -9,6 +9,14 @@
 /* Begin PBXBuildFile section */
 		7348413D586E0EE4CDCDF455 /* Pods_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAA37A2AA03B40270E517D88 /* Pods_Tests.framework */; };
 		ABFA7632B2D01836FB3EB80B /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BCD14818FB6391D5C3E3EF2 /* Pods_Example.framework */; };
+		E2320C051FBB066F002049C9 /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2320BFE1FBB05DA002049C9 /* Endpoint.swift */; };
+		E2320C061FBB0672002049C9 /* MockCompletionInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2320BEB1FB98BBE002049C9 /* MockCompletionInterceptor.swift */; };
+		E2320C071FBB0675002049C9 /* MockExecutionInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2320BED1FB98BC7002049C9 /* MockExecutionInterceptor.swift */; };
+		E2320C081FBB0678002049C9 /* MockFailureInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2320BEF1FB98BD0002049C9 /* MockFailureInterceptor.swift */; };
+		E2320C091FBB067B002049C9 /* MockSuccessInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2320BF11FB98BD9002049C9 /* MockSuccessInterceptor.swift */; };
+		E2320C0A1FBB067F002049C9 /* ClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2320C001FBB0620002049C9 /* ClientTests.swift */; };
+		E2320C0F1FBB127B002049C9 /* MockAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2320C0D1FBB11B3002049C9 /* MockAuthenticator.swift */; };
+		E2320C101FBB1629002049C9 /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2320C0B1FBB0A0A002049C9 /* Entity.swift */; };
 		E2B8F8D41FB77EF500B2A60A /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D31FB77EF500B2A60A /* API.swift */; };
 		E2B8F8D61FB77EFF00B2A60A /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D51FB77EFF00B2A60A /* APIError.swift */; };
 		E2B8F8D81FB77F0900B2A60A /* APIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D71FB77F0900B2A60A /* APIEndpoint.swift */; };
@@ -60,6 +68,14 @@
 		4D8656F5824BEA6267C382EC /* Pods-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Example/Pods-Example.debug.xcconfig"; sourceTree = "<group>"; };
 		94412543B02CA8D5BDBACE40 /* Pods-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		9A8D1A2122CB2A0766F9E3AD /* Pods-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tests/Pods-Tests.release.xcconfig"; sourceTree = "<group>"; };
+		E2320BEB1FB98BBE002049C9 /* MockCompletionInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCompletionInterceptor.swift; sourceTree = "<group>"; };
+		E2320BED1FB98BC7002049C9 /* MockExecutionInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExecutionInterceptor.swift; sourceTree = "<group>"; };
+		E2320BEF1FB98BD0002049C9 /* MockFailureInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFailureInterceptor.swift; sourceTree = "<group>"; };
+		E2320BF11FB98BD9002049C9 /* MockSuccessInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSuccessInterceptor.swift; sourceTree = "<group>"; };
+		E2320BFE1FBB05DA002049C9 /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
+		E2320C001FBB0620002049C9 /* ClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTests.swift; sourceTree = "<group>"; };
+		E2320C0B1FBB0A0A002049C9 /* Entity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
+		E2320C0D1FBB11B3002049C9 /* MockAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAuthenticator.swift; sourceTree = "<group>"; };
 		E2B8F8D31FB77EF500B2A60A /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		E2B8F8D51FB77EFF00B2A60A /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 		E2B8F8D71FB77F0900B2A60A /* APIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoint.swift; sourceTree = "<group>"; };
@@ -83,7 +99,7 @@
 		F1B9F45E1D3950070049F179 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F1B9F4601D3950070049F179 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F1C2386F1DF5A93D00D68ED3 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		F1C238731DF5A93D00D68ED3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F1C238731DF5A93D00D68ED3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Tests/Info.plist; sourceTree = "<group>"; };
 		FAA37A2AA03B40270E517D88 /* Pods_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -125,6 +141,42 @@
 				FAA37A2AA03B40270E517D88 /* Pods_Tests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E2320BE91FB98B37002049C9 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				E2320C0D1FBB11B3002049C9 /* MockAuthenticator.swift */,
+				E2320BEA1FB98B43002049C9 /* Interceptors */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
+		E2320BEA1FB98B43002049C9 /* Interceptors */ = {
+			isa = PBXGroup;
+			children = (
+				E2320BEB1FB98BBE002049C9 /* MockCompletionInterceptor.swift */,
+				E2320BED1FB98BC7002049C9 /* MockExecutionInterceptor.swift */,
+				E2320BEF1FB98BD0002049C9 /* MockFailureInterceptor.swift */,
+				E2320BF11FB98BD9002049C9 /* MockSuccessInterceptor.swift */,
+			);
+			path = Interceptors;
+			sourceTree = "<group>";
+		};
+		E2320BFC1FBA375E002049C9 /* Stubs */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Stubs;
+			sourceTree = "<group>";
+		};
+		E2320BFD1FBB05D2002049C9 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				E2320BFE1FBB05DA002049C9 /* Endpoint.swift */,
+				E2320C0B1FBB0A0A002049C9 /* Entity.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		E2B8F8D21FB77ED900B2A60A /* API */ = {
@@ -201,6 +253,7 @@
 			children = (
 				F1B9F4531D3950070049F179 /* Source */,
 				F1C238701DF5A93D00D68ED3 /* Tests */,
+				F1C238731DF5A93D00D68ED3 /* Info.plist */,
 				F1B9F4521D3950070049F179 /* Products */,
 				73E075CB56F37AEC3578BCEF /* Pods */,
 				C8B1FE1EBD31D2794EF5C482 /* Frameworks */,
@@ -234,7 +287,10 @@
 		F1C238701DF5A93D00D68ED3 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				F1C238731DF5A93D00D68ED3 /* Info.plist */,
+				E2320BFD1FBB05D2002049C9 /* Utils */,
+				E2320BE91FB98B37002049C9 /* Mocks */,
+				E2320BFC1FBA375E002049C9 /* Stubs */,
+				E2320C001FBB0620002049C9 /* ClientTests.swift */,
 			);
 			name = Tests;
 			path = ../Tests;
@@ -483,6 +539,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E2320C0A1FBB067F002049C9 /* ClientTests.swift in Sources */,
+				E2320C0F1FBB127B002049C9 /* MockAuthenticator.swift in Sources */,
+				E2320C061FBB0672002049C9 /* MockCompletionInterceptor.swift in Sources */,
+				E2320C081FBB0678002049C9 /* MockFailureInterceptor.swift in Sources */,
+				E2320C101FBB1629002049C9 /* Entity.swift in Sources */,
+				E2320C051FBB066F002049C9 /* Endpoint.swift in Sources */,
+				E2320C071FBB0675002049C9 /* MockExecutionInterceptor.swift in Sources */,
+				E2320C091FBB067B002049C9 /* MockSuccessInterceptor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
