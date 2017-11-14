@@ -11,7 +11,7 @@ import Alamofire
 extension DataRequest {
     
     @discardableResult
-    public func response<T: Decodable>(_ manager: Manager, _ endpoint: Endpoint, _ completion: @escaping (Response<T>) -> Void) -> Self {
+    public func response<T: Decodable>(_ manager: Manager, _ endpoint: Endpoint, _ completion: @escaping (Response<T>) -> ()) -> Self {
         let preCompletion = { (response: Response<T>) in
             let interceptions: Manager.Interceptions<T> = manager.completionInterceptions(endpoint: endpoint, request: self, response: response)
             InterceptorsExecutor(queue: interceptions, completion: completion) { $0(response) }

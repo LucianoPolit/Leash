@@ -30,10 +30,7 @@ class InterceptorsExecutor<T> {
             let interception = queue.removeFirst()
             interception { [weak self] result in
                 guard let `self` = self else { return }
-                guard let result = result else {
-                    self.startNext()
-                    return
-                }
+                guard let result = result else { return self.startNext() }
                 
                 self.completion(result.response)
                 if !result.finish {

@@ -23,17 +23,14 @@ open class Client {
     // MARK: - Methods
     
     @discardableResult
-    open func execute<T: Decodable>(endpoint: Endpoint, completion: @escaping (Response<T>) -> Void) -> DataRequest? {
+    open func execute<T: Decodable>(endpoint: Endpoint, completion: @escaping (Response<T>) -> ()) -> DataRequest? {
         do {
             let request = try self.request(for: endpoint)
             return request.response(manager, endpoint, completion)
-        } catch let error as Error {
-            completion(.failure(error))
         } catch {
             completion(.failure(Error.encoding(error)))
+            return nil
         }
-        
-        return nil
     }
     
     open func request(for endpoint: Endpoint) throws -> DataRequest {
@@ -59,10 +56,8 @@ open class Client {
 private extension URL {
     
     init?(manager: Manager) {
-        guard let scheme = manager.scheme,
-            let host = manager.host,
-            !scheme.isEmpty,
-            !host.isEmpty else { return nil }
+        guard let scheme = manager.scheme, !scheme.isEmpty,
+            let host = manager.host, !host.isEmpty else { return nil }
         
         var baseURL = scheme + "://" + host
         
