@@ -101,7 +101,7 @@ extension ClientTests {
         }
     }
     
-    func testBodyWithCustomDateFormatter() {
+    func testBodyWithCustomDateFormatterWithEncodable() {
         let entity = DatedEntity(date: Date(timeIntervalSince1970: 100))
         let endpoint = Endpoint(method: .post, parameters: entity)
         let formatter = DateFormatter()

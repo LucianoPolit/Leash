@@ -140,7 +140,83 @@ extension AlamofireLeashTests {
 
 extension AlamofireLeashTests {
     
+    func testDecodable() {
+        let expectation = self.expectation(description: "Expected to find a success response")
+        executeRequest(builder: builder, endpoint: successEndpoint) { response in
+            guard case .success = response else {
+                XCTFail()
+                return
+            }
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 5)
+    }
     
+    func testCustomDateFormatter() {
+        let expectation = self.expectation(description: "Expected to find a success response")
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.S'Z'"
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        let entity = DatedEntity(date: Date(timeIntervalSince1970: 100))
+        let datedEndpoint = Endpoint(path: "dated/entity")
+        stub(condition: isEndpoint(datedEndpoint)) { _ in
+            let encoded = try? self.manager.jsonEncoder.encode(entity)
+            return OHHTTPStubsResponse(data: encoded ?? Data(), statusCode: 200, headers: nil)
+        }
+        manager = builder
+            .jsonDateFormatter(formatter)
+            .build()
+        assertNoErrorThrown {
+            let dataRequest = try client.request(for: datedEndpoint)
+            dataRequest.response(manager, datedEndpoint) { (response: Response<DatedEntity>) in
+                guard case .success(let result) = response else {
+                    XCTFail()
+                    return
+                }
+                XCTAssertEqual(result.value, entity)
+                expectation.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 5)
+    }
+    
+    func testDifferentEncoder() {
+        let expectation = self.expectation(description: "Expected to find a success response")
+        let entity = DatedEntity(date: Date(timeIntervalSince1970: 100))
+        let datedEndpoint = Endpoint(path: "dated/entity")
+        stub(condition: isEndpoint(datedEndpoint)) { _ in
+            let encoded = try? self.manager.jsonEncoder.encode(entity)
+            return OHHTTPStubsResponse(data: encoded ?? Data(), statusCode: 200, headers: nil)
+        }
+        manager = builder
+            .jsonEncoder { $0.dateEncodingStrategy = .iso8601 }
+            .jsonDecoder { $0.dateDecodingStrategy = .iso8601 }
+            .build()
+        assertNoErrorThrown {
+            let dataRequest = try client.request(for: datedEndpoint)
+            dataRequest.response(manager, datedEndpoint) { (response: Response<DatedEntity>) in
+                guard case .success(let result) = response else {
+                    XCTFail()
+                    return
+                }
+                XCTAssertEqual(result.value, entity)
+                expectation.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 5)
+    }
+    
+    func testFailure() {
+        let expectation = self.expectation(description: "Expected to find a failure response")
+        executeRequest(builder: builder, endpoint: failureEndpoint) { response in
+            guard case .failure = response else {
+                XCTFail()
+                return
+            }
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 5)
+    }
     
 }
 
@@ -150,11 +226,11 @@ extension AlamofireLeashTests {
     
     func testDecodingError() {
         let expectation = self.expectation(description: "Expected to return a decoding error")
-        let endpoint = Endpoint(path: "decoding/error")
-        stub(condition: isEndpoint(endpoint)) { _ in
+        let undecodableEndpoint = Endpoint(path: "decoding/error")
+        stub(condition: isEndpoint(undecodableEndpoint)) { _ in
             return OHHTTPStubsResponse(data: Data(), statusCode: 200, headers: nil)
         }
-        executeRequest(builder: builder, endpoint: endpoint) { response in
+        executeRequest(builder: builder, endpoint: undecodableEndpoint) { response in
             guard case .failure(let error) = response, case Leash.Error.decoding = error else {
                 XCTFail()
                 return
