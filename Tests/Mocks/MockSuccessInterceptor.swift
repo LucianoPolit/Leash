@@ -12,6 +12,12 @@ import Alamofire
 
 class MockSuccessInterceptor<U>: SuccessInterceptor {
     
+    var completion: ((InterceptorChain<U>?) -> ())?
+    
+    init(completion: ((InterceptorChain<U>?) -> ())? = nil) {
+        self.completion = completion
+    }
+    
     var interceptCalled = false
     var interceptParameterChain: InterceptorChain<U>?
     var interceptParameterResponse: DefaultDataResponse?
@@ -20,6 +26,7 @@ class MockSuccessInterceptor<U>: SuccessInterceptor {
         interceptCalled = true
         interceptParameterChain = chain as? InterceptorChain<U>
         interceptParameterResponse = response
+        completion?(chain as? InterceptorChain<U>)
     }
     
 }

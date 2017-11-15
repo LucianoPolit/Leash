@@ -88,7 +88,7 @@ extension InterceptorsExecutorTests {
     
 }
 
-// MARK: - Other
+// MARK: - Others
 
 extension InterceptorsExecutorTests {
     

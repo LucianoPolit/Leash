@@ -226,7 +226,7 @@ extension ClientTests {
     
 }
 
-// MARK: - Error
+// MARK: - Errors
 
 extension ClientTests {
     
@@ -234,7 +234,7 @@ extension ClientTests {
         let endpoint = Endpoint(method: .post, parameters: Data())
         let expectation = self.expectation(description: "Expected to fail")
         client.execute(endpoint: endpoint) { (response: Response<Data>) in
-            guard case .failure(let error) = response, case Leash.Error.encoding(_) = error else {
+            guard case .failure(let error) = response, case Leash.Error.encoding = error else {
                 XCTFail()
                 return
             }

@@ -11,6 +11,12 @@ import Foundation
 
 class MockCompletionInterceptor<U>: CompletionInterceptor {
     
+    var completion: ((InterceptorChain<U>?) -> ())?
+    
+    init(completion: ((InterceptorChain<U>?) -> ())? = nil) {
+        self.completion = completion
+    }
+    
     var interceptCalled = false
     var interceptParameterChain: InterceptorChain<U>?
     var interceptParameterResponse: Response<U>?
@@ -19,6 +25,7 @@ class MockCompletionInterceptor<U>: CompletionInterceptor {
         interceptCalled = true
         interceptParameterChain = chain as? InterceptorChain<U>
         interceptParameterResponse = response as? Response<U>
+        completion?(chain as? InterceptorChain<U>)
     }
     
 }

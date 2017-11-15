@@ -11,6 +11,12 @@ import Foundation
 
 class MockFailureInterceptor<U>: FailureInterceptor {
     
+    var completion: ((InterceptorChain<U>?) -> ())?
+    
+    init(completion: ((InterceptorChain<U>?) -> ())? = nil) {
+        self.completion = completion
+    }
+    
     var interceptCalled = false
     var interceptParameterChain: InterceptorChain<U>?
     var interceptParameterError: Swift.Error?
@@ -19,6 +25,7 @@ class MockFailureInterceptor<U>: FailureInterceptor {
         interceptCalled = true
         interceptParameterChain = chain as? InterceptorChain<U>
         interceptParameterError = error
+        completion?(chain as? InterceptorChain<U>)
     }
     
 }
