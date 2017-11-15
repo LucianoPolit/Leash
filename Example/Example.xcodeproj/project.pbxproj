@@ -17,7 +17,7 @@
 		E2320C0A1FBB067F002049C9 /* ClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2320C001FBB0620002049C9 /* ClientTests.swift */; };
 		E2320C101FBB1629002049C9 /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2320C0B1FBB0A0A002049C9 /* Entity.swift */; };
 		E237D16B1FBB80D90036ED66 /* InterceptorChainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25AD4811FBB6DC700E843B6 /* InterceptorChainTests.swift */; };
-		E237D16C1FBB80DC0036ED66 /* InterceptorExecutorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25AD4831FBB6DE600E843B6 /* InterceptorExecutorTests.swift */; };
+		E237D16C1FBB80DC0036ED66 /* InterceptorsExecutorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25AD4831FBB6DE600E843B6 /* InterceptorsExecutorTests.swift */; };
 		E25AD4801FBB6DB500E843B6 /* Alamofire+Leash+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25AD47E1FBB6DAF00E843B6 /* Alamofire+Leash+Tests.swift */; };
 		E273165C1FBB5DC600FC20CE /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E273165B1FBB5DC600FC20CE /* Info.plist */; };
 		E273165F1FBB5F8D00FC20CE /* Authenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E273165D1FBB5F8500FC20CE /* Authenticator.swift */; };
@@ -82,7 +82,7 @@
 		E2320C0B1FBB0A0A002049C9 /* Entity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
 		E25AD47E1FBB6DAF00E843B6 /* Alamofire+Leash+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Alamofire+Leash+Tests.swift"; sourceTree = "<group>"; };
 		E25AD4811FBB6DC700E843B6 /* InterceptorChainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterceptorChainTests.swift; sourceTree = "<group>"; };
-		E25AD4831FBB6DE600E843B6 /* InterceptorExecutorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterceptorExecutorTests.swift; sourceTree = "<group>"; };
+		E25AD4831FBB6DE600E843B6 /* InterceptorsExecutorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterceptorsExecutorTests.swift; sourceTree = "<group>"; };
 		E273165B1FBB5DC600FC20CE /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E273165D1FBB5F8500FC20CE /* Authenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authenticator.swift; sourceTree = "<group>"; };
 		E2B7CFD51FBB71B8009FA962 /* BaseTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
@@ -286,7 +286,7 @@
 				E25AD47E1FBB6DAF00E843B6 /* Alamofire+Leash+Tests.swift */,
 				E2320C001FBB0620002049C9 /* ClientTests.swift */,
 				E25AD4811FBB6DC700E843B6 /* InterceptorChainTests.swift */,
-				E25AD4831FBB6DE600E843B6 /* InterceptorExecutorTests.swift */,
+				E25AD4831FBB6DE600E843B6 /* InterceptorsExecutorTests.swift */,
 				E273165B1FBB5DC600FC20CE /* Info.plist */,
 			);
 			name = Tests;
@@ -545,7 +545,7 @@
 				E2320C081FBB0678002049C9 /* MockFailureInterceptor.swift in Sources */,
 				E2320C101FBB1629002049C9 /* Entity.swift in Sources */,
 				E25AD4801FBB6DB500E843B6 /* Alamofire+Leash+Tests.swift in Sources */,
-				E237D16C1FBB80DC0036ED66 /* InterceptorExecutorTests.swift in Sources */,
+				E237D16C1FBB80DC0036ED66 /* InterceptorsExecutorTests.swift in Sources */,
 				E273165F1FBB5F8D00FC20CE /* Authenticator.swift in Sources */,
 				E2320C051FBB066F002049C9 /* Endpoint.swift in Sources */,
 				E2320C071FBB0675002049C9 /* MockExecutionInterceptor.swift in Sources */,
