@@ -225,7 +225,7 @@ extension AlamofireLeashTests {
 extension AlamofireLeashTests {
     
     func testDecodingError() {
-        let expectation = self.expectation(description: "Expected to return a decoding error")
+        let expectation = self.expectation(description: "Expected to find a decoding error")
         let undecodableEndpoint = Endpoint(path: "decoding/error")
         stub(condition: isEndpoint(undecodableEndpoint)) { _ in
             return OHHTTPStubsResponse(data: Data(), statusCode: 200, headers: nil)

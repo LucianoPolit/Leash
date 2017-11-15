@@ -208,7 +208,7 @@ extension ClientTests {
     
     func testExecuteCallsResponse() {
         let endpoint = Endpoint(path: "response/123")
-        let expectation = self.expectation(description: "Expected to succeed")
+        let expectation = self.expectation(description: "Expected to find a success response")
         let json = ["some" : "123"]
         stub(condition: isEndpoint(endpoint)) { _ in
             return OHHTTPStubsResponse(jsonObject: json, statusCode: 200, headers: nil)
@@ -232,7 +232,7 @@ extension ClientTests {
     
     func testEncodingError() {
         let endpoint = Endpoint(method: .post, parameters: Data())
-        let expectation = self.expectation(description: "Expected to fail")
+        let expectation = self.expectation(description: "Expected to find a failure response")
         client.execute(endpoint: endpoint) { (response: Response<Data>) in
             guard case .failure(let error) = response, case Leash.Error.encoding = error else {
                 XCTFail()
