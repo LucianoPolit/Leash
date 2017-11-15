@@ -8,6 +8,7 @@
 
 import Foundation
 import XCTest
+import OHHTTPStubs
 @testable import Leash
 
 class BaseTestCase: XCTestCase {
@@ -19,10 +20,10 @@ class BaseTestCase: XCTestCase {
     
     var builder: Manager.Builder {
         return Manager.Builder()
-            .scheme(ClientTests.scheme)
-            .host(ClientTests.host)
-            .port(ClientTests.port)
-            .path(ClientTests.path)
+            .scheme(BaseTestCase.scheme)
+            .host(BaseTestCase.host)
+            .port(BaseTestCase.port)
+            .path(BaseTestCase.path)
     }
     var manager: Manager! {
         didSet {
@@ -60,6 +61,21 @@ extension BaseTestCase {
         } catch {
             XCTFail()
         }
+    }
+    
+}
+
+extension BaseTestCase {
+    
+    func isEndpoint(_ endpoint: Endpoint) -> OHHTTPStubsTestBlock {
+        return {
+            return $0.url?.absoluteString == "\(self.baseURL)\(endpoint.path)"
+                && $0.httpMethod == endpoint.method.rawValue
+        }
+    }
+    
+    var baseURL: String {
+        return "\(BaseTestCase.scheme)://\(BaseTestCase.host):\(BaseTestCase.port)/\(BaseTestCase.path)/"
     }
     
 }

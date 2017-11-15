@@ -247,21 +247,6 @@ extension ClientTests {
 
 // MARK: - Utils
 
-private extension ClientTests {
-    
-    func isEndpoint(_ endpoint: Endpoint) -> OHHTTPStubsTestBlock {
-        return {
-            return $0.url?.absoluteString == "\(self.baseURL)\(endpoint.path)"
-                && $0.httpMethod == endpoint.method.rawValue
-        }
-    }
-    
-    var baseURL: String {
-        return "\(ClientTests.scheme)://\(ClientTests.host):\(ClientTests.port)/\(ClientTests.path)/"
-    }
-    
-}
-
 private class MockSessionManager: SessionManager {
     
     var requestCalled = false
