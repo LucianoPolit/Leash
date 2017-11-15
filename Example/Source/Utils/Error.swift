@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// The error of the project.
 enum Error: Swift.Error {
     case server(APIError)
     case unauthorized
