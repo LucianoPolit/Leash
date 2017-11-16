@@ -9,6 +9,7 @@
 import Foundation
 import Leash
 
+/// Responsible for configuring all the requirements to reach the API.
 class API {
     
     // MARK: - Shared

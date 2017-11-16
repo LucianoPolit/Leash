@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Used to update an expense.
 struct UpdateExpenseRequest: Encodable {
     
     let id: String

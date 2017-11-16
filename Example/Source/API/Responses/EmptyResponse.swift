@@ -8,4 +8,5 @@
 
 import Foundation
 
+/// In some cases, there is no response needed, so this is the appropiate way of specifying that.
 struct EmptyResponse: Decodable { }

@@ -10,6 +10,8 @@ import Foundation
 import Leash
 import Alamofire
 
+/// Interceptor responsible for validating the response.
+/// In case that the status code is matched to a known error, the interception is completed with it.
 class ResponseValidator: SuccessInterceptor {
     
     func intercept<T>(chain: InterceptorChain<T>, response: DefaultDataResponse) {

@@ -10,6 +10,8 @@ import Foundation
 import Leash
 import Alamofire
 
+/// Endpoints of the API that can be reached.
+/// It contains all the information needed to create the requests.
 enum APIEndpoint: Endpoint {
     
     case getExpenses

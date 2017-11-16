@@ -10,6 +10,9 @@ import Foundation
 import Leash
 import Alamofire
 
+/// Interceptor responsible for validating the body.
+/// In some cases, the body may contain an API error with extra information.
+/// In case that an API error is found, the interception is completed with it.
 class BodyValidator: SuccessInterceptor {
     
     func intercept<T>(chain: InterceptorChain<T>, response: DefaultDataResponse) {

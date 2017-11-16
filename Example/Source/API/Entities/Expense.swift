@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Main entity of the project.
 struct Expense: Decodable {
     
     let id: String

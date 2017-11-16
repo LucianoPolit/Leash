@@ -9,6 +9,9 @@
 import Foundation
 import Leash
 
+/// Authenticator of the API.
+/// In case an user is signed in, its ID is set on the specified header.
+/// It is just a simple authentication. In case that security is needed, a token system should be implemented.
 class APIAuthenticator {
     
     // MARK: - Properties

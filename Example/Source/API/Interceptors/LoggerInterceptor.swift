@@ -9,6 +9,7 @@
 import Foundation
 import Leash
 
+/// Interceptor responsible for logging the requests and responses.
 class LoggerInterceptor: ExecutionInterceptor, CompletionInterceptor {
     
     // MARK: - ExecutionInterceptor
