@@ -1,8 +1,25 @@
 //
 //  Alamofire+Leash.swift
-//  Alamofire
 //
-//  Created by Luciano Polit on 11/11/17.
+//  Copyright (c) 2017 Luciano Polit <lucianopolit@gmail.com>
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
 //
 
 import Foundation
@@ -10,6 +27,23 @@ import Alamofire
 
 extension DataRequest {
     
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// Also, it is responsible for calling the interceptors when needed (all are asynchronous and executed in a queue order):
+    ///
+    /// - Execution: called before the request is executed.
+    /// - Failure: called when there is a problem executing the request.
+    /// - Success: called when there is no problem executing the request.
+    /// - Completion: called before the completion handler.
+    ///
+    /// Any of the interceptors might have as result to call the completion handler with the specified response.
+    /// Moreover, it could finish the operation if it is required.
+    ///
+    /// - Parameter manager: Contains all the interceptors that must be called.
+    /// - Parameter endpoint: The endpoint that was used to create the request.
+    /// - Parameter completion: Handler of the response.
+    ///
+    /// - Returns: The request.
     @discardableResult
     public func response<T: Decodable>(_ manager: Manager, _ endpoint: Endpoint, _ completion: @escaping (Response<T>) -> ()) -> Self {
         let preCompletion = { (response: Response<T>) in
@@ -38,6 +72,8 @@ extension DataRequest {
     }
     
 }
+
+// MARK: - Utils
 
 private extension DefaultDataResponse {
     

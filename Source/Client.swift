@@ -1,27 +1,53 @@
 //
 //  Client.swift
-//  Pods-Example
 //
-//  Created by Luciano Polit on 11/11/17.
+//  Copyright (c) 2017 Luciano Polit <lucianopolit@gmail.com>
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
 //
 
 import Foundation
 import Alamofire
 
+/// Responsible for creating and executing requests.
 open class Client {
     
     // MARK: - Properties
     
+    /// The manager that is used to create and execute requests.
     public let manager: Manager
     
     // MARK: - Initializers
     
+    /// Initializes and returns a newly allocated object with the specified manager.
     public init(manager: Manager) {
         self.manager = manager
     }
     
     // MARK: - Methods
     
+    /// Creates and executes the request for the specified endpoint.
+    ///
+    /// - Parameter endpoint: Contains all the information needed to create the request.
+    /// - Parameter completion: Handler of the response.
+    ///
+    /// - Returns: The created request.
     @discardableResult
     open func execute<T: Decodable>(endpoint: Endpoint, completion: @escaping (Response<T>) -> ()) -> DataRequest? {
         do {
@@ -33,11 +59,31 @@ open class Client {
         }
     }
     
+    /// Creates the request for the specified endpoint.
+    ///
+    /// - Parameter endpoint: Contains all the information needed to create the request.
+    ///
+    /// - Returns: The created request.
     open func request(for endpoint: Endpoint) throws -> DataRequest {
         let urlRequest = try self.urlRequest(for: endpoint)
         return manager.sessionManager.request(urlRequest)
     }
     
+    /// Creates the URL request for the specified endpoint.
+    ///
+    /// Some of the data is used from the manager and some other from the endpoint.
+    /// Regarding the endpoint parameters, they are encoded on the body/query depending on the method.
+    ///
+    /// There are different acceptable types depending on the encoding:
+    ///
+    /// - For the body, Encodable or [String : Any].
+    /// - For the query, QueryEncodable or [String : CustomStringConvertible].
+    ///
+    /// In case that another type is required, this method must be overridden.
+    ///
+    /// - Parameter endpoint: Contains all the information needed to create the URL request.
+    ///
+    /// - Returns: The created URL request.
     open func urlRequest(for endpoint: Endpoint) throws -> URLRequest {
         guard let url = URL(manager: manager) else { fatalError("Leash -> Manager -> Invalid URL") }
         
