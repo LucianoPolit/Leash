@@ -10,22 +10,22 @@ import Foundation
 import Leash
 
 /// Main client of the project.
-class ExpensesClient: Client {
+class ExpensesClient: Client<ExpensesEndpoint> {
     
-    func create(_ request: CreateExpenseRequest, completion: @escaping (Response<Expense>) -> ()) {
-        execute(endpoint: APIEndpoint.createExpense(request), completion: completion)
+    func readAll(completion: @escaping (Response<[Expense]>) -> ()) {
+        execute(.readAll, completion: completion)
     }
     
-    func read(completion: @escaping (Response<[Expense]>) -> ()) {
-        execute(endpoint: APIEndpoint.getExpenses, completion: completion)
+    func create(_ request: CreateExpenseRequest, completion: @escaping (Response<Expense>) -> ()) {
+        execute(.create(request), completion: completion)
     }
     
     func update(_ request: UpdateExpenseRequest, completion: @escaping (Response<Expense>) -> ()) {
-        execute(endpoint: APIEndpoint.updateExpense(request), completion: completion)
+        execute(.update(request), completion: completion)
     }
     
     func delete(_ expense: String, completion: @escaping (Response<EmptyResponse>) -> ()) {
-        execute(endpoint: APIEndpoint.deleteExpense(expense), completion: completion)
+        execute(.delete(expense), completion: completion)
     }
     
 }

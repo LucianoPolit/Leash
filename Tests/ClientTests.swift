@@ -213,7 +213,7 @@ extension ClientTests {
         stub(condition: isEndpoint(endpoint)) { _ in
             return OHHTTPStubsResponse(jsonObject: json, statusCode: 200, headers: nil)
         }
-        client.execute(endpoint: endpoint) { (response: Response<[String : String]>) in
+        client.execute(endpoint) { (response: Response<[String : String]>) in
             guard case .success(let result) = response else {
                 XCTFail()
                 return
@@ -233,7 +233,7 @@ extension ClientTests {
     func testEncodingError() {
         let endpoint = Endpoint(method: .post, parameters: Data())
         let expectation = self.expectation(description: "Expected to find a failure response")
-        client.execute(endpoint: endpoint) { (response: Response<Data>) in
+        client.execute(endpoint) { (response: Response<Data>) in
             guard case .failure(let error) = response, case Leash.Error.encoding = error else {
                 XCTFail()
                 return

@@ -30,7 +30,7 @@ class BaseTestCase: XCTestCase {
             client = Client(manager: manager)
         }
     }
-    var client: Client!
+    var client: Client<Endpoint>!
     
     override func setUp() {
         manager = builder.build()

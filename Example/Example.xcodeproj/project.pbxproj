@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E231631E1FC1806D004D2251 /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E231631D1FC1806D004D2251 /* Endpoint.swift */; };
+		E23163201FC18075004D2251 /* ExpensesEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E231631F1FC18075004D2251 /* ExpensesEndpoint.swift */; };
 		E2320C051FBB066F002049C9 /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2320BFE1FBB05DA002049C9 /* Endpoint.swift */; };
 		E2320C061FBB0672002049C9 /* MockCompletionInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2320BEB1FB98BBE002049C9 /* MockCompletionInterceptor.swift */; };
 		E2320C071FBB0675002049C9 /* MockExecutionInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2320BED1FB98BC7002049C9 /* MockExecutionInterceptor.swift */; };
@@ -22,7 +24,6 @@
 		E2B7CFD71FBB71E1009FA962 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B7CFD51FBB71B8009FA962 /* BaseTestCase.swift */; };
 		E2B8F8D41FB77EF500B2A60A /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D31FB77EF500B2A60A /* API.swift */; };
 		E2B8F8D61FB77EFF00B2A60A /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D51FB77EFF00B2A60A /* APIError.swift */; };
-		E2B8F8D81FB77F0900B2A60A /* APIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D71FB77F0900B2A60A /* APIEndpoint.swift */; };
 		E2B8F8DA1FB77F1600B2A60A /* APIAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D91FB77F1600B2A60A /* APIAuthenticator.swift */; };
 		E2B8F8DC1FB77F2300B2A60A /* APIFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8DB1FB77F2300B2A60A /* APIFormatters.swift */; };
 		E2B8F8E21FB77F7D00B2A60A /* Expense.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8E11FB77F7D00B2A60A /* Expense.swift */; };
@@ -65,6 +66,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E231631D1FC1806D004D2251 /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
+		E231631F1FC18075004D2251 /* ExpensesEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpensesEndpoint.swift; sourceTree = "<group>"; };
 		E2320BEB1FB98BBE002049C9 /* MockCompletionInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCompletionInterceptor.swift; sourceTree = "<group>"; };
 		E2320BED1FB98BC7002049C9 /* MockExecutionInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExecutionInterceptor.swift; sourceTree = "<group>"; };
 		E2320BEF1FB98BD0002049C9 /* MockFailureInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFailureInterceptor.swift; sourceTree = "<group>"; };
@@ -80,7 +83,6 @@
 		E2B7CFD51FBB71B8009FA962 /* BaseTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 		E2B8F8D31FB77EF500B2A60A /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		E2B8F8D51FB77EFF00B2A60A /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
-		E2B8F8D71FB77F0900B2A60A /* APIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoint.swift; sourceTree = "<group>"; };
 		E2B8F8D91FB77F1600B2A60A /* APIAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIAuthenticator.swift; sourceTree = "<group>"; };
 		E2B8F8DB1FB77F2300B2A60A /* APIFormatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIFormatters.swift; sourceTree = "<group>"; };
 		E2B8F8E11FB77F7D00B2A60A /* Expense.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expense.swift; sourceTree = "<group>"; };
@@ -120,6 +122,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E231631C1FC18060004D2251 /* Endpoints */ = {
+			isa = PBXGroup;
+			children = (
+				E231631D1FC1806D004D2251 /* Endpoint.swift */,
+				E231631F1FC18075004D2251 /* ExpensesEndpoint.swift */,
+			);
+			path = Endpoints;
+			sourceTree = "<group>";
+		};
 		E2320BE91FB98B37002049C9 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
@@ -146,13 +157,13 @@
 			isa = PBXGroup;
 			children = (
 				E2B8F8DD1FB77F5000B2A60A /* Clients */,
+				E231631C1FC18060004D2251 /* Endpoints */,
 				E2B8F8E01FB77F7100B2A60A /* Entities */,
 				E2B8F8ED1FB7863300B2A60A /* Interceptors */,
 				E2B8F8DF1FB77F5D00B2A60A /* Requests */,
 				E2B8F8DE1FB77F5500B2A60A /* Responses */,
 				E2B8F8D31FB77EF500B2A60A /* API.swift */,
 				E2B8F8D91FB77F1600B2A60A /* APIAuthenticator.swift */,
-				E2B8F8D71FB77F0900B2A60A /* APIEndpoint.swift */,
 				E2B8F8D51FB77EFF00B2A60A /* APIError.swift */,
 				E2B8F8DB1FB77F2300B2A60A /* APIFormatters.swift */,
 			);
@@ -377,7 +388,8 @@
 				E2B8F8E61FB7802700B2A60A /* CreateExpenseRequest.swift in Sources */,
 				E2B8F8DC1FB77F2300B2A60A /* APIFormatters.swift in Sources */,
 				E2B8F8DA1FB77F1600B2A60A /* APIAuthenticator.swift in Sources */,
-				E2B8F8D81FB77F0900B2A60A /* APIEndpoint.swift in Sources */,
+				E23163201FC18075004D2251 /* ExpensesEndpoint.swift in Sources */,
+				E231631E1FC1806D004D2251 /* Endpoint.swift in Sources */,
 				E2B8F8E81FB7802E00B2A60A /* UpdateExpenseRequest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
