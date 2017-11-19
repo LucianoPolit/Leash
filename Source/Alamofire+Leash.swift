@@ -39,29 +39,29 @@ extension DataRequest {
     /// Any of the interceptors might have as result to call the completion handler with the specified response.
     /// Moreover, it could finish the operation if it is required.
     ///
-    /// - Parameter manager: Contains all the interceptors that must be called.
+    /// - Parameter client: The client that created the request. It also contains the interceptors that must be called.
     /// - Parameter endpoint: The endpoint that was used to create the request.
     /// - Parameter completion: Handler of the response.
     ///
     /// - Returns: The request.
     @discardableResult
-    public func response<T: Decodable>(_ manager: Manager, _ endpoint: Endpoint, _ completion: @escaping (Response<T>) -> ()) -> Self {
+    public func response<T: Decodable>(_ client: Client, _ endpoint: Endpoint, _ completion: @escaping (Response<T>) -> ()) -> Self {
         let preCompletion = { (response: Response<T>) in
-            let interceptions: Manager.Interceptions<T> = manager.completionInterceptions(endpoint: endpoint, request: self, response: response)
+            let interceptions: Client.Interceptions<T> = client.completionInterceptions(endpoint: endpoint, request: self, response: response)
             InterceptorsExecutor(queue: interceptions, completion: completion) { $0(response) }
         }
         
-        let interceptions: Manager.Interceptions<T> = manager.executionInterceptions(endpoint: endpoint, request: self)
+        let interceptions: Client.Interceptions<T> = client.executionInterceptions(endpoint: endpoint, request: self)
         InterceptorsExecutor(queue: interceptions, completion: preCompletion) { [weak self] callback in
             guard let `self` = self else { return }
             
             self.response { response in
                 if let error = response.error {
-                    let interceptions: Manager.Interceptions<T> = manager.failureInterceptions(endpoint: endpoint, request: self, error: error)
+                    let interceptions: Client.Interceptions<T> = client.failureInterceptions(endpoint: endpoint, request: self, error: error)
                     InterceptorsExecutor(queue: interceptions, completion: callback) { $0(.failure(error)) }
                 } else {
-                    let interceptions: Manager.Interceptions<T> = manager.successInterceptions(endpoint: endpoint, request: self, response: response)
-                    InterceptorsExecutor(queue: interceptions, completion: callback) { $0(response.decoded(with: manager.jsonDecoder)) }
+                    let interceptions: Client.Interceptions<T> = client.successInterceptions(endpoint: endpoint, request: self, response: response)
+                    InterceptorsExecutor(queue: interceptions, completion: callback) { $0(response.decoded(with: client.manager.jsonDecoder)) }
                 }
             }
             
@@ -78,7 +78,7 @@ extension DataRequest {
 private extension DefaultDataResponse {
     
     func decoded<T: Decodable>(with jsonDecoder: JSONDecoder) -> Response<T> {
-        guard let data = data else { return .failure(Error.dataUnavailable) }
+        guard let data = data else { return .failure(Error.unknown) }
         
         do {
             let value = try jsonDecoder.decode(T.self, from: data)
@@ -90,41 +90,41 @@ private extension DefaultDataResponse {
     
 }
 
-private extension Manager {
+private extension Client {
     
     typealias Interceptions<T> = [(@escaping InterceptorCompletion<T>) -> ()]
     
     func executionInterceptions<T: Decodable>(endpoint: Endpoint, request: DataRequest) -> Interceptions<T> {
-        return executionInterceptors.map { interceptor in
+        return manager.executionInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(manager: self, endpoint: endpoint, request: request, completion: completion)
+                let chain = InterceptorChain(client: self, endpoint: endpoint, request: request, completion: completion)
                 interceptor.intercept(chain: chain)
             }
         }
     }
     
     func failureInterceptions<T: Decodable>(endpoint: Endpoint, request: DataRequest, error: Swift.Error) -> Interceptions<T> {
-        return failureInterceptors.map { interceptor in
+        return manager.failureInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(manager: self, endpoint: endpoint, request: request, completion: completion)
+                let chain = InterceptorChain(client: self, endpoint: endpoint, request: request, completion: completion)
                 interceptor.intercept(chain: chain, error: error)
             }
         }
     }
     
     func successInterceptions<T: Decodable>(endpoint: Endpoint, request: DataRequest, response: DefaultDataResponse) -> Interceptions<T> {
-        return successInterceptors.map { interceptor in
+        return manager.successInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(manager: self, endpoint: endpoint, request: request, completion: completion)
+                let chain = InterceptorChain(client: self, endpoint: endpoint, request: request, completion: completion)
                 interceptor.intercept(chain: chain, response: response)
             }
         }
     }
     
     func completionInterceptions<T: Decodable>(endpoint: Endpoint, request: DataRequest, response: Response<T>) -> Interceptions<T> {
-        return completionInterceptors.map { interceptor in
+        return manager.completionInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(manager: self, endpoint: endpoint, request: request, completion: completion)
+                let chain = InterceptorChain(client: self, endpoint: endpoint, request: request, completion: completion)
                 interceptor.intercept(chain: chain, response: response)
             }
         }

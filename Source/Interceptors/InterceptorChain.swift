@@ -29,21 +29,21 @@ import Alamofire
 typealias InterceptorCompletion<T> = ((response: Response<T>, finish: Bool)?) -> ()
 
 /// Contains all the information that an interceptor might require.
-public class InterceptorChain<T: Decodable> {
-    /// The manager that is requesting the interception.
-    public let manager: Manager
+open class InterceptorChain<T: Decodable> {
+    /// The client that is requesting the interception.
+    public let client: Client
     /// The endpoint that is being intercepted.
     public let endpoint: Endpoint
     /// The request that is being intercepted.
     public let request: DataRequest
     /// The completion handler of the interception.
-    private let completion: InterceptorCompletion<T>
+    fileprivate let completion: InterceptorCompletion<T>
     /// Determines if the interception is completed or not.
-    private var completed = false
+    fileprivate var completed = false
     
     /// Initializes and returns a newly allocated object with the specified parameters.
-    init(manager: Manager, endpoint: Endpoint, request: DataRequest, completion: @escaping InterceptorCompletion<T>) {
-        self.manager = manager
+    init(client: Client, endpoint: Endpoint, request: DataRequest, completion: @escaping InterceptorCompletion<T>) {
+        self.client = client
         self.endpoint = endpoint
         self.request = request
         self.completion = completion
@@ -57,11 +57,13 @@ extension InterceptorChain {
         complete(nil)
     }
     
-    /// Retries the same request with the same completion handler.
-    public func retry() {
-        guard let urlRequest = self.request.request else { return proceed() }
-        let request = manager.sessionManager.request(urlRequest)
-        request.response(manager, endpoint) { [weak self] response in
+    /// Retries the operation with the same completion handler.
+    ///
+    /// - Returns: The new request.
+    @discardableResult
+    public func retry() throws -> DataRequest {
+        let request = try client.request(for: endpoint)
+        return request.response(client, endpoint) { [weak self] response in
             self?.complete(with: response)
         }
     }
@@ -82,7 +84,7 @@ extension InterceptorChain {
     ///                    The purpose of this parameter is to be used by another interceptor or by the completion handler.
     /// - Parameter finish: Determines if the process should be finished or not.
     ///                     In case that it is false, the completion handler will receive multiple calls.
-    public func complete(with value: T, extra: Any?, finish: Bool = true) {
+    public func complete(with value: T, extra: Any? = nil, finish: Bool = true) {
         complete(with: .success(value: value, extra: extra), finish: finish)
     }
     

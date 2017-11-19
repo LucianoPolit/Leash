@@ -26,7 +26,7 @@ import Foundation
 import Alamofire
 
 /// Responsible for creating and executing requests.
-open class Client<Target: Endpoint> {
+open class Client {
     
     // MARK: - Properties
     
@@ -49,10 +49,10 @@ open class Client<Target: Endpoint> {
     ///
     /// - Returns: The created request.
     @discardableResult
-    open func execute<T: Decodable>(_ endpoint: Target, completion: @escaping (Response<T>) -> ()) -> DataRequest? {
+    open func execute<T: Decodable>(_ endpoint: Endpoint, completion: @escaping (Response<T>) -> ()) -> DataRequest? {
         do {
             let request = try self.request(for: endpoint)
-            return request.response(manager, endpoint, completion)
+            return request.response(self, endpoint, completion)
         } catch {
             completion(.failure(Error.encoding(error)))
             return nil
@@ -64,7 +64,7 @@ open class Client<Target: Endpoint> {
     /// - Parameter endpoint: Contains all the information needed to create the request.
     ///
     /// - Returns: The created request.
-    open func request(for endpoint: Target) throws -> DataRequest {
+    open func request(for endpoint: Endpoint) throws -> DataRequest {
         let urlRequest = try self.urlRequest(for: endpoint)
         return manager.sessionManager.request(urlRequest)
     }
@@ -84,7 +84,7 @@ open class Client<Target: Endpoint> {
     /// - Parameter endpoint: Contains all the information needed to create the URL request.
     ///
     /// - Returns: The created URL request.
-    open func urlRequest(for endpoint: Target) throws -> URLRequest {
+    open func urlRequest(for endpoint: Endpoint) throws -> URLRequest {
         guard let url = URL(manager: manager) else { fatalError("Leash -> Manager -> Invalid URL") }
         
         var urlRequest = URLRequest(url: url.appendingPathComponent(endpoint.path))

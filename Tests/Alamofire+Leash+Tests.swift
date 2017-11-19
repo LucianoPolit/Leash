@@ -26,7 +26,7 @@ class AlamofireLeashTests: BaseTestCase {
             return OHHTTPStubsResponse(jsonObject: entity, statusCode: 200, headers: nil)
         }
         stub(condition: isEndpoint(failureEndpoint)) { _ in
-            return OHHTTPStubsResponse(error: Leash.Error.dataUnavailable)
+            return OHHTTPStubsResponse(error: Leash.Error.unknown)
         }
     }
     
@@ -191,7 +191,7 @@ extension AlamofireLeashTests {
             .build()
         assertNoErrorThrown {
             let dataRequest = try client.request(for: datedEndpoint)
-            dataRequest.response(manager, datedEndpoint) { (response: Response<DatedEntity>) in
+            dataRequest.response(client, datedEndpoint) { (response: Response<DatedEntity>) in
                 guard case .success(let result) = response else {
                     XCTFail()
                     return
@@ -217,7 +217,7 @@ extension AlamofireLeashTests {
             .build()
         assertNoErrorThrown {
             let dataRequest = try client.request(for: datedEndpoint)
-            dataRequest.response(manager, datedEndpoint) { (response: Response<DatedEntity>) in
+            dataRequest.response(client, datedEndpoint) { (response: Response<DatedEntity>) in
                 guard case .success(let result) = response else {
                     XCTFail()
                     return
@@ -288,7 +288,7 @@ private extension AlamofireLeashTests {
         manager = builder.build()
         assertNoErrorThrown {
             let dataRequest = try client.request(for: endpoint)
-            dataRequest.response(manager, successEndpoint) { response in
+            dataRequest.response(client, successEndpoint) { response in
                 completion?(response)
             }
         }

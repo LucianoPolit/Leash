@@ -50,9 +50,9 @@ extension ClientTests {
         }
     }
     
-    // MARK: - Authorizator
+    // MARK: - Authenticator
     
-    func testAuthorizatorWithoutAuthorization() {
+    func testAuthenticatorWithoutAuthorization() {
         let endpoint = Endpoint()
         let authenticator = Authenticator()
         manager = builder
@@ -65,7 +65,7 @@ extension ClientTests {
         
     }
     
-    func testAuthorizatorWithAuthorization() {
+    func testAuthenticatorWithAuthorization() {
         let endpoint = Endpoint()
         let authenticator = Authenticator()
         authenticator.authentication = "123"

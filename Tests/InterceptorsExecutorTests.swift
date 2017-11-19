@@ -127,7 +127,7 @@ private extension InterceptorsExecutorTests {
     func chain(with completion: @escaping InterceptorCompletion<T>) throws -> InterceptorChain<T> {
         let endpoint = Endpoint()
         let dataRequest = try self.client.request(for: endpoint)
-        return InterceptorChain(manager: self.manager, endpoint: endpoint, request: dataRequest, completion: completion)
+        return InterceptorChain(client: client, endpoint: endpoint, request: dataRequest, completion: completion)
     }
     
 }

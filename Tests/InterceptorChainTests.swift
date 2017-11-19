@@ -25,7 +25,7 @@ class InterceptorChainTests: BaseTestCase {
         assertNoErrorThrown {
             let endpoint = Endpoint()
             let dataRequest = try client.request(for: endpoint)
-            chain = InterceptorChain(manager: manager, endpoint: endpoint, request: dataRequest) { result in
+            chain = InterceptorChain(client: client, endpoint: endpoint, request: dataRequest) { result in
                 self.count += 1
                 self.result = result
             }
@@ -64,9 +64,9 @@ extension InterceptorChainTests {
     
     func testCompleteWithFailureCallsCompletionOnylOneTime() {
         XCTAssertEqual(count, 0)
-        chain.complete(with: Leash.Error.dataUnavailable)
-        chain.complete(with: Leash.Error.dataUnavailable)
-        chain.complete(with: Leash.Error.dataUnavailable)
+        chain.complete(with: Leash.Error.unknown)
+        chain.complete(with: Leash.Error.unknown)
+        chain.complete(with: Leash.Error.unknown)
         XCTAssertEqual(count, 1)
     }
     
@@ -83,17 +83,24 @@ extension InterceptorChainTests {
     
     func testRetry() {
         let expectation = self.expectation(description: "Expected to call all the interceptors")
-        chain = InterceptorChain(manager: chain.manager, endpoint: chain.endpoint, request: chain.request) { result in
+        let authenticator = Authenticator()
+        let futureAuthentication = "ThisIsNew!"
+        manager = builder
+            .authenticator(authenticator)
+            .build()
+        chain = InterceptorChain(client: client, endpoint: chain.endpoint, request: chain.request) { result in
             guard let result = result,
                 case .failure(let error) = result.response,
-                case Leash.Error.dataUnavailable = error else { return XCTFail() }
+                case Leash.Error.unknown = error else { return XCTFail() }
             XCTAssertTrue(result.finish)
             expectation.fulfill()
         }
-        stub(condition: isEndpoint(chain.endpoint)) { _ in
-            return OHHTTPStubsResponse(error: Leash.Error.dataUnavailable)
+        stub(condition: isEndpoint(chain.endpoint)) { request in
+            XCTAssertEqual(request.value(forHTTPHeaderField: Authenticator.header), futureAuthentication)
+            return OHHTTPStubsResponse(error: Leash.Error.unknown)
         }
         assertNoErrorThrown {
+            authenticator.authentication = futureAuthentication
             try chain?.retry()
         }
         waitForExpectations(timeout: 5)
@@ -130,17 +137,17 @@ extension InterceptorChainTests {
     }
     
     func testCompleteWithFailureFinishDefault() {
-        chain.complete(with: Leash.Error.dataUnavailable)
+        chain.complete(with: Leash.Error.unknown)
         XCTAssertTrue(result?.finish ?? false)
     }
     
     func testCompleteWithFailureFinishTrue() {
-        chain.complete(with: Leash.Error.dataUnavailable, finish: true)
+        chain.complete(with: Leash.Error.unknown, finish: true)
         XCTAssertTrue(result?.finish ?? false)
     }
     
     func testCompleteWithFailureFinishFalse() {
-        chain.complete(with: Leash.Error.dataUnavailable, finish: false)
+        chain.complete(with: Leash.Error.unknown, finish: false)
         XCTAssertFalse(result?.finish ?? true)
     }
     

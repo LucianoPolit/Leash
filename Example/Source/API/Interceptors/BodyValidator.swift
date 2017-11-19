@@ -19,7 +19,7 @@ class BodyValidator: SuccessInterceptor {
         defer { chain.proceed() }
         guard let data = response.data else { return }
         
-        if let error = try? chain.manager.jsonDecoder.decode(APIError.self, from: data) {
+        if let error = try? chain.client.manager.jsonDecoder.decode(APIError.self, from: data) {
             chain.complete(with: Error.server(error))
         }
     }
