@@ -57,6 +57,15 @@ extension InterceptorChain {
         complete(nil)
     }
     
+    /// Retries the same request with the same completion handler.
+    public func retry() {
+        guard let urlRequest = self.request.request else { return proceed() }
+        let request = manager.sessionManager.request(urlRequest)
+        request.response(manager, endpoint) { [weak self] response in
+            self?.complete(with: response)
+        }
+    }
+    
     /// Completes the interception injecting the specified response.
     ///
     /// - Parameter response: The response that is being injected.
