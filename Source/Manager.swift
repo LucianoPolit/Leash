@@ -69,6 +69,8 @@ public class Manager {
         completionInterceptors = builder.completionInterceptors
         
         sessionManager = builder.sessionManager
+        sessionManager.startRequestsImmediately = false
+        
         jsonEncoder = builder.jsonEncoder
         jsonDecoder = builder.jsonDecoder
     }
@@ -151,7 +153,6 @@ public class Manager {
         /// Sets the session manager.
         public func sessionManager(_ sessionManager: SessionManager) -> Self {
             self.sessionManager = sessionManager
-            self.sessionManager.startRequestsImmediately = false
             return self
         }
         
