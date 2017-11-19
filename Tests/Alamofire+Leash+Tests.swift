@@ -134,6 +134,29 @@ extension AlamofireLeashTests {
         waitForExpectations(timeout: 5)
     }
     
+    func testCallsInterceptorsWhenRetry() {
+        let expectation = self.expectation(description: "Expected to call all the interceptors")
+        var first = true
+        let executionInterceptor = MockExecutionInterceptor<T> { chain in
+            defer { chain?.proceed() }
+            guard !first else { return }
+            expectation.fulfill()
+        }
+        let completionInterceptor = MockCompletionInterceptor<T> { chain in
+            defer { chain?.proceed() }
+            guard first else { return }
+            first = false
+            self.assertNoErrorThrown {
+                try chain?.retry()
+            }
+        }
+        let builder = self.builder
+            .add(interceptor: executionInterceptor)
+            .add(interceptor: completionInterceptor)
+        executeRequest(builder: builder, endpoint: successEndpoint)
+        waitForExpectations(timeout: 5)
+    }
+    
 }
 
 // MARK: - Response

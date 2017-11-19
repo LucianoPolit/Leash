@@ -9,6 +9,7 @@
 import Foundation
 import Alamofire
 import XCTest
+import OHHTTPStubs
 @testable import Leash
 
 class InterceptorChainTests: BaseTestCase {
@@ -75,9 +76,27 @@ extension InterceptorChainTests {
 
 extension InterceptorChainTests {
     
-    func testProceedFinish() {
+    func testProceed() {
         chain.proceed()
         XCTAssertNil(result)
+    }
+    
+    func testRetry() {
+        let expectation = self.expectation(description: "Expected to call all the interceptors")
+        chain = InterceptorChain(manager: chain.manager, endpoint: chain.endpoint, request: chain.request) { result in
+            guard let result = result,
+                case .failure(let error) = result.response,
+                case Leash.Error.dataUnavailable = error else { return XCTFail() }
+            XCTAssertTrue(result.finish)
+            expectation.fulfill()
+        }
+        stub(condition: isEndpoint(chain.endpoint)) { _ in
+            return OHHTTPStubsResponse(error: Leash.Error.dataUnavailable)
+        }
+        assertNoErrorThrown {
+            try chain?.retry()
+        }
+        waitForExpectations(timeout: 5)
     }
     
     func testCompleteWithResponseFinishDefault() {
