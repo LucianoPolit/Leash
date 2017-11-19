@@ -9,7 +9,7 @@
 import Foundation
 @testable import Leash
 
-class MockFailureInterceptor<U>: FailureInterceptor {
+class MockFailureInterceptor<U: Decodable>: FailureInterceptor {
     
     var completion: ((InterceptorChain<U>?) -> ())?
     

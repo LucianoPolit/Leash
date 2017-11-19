@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 @testable import Leash
 
-class MockSuccessInterceptor<U>: SuccessInterceptor {
+class MockSuccessInterceptor<U: Decodable>: SuccessInterceptor {
     
     var completion: ((InterceptorChain<U>?) -> ())?
     

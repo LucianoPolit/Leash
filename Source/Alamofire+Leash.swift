@@ -94,7 +94,7 @@ private extension Manager {
     
     typealias Interceptions<T> = [(@escaping InterceptorCompletion<T>) -> ()]
     
-    func executionInterceptions<T>(endpoint: Endpoint, request: DataRequest) -> Interceptions<T> {
+    func executionInterceptions<T: Decodable>(endpoint: Endpoint, request: DataRequest) -> Interceptions<T> {
         return executionInterceptors.map { interceptor in
             return { completion in
                 let chain = InterceptorChain(manager: self, endpoint: endpoint, request: request, completion: completion)
@@ -103,7 +103,7 @@ private extension Manager {
         }
     }
     
-    func failureInterceptions<T>(endpoint: Endpoint, request: DataRequest, error: Swift.Error) -> Interceptions<T> {
+    func failureInterceptions<T: Decodable>(endpoint: Endpoint, request: DataRequest, error: Swift.Error) -> Interceptions<T> {
         return failureInterceptors.map { interceptor in
             return { completion in
                 let chain = InterceptorChain(manager: self, endpoint: endpoint, request: request, completion: completion)
@@ -112,7 +112,7 @@ private extension Manager {
         }
     }
     
-    func successInterceptions<T>(endpoint: Endpoint, request: DataRequest, response: DefaultDataResponse) -> Interceptions<T> {
+    func successInterceptions<T: Decodable>(endpoint: Endpoint, request: DataRequest, response: DefaultDataResponse) -> Interceptions<T> {
         return successInterceptors.map { interceptor in
             return { completion in
                 let chain = InterceptorChain(manager: self, endpoint: endpoint, request: request, completion: completion)
@@ -121,7 +121,7 @@ private extension Manager {
         }
     }
     
-    func completionInterceptions<T>(endpoint: Endpoint, request: DataRequest, response: Response<T>) -> Interceptions<T> {
+    func completionInterceptions<T: Decodable>(endpoint: Endpoint, request: DataRequest, response: Response<T>) -> Interceptions<T> {
         return completionInterceptors.map { interceptor in
             return { completion in
                 let chain = InterceptorChain(manager: self, endpoint: endpoint, request: request, completion: completion)

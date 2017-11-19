@@ -29,7 +29,7 @@ import Alamofire
 typealias InterceptorCompletion<T> = ((response: Response<T>, finish: Bool)?) -> ()
 
 /// Contains all the information that an interceptor might require.
-public class InterceptorChain<T> {
+public class InterceptorChain<T: Decodable> {
     /// The manager that is requesting the interception.
     public let manager: Manager
     /// The endpoint that is being intercepted.
