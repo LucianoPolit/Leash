@@ -143,21 +143,25 @@ private extension URLRequest {
         }
         
         if endpoint.method.isBodyEncodable, let encodable = parameters as? Encodable {
-            setValue("application/json", forHTTPHeaderField: "Content-Type")
-            httpBody = try encodable.encoded(with: jsonEncoder)
-        }
-        
-        if endpoint.method.isQueryEncodable, let queryEncodable = parameters as? QueryEncodable {
-            try encode(query: queryEncodable.toQuery())
+            return try encode(encodable: encodable, with: jsonEncoder)
         }
         
         if endpoint.method.isQueryEncodable, let query = parameters as? [String : CustomStringConvertible] {
-            try encode(query: query)
+            return try encode(query: query)
+        }
+        
+        if endpoint.method.isQueryEncodable, let queryEncodable = parameters as? QueryEncodable {
+            return try encode(query: queryEncodable.toQuery())
         }
     }
     
     mutating func encode(json: [String : Any]) throws {
         self = try JSONEncoding().encode(self, with: json)
+    }
+    
+    mutating func encode(encodable: Encodable, with jsonEncoder: JSONEncoder) throws {
+        setValue("application/json", forHTTPHeaderField: "Content-Type")
+        httpBody = try encodable.encoded(with: jsonEncoder)
     }
     
     mutating func encode(query: [String : CustomStringConvertible]) throws {
