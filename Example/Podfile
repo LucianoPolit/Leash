@@ -5,7 +5,7 @@ def myPods
     if ENV['TRAVIS']
         pod 'Leash', :git => 'https://github.com/lucianopolit/Leash.git', :branch => ENV['TRAVIS_BRANCH']
     else
-        pod 'Leash', :path => '../'
+        pod 'Leash'
     end
 end
 
