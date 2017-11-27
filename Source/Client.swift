@@ -85,40 +85,16 @@ open class Client {
     ///
     /// - Returns: The created URL request.
     open func urlRequest(for endpoint: Endpoint) throws -> URLRequest {
-        guard let url = URL(manager: manager) else { fatalError("Leash -> Manager -> Invalid URL") }
-        
-        var urlRequest = URLRequest(url: url.appendingPathComponent(endpoint.path))
+        var urlRequest = URLRequest(url: manager.url.appendingPathComponent(endpoint.path))
         urlRequest.httpMethod = endpoint.method.rawValue
-        try urlRequest.encode(endpoint: endpoint, with: manager.jsonEncoder)
         urlRequest.addAuthenticator(manager.authenticator)
-
+        try urlRequest.encode(endpoint: endpoint, with: manager.jsonEncoder)
         return urlRequest
     }
     
 }
 
 // MARK: - Utils
-
-private extension URL {
-    
-    init?(manager: Manager) {
-        guard let scheme = manager.scheme, !scheme.isEmpty,
-            let host = manager.host, !host.isEmpty else { return nil }
-        
-        var baseURL = scheme + "://" + host
-        
-        if let port = manager.port {
-            baseURL += ":\(port)"
-        }
-        
-        if let path = manager.path {
-            baseURL += "/\(path)"
-        }
-
-        self.init(string: baseURL)
-    }
-    
-}
 
 private extension URLRequest {
     

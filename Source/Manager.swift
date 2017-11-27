@@ -28,14 +28,8 @@ import Alamofire
 /// Contains all the information needed to properly reach an API.
 public class Manager {
     
-    /// Scheme of the API.
-    public let scheme: String?
-    /// Host of the API.
-    public let host: String?
-    /// Port of the API.
-    public let port: Int?
-    /// Path of the API.
-    public let path: String?
+    /// URL of the API.
+    public let url: URL
     /// Authenticator of the API.
     public let authenticator: Authenticator?
     
@@ -57,10 +51,9 @@ public class Manager {
     
     /// Initializes and returns a newly allocated object with the specified builder.
     public init(builder: Builder) {
-        scheme = builder.scheme
-        host = builder.host
-        port = builder.port
-        path = builder.path
+        guard let builderURL = builder.url ?? URL(builder: builder) else { fatalError("Leash -> Manager -> Invalid URL") }
+        
+        url = builderURL
         authenticator = builder.authenticator
         
         executionInterceptors = builder.executionInterceptors
@@ -78,6 +71,7 @@ public class Manager {
     /// Builder of Managers.
     public class Builder {
         
+        var url: URL?
         var scheme: String?
         var host: String?
         var port: Int?
@@ -95,6 +89,18 @@ public class Manager {
         
         /// Initializes and returns a newly allocated object.
         public init() { }
+        
+        /// Sets the URL of the API.
+        public func url(_ url: URL) -> Self {
+            self.url = url
+            return self
+        }
+        
+        /// Sets the URL of the API.
+        public func url(_ url: String) -> Self {
+            self.url = URL(string: url)
+            return self
+        }
         
         /// Sets the scheme of the API.
         public func scheme(_ scheme: String) -> Self {
@@ -180,6 +186,28 @@ public class Manager {
             return Manager(builder: self)
         }
         
+    }
+    
+}
+
+// MARK: - Utils
+
+private extension URL {
+    
+    init?(builder: Manager.Builder) {
+        guard let scheme = builder.scheme, let host = builder.host else { return nil }
+        
+        var baseURL = scheme + "://" + host
+        
+        if let port = builder.port {
+            baseURL += ":\(port)"
+        }
+        
+        if let path = builder.path {
+            baseURL += "/\(path)"
+        }
+        
+        self.init(string: baseURL)
     }
     
 }
