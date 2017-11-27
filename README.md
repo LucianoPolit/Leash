@@ -46,7 +46,7 @@ To run the example project there are two possibilities:
 Leash is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'Leash'
+pod 'Leash', '~> 1.1'
 ```
 
 ## Usage
@@ -73,8 +73,8 @@ let client = Client(manager: manager)
 Now, assuming that we have already created an `APIEndpoint` with all the reachable endpoints, we can execute requests. For example:
 
 ```swift
-client.execute(APIEndpoint.readAllUsers) { (response: [User]) in
-    // Do whatever you have to do with the users here.
+client.execute(APIEndpoint.readAllUsers) { (response: Response<[User]>) in
+    // Do whatever you have to do with the response here.
 }
 ```
 
@@ -82,7 +82,7 @@ Ok, that is good. But, what if we just want to call it like this?
 
 ```swift
 usersClient.readAll { response in
-    // Do whatever you have to do with the users here.
+    // Do whatever you have to do with the response here.
 }
 ```
 
@@ -145,7 +145,7 @@ In case you want to encode the parameters in a different way, you have to overri
 When you execute a request you have to specify the type of the response. Also, this type must conform to `Decodable`. After executing the request, in case of a successful response, you will have the response with a value of the specified type. So, a simple example could be:
 
 ```swift
-client.execute(APIEndpoint.readAllUsers) { (response: [User]) in
+client.execute(APIEndpoint.readAllUsers) { (response: Response<[User]>) in
     // Here, in case of a successful response, the `response.value` is of the type `[User]`.
 }
 ```
