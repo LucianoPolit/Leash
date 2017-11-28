@@ -41,6 +41,8 @@ public class Manager {
     public let successInterceptors: [SuccessInterceptor]
     /// Interceptors called before the completion handler.
     public let completionInterceptors: [CompletionInterceptor]
+    /// Interceptors called after a serialization operation.
+    public let serializationInterceptors: [SerializationInterceptor]
     
     /// Responsible for executing the requests and calling the interceptors when needed.
     public let sessionManager: SessionManager
@@ -60,6 +62,7 @@ public class Manager {
         failureInterceptors = builder.failureInterceptors
         successInterceptors = builder.successInterceptors
         completionInterceptors = builder.completionInterceptors
+        serializationInterceptors = builder.serializationInterceptors
         
         sessionManager = builder.sessionManager
         sessionManager.startRequestsImmediately = false
@@ -82,6 +85,7 @@ public class Manager {
         var failureInterceptors: [FailureInterceptor] = []
         var successInterceptors: [SuccessInterceptor] = []
         var completionInterceptors: [CompletionInterceptor] = []
+        var serializationInterceptors: [SerializationInterceptor] = []
         
         var sessionManager = SessionManager.default
         var jsonEncoder = JSONEncoder()
@@ -153,6 +157,12 @@ public class Manager {
         /// Adds a completion interceptor.
         public func add(interceptor: CompletionInterceptor) -> Self {
             completionInterceptors.append(interceptor)
+            return self
+        }
+        
+        /// Adds a serialization interceptor.
+        public func add(interceptor: SerializationInterceptor) -> Self {
+            serializationInterceptors.append(interceptor)
             return self
         }
         
