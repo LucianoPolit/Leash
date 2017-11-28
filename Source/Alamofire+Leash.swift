@@ -41,39 +41,38 @@ extension DataRequest {
     /// Any of the interceptors might have as result to call the completion handler with the specified response.
     /// Moreover, it could finish the operation if it is required.
     ///
+    /// - Parameter queue: The queue on which the completion handler is dispatched.
     /// - Parameter client: The client that created the request. It also contains the interceptors that must be called.
     /// - Parameter endpoint: The endpoint that was used to create the request.
     /// - Parameter completion: Handler of the response.
     ///
     /// - Returns: The request.
     @discardableResult
-    public func response(client: Client,
+    public func response(queue: DispatchQueue? = nil,
+                         client: Client,
                          endpoint: Endpoint,
                          completion: @escaping (Response<Data>) -> ()) -> Self {
         let preCompletion = { (response: Response<Data>) in
             let interceptions = client.completionInterceptions(endpoint: endpoint, request: self, response: response)
-            InterceptorsExecutor(queue: client.queue, interceptions: interceptions, completion: completion) { $0(response) }
+            InterceptorsExecutor(queue: queue, interceptions: interceptions, completion: completion) { $0(response) }
         }
         
         let interceptions = client.executionInterceptions(endpoint: endpoint, request: self)
-        InterceptorsExecutor(queue: client.queue, interceptions: interceptions, completion: preCompletion) { [weak self] callback in
-            guard let `self` = self else { return }
-            
+        InterceptorsExecutor(queue: queue, interceptions: interceptions, completion: preCompletion) { callback in
             self.responseData { response in
                 if let httpResponse = response.response, let data = response.value, response.error == nil {
                     let interceptions = client.successInterceptions(endpoint: endpoint, request: self, response: httpResponse, data: data)
-                    InterceptorsExecutor(queue: client.queue, interceptions: interceptions, completion: callback) {
+                    InterceptorsExecutor(queue: queue, interceptions: interceptions, completion: callback) {
                         $0(.success(value: data, extra: nil))
                     }
                 } else {
                     let error = response.error ?? Error.unknown
                     let interceptions = client.failureInterceptions(endpoint: endpoint, request: self, error: error)
-                    InterceptorsExecutor(queue: client.queue, interceptions: interceptions, completion: callback) {
+                    InterceptorsExecutor(queue: queue, interceptions: interceptions, completion: callback) {
                         $0(.failure(error))
                     }
                 }
             }
-            
             self.resume()
         }
         
@@ -86,20 +85,40 @@ extension DataRequest {
 
 extension DataRequest {
     
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// Also, it is responsible for calling the interceptors when needed (all asynchronous and executed in a queue order):
+    ///
+    /// - Execution: called before the request is executed.
+    /// - Failure: called when there is a problem executing the request.
+    /// - Success: called when there is no problem executing the request.
+    /// - Completion: called before the completion handler.
+    /// - Serialization: called after the serialization operation.
+    ///
+    /// Any of the interceptors might have as result to call the completion handler with the specified response.
+    /// Moreover, it could finish the operation if it is required.
+    ///
+    /// - Parameter queue: The queue on which the completion handler is dispatched.
+    /// - Parameter client: The client that created the request. It also contains the interceptors that must be called.
+    /// - Parameter endpoint: The endpoint that was used to create the request.
+    /// - Parameter serializer: The serializer responsible for serializing the request, response and data.
+    /// - Parameter completion: Handler of the response.
+    ///
+    /// - Returns: The request.
     @discardableResult
-    public func response<T: DataResponseSerializerProtocol>(client: Client,
+    public func response<T: DataResponseSerializerProtocol>(queue: DispatchQueue? = nil,
+                                                            client: Client,
                                                             endpoint: Endpoint,
                                                             serializer: T,
                                                             completion: @escaping (Response<T.SerializedObject>) -> ()) -> Self {
-        return response(client: client, endpoint: endpoint) { [weak self] response in
-            guard let `self` = self else { return }
-            
+        return response(queue: .global(qos: .utility), client: client, endpoint: endpoint) { response in
             let result = serializer.serializeResponse(self.request, self.response, response.value, response.error)
             let interceptions = client.serializationInterceptions(endpoint: endpoint,
                                                                   request: self,
+                                                                  response: response,
                                                                   result: result,
                                                                   serializer: serializer)
-            InterceptorsExecutor(queue: client.queue, interceptions: interceptions, completion: completion) { callback in
+            InterceptorsExecutor(queue: queue, interceptions: interceptions, completion: completion) { callback in
                 switch result {
                 case .failure(let error):
                     callback(.failure(error))
@@ -116,6 +135,8 @@ extension DataRequest {
 
 extension DataRequest {
     
+    /// Creates a response serializer that returns a decoded object result type
+    /// constructed from the response data using the specified JSON decoder.
     public static func decodableResponseSerializer<T: Decodable>(jsonDecoder: JSONDecoder) -> DataResponseSerializer<T> {
         return DataResponseSerializer { request, response, data, error in
             guard let data = data else { return .failure(Error.unknown) }
@@ -129,11 +150,32 @@ extension DataRequest {
         }
     }
     
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// Also, it is responsible for calling the interceptors when needed (all asynchronous and executed in a queue order):
+    ///
+    /// - Execution: called before the request is executed.
+    /// - Failure: called when there is a problem executing the request.
+    /// - Success: called when there is no problem executing the request.
+    /// - Completion: called before the completion handler.
+    /// - Serialization: called after the serialization operation.
+    ///
+    /// Any of the interceptors might have as result to call the completion handler with the specified response.
+    /// Moreover, it could finish the operation if it is required.
+    ///
+    /// - Parameter queue: The queue on which the completion handler is dispatched.
+    /// - Parameter client: The client that created the request. It also contains the interceptors that must be called.
+    /// - Parameter endpoint: The endpoint that was used to create the request.
+    /// - Parameter completion: Handler of the response.
+    ///
+    /// - Returns: The request.
     @discardableResult
-    public func responseDecodable<T: Decodable>(client: Client,
+    public func responseDecodable<T: Decodable>(queue: DispatchQueue? = nil,
+                                                client: Client,
                                                 endpoint: Endpoint,
                                                 completion: @escaping (Response<T>) -> ()) -> Self {
-        return response(client: client,
+        return response(queue: queue,
+                        client: client,
                         endpoint: endpoint,
                         serializer: DataRequest.decodableResponseSerializer(jsonDecoder: client.manager.jsonDecoder),
                         completion: completion)
@@ -185,12 +227,13 @@ private extension Client {
     
     func serializationInterceptions<T: DataResponseSerializerProtocol>(endpoint: Endpoint,
                                                                        request: DataRequest,
+                                                                       response: Response<Data>,
                                                                        result: Result<T.SerializedObject>,
                                                                        serializer: T) -> [Interception<T.SerializedObject>] {
         return manager.serializationInterceptors.map { interceptor in
             return { completion in
                 let chain = InterceptorChain(client: self, endpoint: endpoint, request: request, completion: completion)
-                interceptor.intercept(chain: chain, result: result, serializer: serializer)
+                interceptor.intercept(chain: chain, response: response, result: result, serializer: serializer)
             }
         }
     }

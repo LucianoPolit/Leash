@@ -29,6 +29,7 @@ import Alamofire
 public protocol SerializationInterceptor {
     /// Main method responsible for handling the interception.
     func intercept<T: DataResponseSerializerProtocol>(chain: InterceptorChain<T.SerializedObject>,
+                                                      response: Response<Data>,
                                                       result: Result<T.SerializedObject>,
                                                       serializer: T)
 }

@@ -44,6 +44,7 @@ class LoggerInterceptor: ExecutionInterceptor, CompletionInterceptor, Serializat
     // MARK: - SerializationInterceptor
     
     func intercept<T>(chain: InterceptorChain<T.SerializedObject>,
+                      response: Response<Data>,
                       result: Result<T.SerializedObject>,
                       serializer: T) where T : DataResponseSerializerProtocol {
         defer { chain.proceed() }

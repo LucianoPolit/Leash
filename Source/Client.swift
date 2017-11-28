@@ -32,14 +32,12 @@ open class Client {
     
     /// The manager that is used to create and execute requests.
     public let manager: Manager
-    public let queue: DispatchQueue
     
     // MARK: - Initializers
     
     /// Initializes and returns a newly allocated object with the specified parameters.
-    public init(manager: Manager, queue: DispatchQueue = .main) {
+    public init(manager: Manager) {
         self.manager = manager
-        self.queue = queue
     }
     
     // MARK: - Methods
@@ -47,14 +45,20 @@ open class Client {
     /// Creates and executes the request for the specified endpoint.
     ///
     /// - Parameter endpoint: Contains all the information needed to create the request.
+    /// - Parameter queue: The queue on which the completion handler is dispatched.
     /// - Parameter completion: Handler of the response.
     ///
     /// - Returns: The created request.
     @discardableResult
-    open func execute<T: Decodable>(_ endpoint: Endpoint, completion: @escaping (Response<T>) -> ()) -> DataRequest? {
+    open func execute<T: Decodable>(_ endpoint: Endpoint,
+                                    queue: DispatchQueue? = nil,
+                                    completion: @escaping (Response<T>) -> ()) -> DataRequest? {
         do {
             let request = try self.request(for: endpoint)
-            return request.responseDecodable(client: self, endpoint: endpoint, completion: completion)
+            return request.responseDecodable(queue: queue,
+                                             client: self,
+                                             endpoint: endpoint,
+                                             completion: completion)
         } catch {
             completion(.failure(Error.encoding(error)))
             return nil

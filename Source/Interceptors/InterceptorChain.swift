@@ -105,8 +105,8 @@ extension InterceptorChain where T == Data {
     @discardableResult
     public func retry() throws -> DataRequest {
         let request = try client.request(for: endpoint)
-        return request.response(client: client, endpoint: endpoint) { [weak self] response in
-            self?.complete(with: response)
+        return request.response(client: client, endpoint: endpoint) { response in
+            self.complete(with: response)
         }
     }
     

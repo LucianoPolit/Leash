@@ -26,7 +26,8 @@ import Foundation
 
 /// Responsible for executing the interceptors in a queue order (asynchronously).
 /// After all the interceptors are executed, the finally handler is called.
-/// In case that any of the interceptors requests to finish the operation, no more interceptors are called (neither the finally handler).
+/// In case that any of the interceptors requests to finish the operation,
+/// no more interceptors are called (neither the finally handler).
 /// The completion handler is always dispatched on the specified queue.
 class InterceptorsExecutor<T> {
     
@@ -34,21 +35,23 @@ class InterceptorsExecutor<T> {
     typealias Completion = (Response<T>) -> ()
     typealias Finally = (@escaping (Response<T>) -> ()) -> ()
     
-    private let operationQueue = OperationQueue()
-    private let queue: DispatchQueue
-    private var interceptions: [Interception]
-    private let completion: Completion
-    private let finally: Finally
+    fileprivate let operationQueue = OperationQueue()
+    fileprivate let queue: DispatchQueue
+    fileprivate var interceptions: [Interception]
+    fileprivate let completion: Completion
+    fileprivate let finally: Finally
     
     @discardableResult
-    init(queue: DispatchQueue = .main,
+    init(queue: DispatchQueue? = nil,
          interceptions: [Interception],
          completion: @escaping Completion,
          finally: @escaping Finally) {
-        self.queue = queue
+        self.queue = queue ?? .main
         self.interceptions = interceptions
         self.completion = completion
         self.finally = finally
+        operationQueue.maxConcurrentOperationCount = 1
+        operationQueue.qualityOfService = .utility
         start()
     }
     
@@ -58,10 +61,10 @@ class InterceptorsExecutor<T> {
             let operation = InterceptionOperation(interception: interception,
                                                   completionHandler: completionHandler,
                                                   finishHandler: finishHandler)
-            operationQueue.enqueue(operation)
+            operationQueue.addOperation(operation)
         }
         
-        operationQueue.enqueue {
+        operationQueue.addOperation {
             self.finallyHandler()
         }
     }
@@ -94,33 +97,6 @@ private extension InterceptorsExecutor {
     
 }
 
-private extension OperationQueue {
-    
-    func enqueue(_ operation: Operation) {
-        operation.addDependency(operations.last)
-        addOperation(operation)
-    }
-    
-    func enqueue(_ block: @escaping () -> ()) {
-        let operation = Operation()
-        operation.completionBlock = {
-            guard !operation.isCancelled else { return }
-            block()
-        }
-        enqueue(operation)
-    }
-    
-}
-
-private extension Operation {
-    
-    func addDependency(_ operation: Operation?) {
-        guard let operation = operation else { return }
-        addDependency(operation)
-    }
-    
-}
-
 private class InterceptionOperation<T>: AsynchronousOperation {
     
     typealias FinishHandler = () -> ()
@@ -143,15 +119,14 @@ private class InterceptionOperation<T>: AsynchronousOperation {
         state = .executing
         
         interception { result in
-            guard let result = result else { return self.state = .finished }
+            defer { self.state = .finished }
+            guard let result = result else { return }
             
             self.completionHandler(result.response)
             
             if result.finish {
                 self.finishHandler()
             }
-            
-            self.state = .finished
         }
     }
     

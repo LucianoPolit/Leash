@@ -36,15 +36,7 @@ public enum Response<T> {
 
 extension Response {
     
-    public var isFailure: Bool {
-        switch self {
-        case .failure:
-            return true
-        case .success:
-            return false
-        }
-    }
-    
+    /// Represents if the response is a success or not.
     public var isSuccess: Bool {
         switch self {
         case .failure:
@@ -54,19 +46,21 @@ extension Response {
         }
     }
     
+    /// Represents if the response is a failure or not.
+    public var isFailure: Bool {
+        switch self {
+        case .failure:
+            return true
+        case .success:
+            return false
+        }
+    }
+    
 }
 
 extension Response {
     
-    public var error: Swift.Error? {
-        switch self {
-        case .failure(let error):
-            return error
-        case .success:
-            return nil
-        }
-    }
-    
+    /// The value in case that the response is a success.
     public var value: T? {
         switch self {
         case .failure:
@@ -76,12 +70,23 @@ extension Response {
         }
     }
     
+    /// The extra in case that the response is a success.
     public var extra: Any? {
         switch self {
         case .failure:
             return nil
         case .success(_, let extra):
             return extra
+        }
+    }
+    
+    /// The error in case that the response is a failure.
+    public var error: Swift.Error? {
+        switch self {
+        case .failure(let error):
+            return error
+        case .success:
+            return nil
         }
     }
     
