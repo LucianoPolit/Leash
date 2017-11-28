@@ -103,6 +103,17 @@ extension ManagerTests {
         XCTAssertEqual(manager.completionInterceptors.count, 1)
     }
     
+    func testSerializationInterceptor() {
+        let interceptor = MockSerializationInterceptor<Data>()
+        
+        manager = Manager.Builder()
+            .url(baseURL)
+            .add(interceptor: interceptor)
+            .build()
+        
+        XCTAssertEqual(manager.serializationInterceptors.count, 1)
+    }
+    
     // MARK: - Others
     
     func testAuthenticator() {

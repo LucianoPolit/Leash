@@ -17,6 +17,8 @@ class InterceptorsExecutorTests: BaseTestCase { }
 extension InterceptorsExecutorTests {
     
     func testOrder() {
+        let expectation = self.expectation(description: "Expected to call the completion handler in multiple occasions")
+        
         var number = 0
         var expectedNumber = 0
         
@@ -40,14 +42,21 @@ extension InterceptorsExecutorTests {
             }
             XCTAssertEqual(result.value.count, expectedNumber)
             expectedNumber += 1
+            
+            if expectedNumber == 6 {
+                expectation.fulfill()
+            }
+            
+            if expectedNumber > 6 {
+                XCTFail()
+            }
         }
         
         InterceptorsExecutor(interceptions: interceptions, completion: completion) { completion in
             completion(.success(value: Data(count: number), extra: nil))
         }
         
-        XCTAssertEqual(expectedNumber, number + 1)
-        XCTAssertEqual(expectedNumber, 6)
+        waitForExpectations(timeout: 5)
     }
     
 }
@@ -57,40 +66,53 @@ extension InterceptorsExecutorTests {
 extension InterceptorsExecutorTests {
     
     func testFinish() {
-        var calls = 0
+        let expectation = self.expectation(description: "Expected to call the completion handler in only one occasion")
         
+        var calls = 0
+
         let interceptors = Array(repeating: MockExecutionInterceptor(), count: 5)
         let interceptions: [(@escaping InterceptorCompletion<Data>) -> ()] = interceptors.map { interceptor in
             return { completion in
                 self.assertNoErrorThrown {
                     let chain = try self.chain(with: completion)
                     interceptor.intercept(chain: chain)
-                    chain.complete(with: Data(), extra: nil)
+                    chain.complete(with: Data(count: 5), extra: nil)
                 }
             }
         }
-        
+
         let completion = { (response: Response<Data>) in
             XCTAssertEqual(calls, 0)
+            XCTAssertEqual(response.value?.count, 5)
             calls += 1
+            
+            if calls == 1 {
+                expectation.fulfill()
+            }
+            
+            if calls > 1 {
+                XCTFail()
+            }
         }
         
         InterceptorsExecutor(interceptions: interceptions, completion: completion) { completion in
             completion(.success(value: Data(), extra: nil))
         }
-        
-        XCTAssertEqual(calls, 1)
+
+        waitForExpectations(timeout: 5)
     }
     
 }
 
-// MARK: - Others
+//// MARK: - Others
 
 extension InterceptorsExecutorTests {
     
     func testNoResult() {
-        var calls = 0
+        let expectation = self.expectation(description: "Expected to call the completion handler in only one occasion")
         
+        var calls = 0
+
         let interceptors = Array(repeating: MockExecutionInterceptor(), count: 5)
         let interceptions: [(@escaping InterceptorCompletion<Data>) -> ()] = interceptors.map { interceptor in
             return { completion in
@@ -104,14 +126,23 @@ extension InterceptorsExecutorTests {
         
         let completion = { (response: Response<Data>) in
             XCTAssertEqual(calls, 0)
+            XCTAssertEqual(response.value?.count, 5)
             calls += 1
+            
+            if calls == 1 {
+                expectation.fulfill()
+            }
+            
+            if calls > 1 {
+                XCTFail()
+            }
         }
         
         InterceptorsExecutor(interceptions: interceptions, completion: completion) { completion in
-            completion(.success(value: Data(), extra: nil))
+            completion(.success(value: Data(count: 5), extra: nil))
         }
-        
-        XCTAssertEqual(calls, 1)
+
+        waitForExpectations(timeout: 5)
     }
     
 }

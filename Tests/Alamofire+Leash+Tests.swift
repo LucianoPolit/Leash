@@ -134,6 +134,20 @@ extension AlamofireLeashTests {
         waitForExpectations(timeout: 5)
     }
     
+    func testCallsSerializationInterceptor() {
+        let expectation = self.expectation(description: "Expected to call all the interceptors")
+        let interceptors = Array(repeating: MockSerializationInterceptor<PrimitiveEntity>(), count: 3)
+        var builder = self.builder
+        interceptors.forEach {
+            builder = builder.add(interceptor: $0)
+        }
+        testCallsInterceptors(interceptors: interceptors) {
+            expectation.fulfill()
+        }
+        executeRequest(builder: builder, endpoint: successEndpoint)
+        waitForExpectations(timeout: 5)
+    }
+    
     func testCallsInterceptorsWhenRetry() {
         let expectation = self.expectation(description: "Expected to call all the interceptors")
         var first = true
@@ -340,3 +354,4 @@ extension MockExecutionInterceptor: MockInterceptor { }
 extension MockFailureInterceptor: MockInterceptor { }
 extension MockSuccessInterceptor: MockInterceptor { }
 extension MockCompletionInterceptor: MockInterceptor { }
+extension MockSerializationInterceptor: MockInterceptor { }
