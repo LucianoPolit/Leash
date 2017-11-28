@@ -27,37 +27,171 @@ import Foundation
 /// Responsible for executing the interceptors in a queue order (asynchronously).
 /// After all the interceptors are executed, the finally handler is called.
 /// In case that any of the interceptors requests to finish the operation, no more interceptors are called (neither the finally handler).
+/// The completion handler is always dispatched on the specified queue.
 class InterceptorsExecutor<T> {
     
-    private var interceptions: [(@escaping InterceptorCompletion<T>) -> ()]
-    private let completion: (Response<T>) -> ()
-    private let finally: (@escaping (Response<T>) -> ()) -> ()
+    typealias Interception = (@escaping InterceptorCompletion<T>) -> ()
+    typealias Completion = (Response<T>) -> ()
+    typealias Finally = (@escaping (Response<T>) -> ()) -> ()
+    
+    private let operationQueue = OperationQueue()
+    private let queue: DispatchQueue
+    private var interceptions: [Interception]
+    private let completion: Completion
+    private let finally: Finally
     
     @discardableResult
-    init(interceptions: [(@escaping InterceptorCompletion<T>) -> ()],
-         completion: @escaping (Response<T>) -> (),
-         finally: @escaping (@escaping (Response<T>) -> ()) -> ()) {
+    init(queue: DispatchQueue = .main,
+         interceptions: [Interception],
+         completion: @escaping Completion,
+         finally: @escaping Finally) {
+        self.queue = queue
         self.interceptions = interceptions
         self.completion = completion
         self.finally = finally
-        startNext()
+        start()
     }
     
-    private func startNext() {
-        if (interceptions.isEmpty) {
-            finally(completion)
-        } else {
+    private func start() {
+        while !interceptions.isEmpty {
             let interception = interceptions.removeFirst()
-            interception { [weak self] result in
-                guard let `self` = self else { return }
-                guard let result = result else { return self.startNext() }
-                
-                self.completion(result.response)
-                if !result.finish {
-                    self.startNext()
-                }
-            }
+            let operation = InterceptionOperation(interception: interception,
+                                                  completionHandler: completionHandler,
+                                                  finishHandler: finishHandler)
+            operationQueue.enqueue(operation)
         }
+        
+        operationQueue.enqueue {
+            self.finallyHandler()
+        }
+    }
+    
+}
+
+// MARK: - Utils
+
+private extension InterceptorsExecutor {
+    
+    func dispatch(_ block: @escaping () -> ()) {
+        queue.async(execute: block)
+    }
+    
+    func finallyHandler() {
+        dispatch {
+            self.finally(self.completion)
+        }
+    }
+    
+    func completionHandler(response: Response<T>) {
+        dispatch {
+            self.completion(response)
+        }
+    }
+    
+    func finishHandler() {
+        operationQueue.cancelAllOperations()
+    }
+    
+}
+
+private extension OperationQueue {
+    
+    func enqueue(_ operation: Operation) {
+        operation.addDependency(operations.last)
+        addOperation(operation)
+    }
+    
+    func enqueue(_ block: @escaping () -> ()) {
+        let operation = Operation()
+        operation.completionBlock = {
+            guard !operation.isCancelled else { return }
+            block()
+        }
+        enqueue(operation)
+    }
+    
+}
+
+private extension Operation {
+    
+    func addDependency(_ operation: Operation?) {
+        guard let operation = operation else { return }
+        addDependency(operation)
+    }
+    
+}
+
+private class InterceptionOperation<T>: AsynchronousOperation {
+    
+    typealias FinishHandler = () -> ()
+    
+    let interception: InterceptorsExecutor<T>.Interception
+    let completionHandler: InterceptorsExecutor<T>.Completion
+    let finishHandler: FinishHandler
+    
+    init(interception: @escaping InterceptorsExecutor<T>.Interception,
+         completionHandler: @escaping InterceptorsExecutor<T>.Completion,
+         finishHandler: @escaping FinishHandler) {
+        self.interception = interception
+        self.completionHandler = completionHandler
+        self.finishHandler = finishHandler
+    }
+    
+    override func main() {
+        guard !isCancelled else { return }
+        
+        state = .executing
+        
+        interception { result in
+            guard let result = result else { return self.state = .finished }
+            
+            self.completionHandler(result.response)
+            
+            if result.finish {
+                self.finishHandler()
+            }
+            
+            self.state = .finished
+        }
+    }
+    
+}
+
+private class AsynchronousOperation: Operation {
+    
+    var state: State = .ready {
+        willSet {
+            willChangeValue(forKey: state.key)
+            willChangeValue(forKey: newValue.key)
+        }
+        didSet {
+            didChangeValue(forKey: oldValue.key)
+            didChangeValue(forKey: state.key)
+        }
+    }
+    
+    override var isAsynchronous: Bool {
+        return true
+    }
+    
+    override var isExecuting: Bool {
+        return state == .executing
+    }
+    
+    override var isFinished: Bool {
+        return state == .finished
+    }
+    
+    enum State: String {
+        
+        case ready
+        case executing
+        case finished
+        
+        var key: String {
+            return "is" + rawValue.capitalized
+        }
+        
     }
     
 }
