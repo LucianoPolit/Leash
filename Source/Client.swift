@@ -32,12 +32,14 @@ open class Client {
     
     /// The manager that is used to create and execute requests.
     public let manager: Manager
+    public let queue: DispatchQueue
     
     // MARK: - Initializers
     
-    /// Initializes and returns a newly allocated object with the specified manager.
-    public init(manager: Manager) {
+    /// Initializes and returns a newly allocated object with the specified parameters.
+    public init(manager: Manager, queue: DispatchQueue = .main) {
         self.manager = manager
+        self.queue = queue
     }
     
     // MARK: - Methods
@@ -52,7 +54,7 @@ open class Client {
     open func execute<T: Decodable>(_ endpoint: Endpoint, completion: @escaping (Response<T>) -> ()) -> DataRequest? {
         do {
             let request = try self.request(for: endpoint)
-            return request.response(self, endpoint, completion)
+            return request.responseDecodable(client: self, endpoint: endpoint, completion: completion)
         } catch {
             completion(.failure(Error.encoding(error)))
             return nil

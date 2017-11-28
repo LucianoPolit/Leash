@@ -163,6 +163,39 @@ extension AlamofireLeashTests {
 
 extension AlamofireLeashTests {
     
+    func testData() {
+        let expectation = self.expectation(description: "Expected to find a success response")
+        assertNoErrorThrown {
+            let endpoint = successEndpoint
+            let dataRequest = try client.request(for: endpoint)
+            dataRequest.response(client: client, endpoint: endpoint) { response in
+                guard case .success = response else {
+                    XCTFail()
+                    return
+                }
+                expectation.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 5)
+    }
+    
+    func testSerializer() {
+        let expectation = self.expectation(description: "Expected to find a success response")
+        assertNoErrorThrown {
+            let endpoint = successEndpoint
+            let dataRequest = try client.request(for: endpoint)
+            let serializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
+            dataRequest.response(client: client, endpoint: endpoint, responseSerializer: serializer) { response in
+                guard case .success = response else {
+                    XCTFail()
+                    return
+                }
+                expectation.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 5)
+    }
+    
     func testDecodable() {
         let expectation = self.expectation(description: "Expected to find a success response")
         executeRequest(builder: builder, endpoint: successEndpoint) { response in
@@ -191,7 +224,7 @@ extension AlamofireLeashTests {
             .build()
         assertNoErrorThrown {
             let dataRequest = try client.request(for: datedEndpoint)
-            dataRequest.response(client, datedEndpoint) { (response: Response<DatedEntity>) in
+            dataRequest.responseDecodable(client: client, endpoint: datedEndpoint) { (response: Response<DatedEntity>) in
                 guard case .success(let result) = response else {
                     XCTFail()
                     return
@@ -217,7 +250,7 @@ extension AlamofireLeashTests {
             .build()
         assertNoErrorThrown {
             let dataRequest = try client.request(for: datedEndpoint)
-            dataRequest.response(client, datedEndpoint) { (response: Response<DatedEntity>) in
+            dataRequest.responseDecodable(client: client, endpoint: datedEndpoint) { (response: Response<DatedEntity>) in
                 guard case .success(let result) = response else {
                     XCTFail()
                     return
@@ -288,7 +321,7 @@ private extension AlamofireLeashTests {
         manager = builder.build()
         assertNoErrorThrown {
             let dataRequest = try client.request(for: endpoint)
-            dataRequest.response(client, successEndpoint) { response in
+            dataRequest.responseDecodable(client: client, endpoint: endpoint) { response in
                 completion?(response)
             }
         }
