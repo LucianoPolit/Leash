@@ -31,3 +31,58 @@ public enum Response<T> {
     /// Represents a failed response.
     case failure(Swift.Error)
 }
+
+// MARK: - Utils
+
+extension Response {
+    
+    public var isFailure: Bool {
+        switch self {
+        case .failure:
+            return true
+        case .success:
+            return false
+        }
+    }
+    
+    public var isSuccess: Bool {
+        switch self {
+        case .failure:
+            return false
+        case .success:
+            return true
+        }
+    }
+    
+}
+
+extension Response {
+    
+    public var error: Swift.Error? {
+        switch self {
+        case .failure(let error):
+            return error
+        case .success:
+            return nil
+        }
+    }
+    
+    public var value: T? {
+        switch self {
+        case .failure:
+            return nil
+        case .success(let value, _):
+            return value
+        }
+    }
+    
+    public var extra: Any? {
+        switch self {
+        case .failure:
+            return nil
+        case .success(_, let extra):
+            return extra
+        }
+    }
+    
+}

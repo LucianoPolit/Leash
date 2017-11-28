@@ -38,6 +38,7 @@
 		E2B8F8FD1FB78B3D00B2A60A /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8FC1FB78B3D00B2A60A /* Logger.swift */; };
 		E2DE8F8B1FC229CD0000D928 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DE8F8A1FC229CD0000D928 /* Client.swift */; };
 		E2F50F241FCC64C800296FB7 /* ManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F50F221FCC64AC00296FB7 /* ManagerTests.swift */; };
+		E2F50F2B1FCD602800296FB7 /* ResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F50F291FCD601100296FB7 /* ResponseTests.swift */; };
 		F1B9F4551D3950070049F179 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B9F4541D3950070049F179 /* AppDelegate.swift */; };
 		F1B9F45A1D3950070049F179 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F1B9F4581D3950070049F179 /* Main.storyboard */; };
 		F1B9F45C1D3950070049F179 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1B9F45B1D3950070049F179 /* Assets.xcassets */; };
@@ -99,6 +100,7 @@
 		E2B8F8FC1FB78B3D00B2A60A /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		E2DE8F8A1FC229CD0000D928 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		E2F50F221FCC64AC00296FB7 /* ManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagerTests.swift; sourceTree = "<group>"; };
+		E2F50F291FCD601100296FB7 /* ResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseTests.swift; sourceTree = "<group>"; };
 		F1B9F4511D3950070049F179 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1B9F4541D3950070049F179 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F1B9F4591D3950070049F179 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -269,6 +271,7 @@
 				E25AD4811FBB6DC700E843B6 /* InterceptorChainTests.swift */,
 				E25AD4831FBB6DE600E843B6 /* InterceptorsExecutorTests.swift */,
 				E2F50F221FCC64AC00296FB7 /* ManagerTests.swift */,
+				E2F50F291FCD601100296FB7 /* ResponseTests.swift */,
 				E273165B1FBB5DC600FC20CE /* Info.plist */,
 			);
 			name = Tests;
@@ -415,6 +418,7 @@
 				E237D16C1FBB80DC0036ED66 /* InterceptorsExecutorTests.swift in Sources */,
 				E273165F1FBB5F8D00FC20CE /* Authenticator.swift in Sources */,
 				E2320C051FBB066F002049C9 /* Endpoint.swift in Sources */,
+				E2F50F2B1FCD602800296FB7 /* ResponseTests.swift in Sources */,
 				E2320C071FBB0675002049C9 /* MockExecutionInterceptor.swift in Sources */,
 				E2320C091FBB067B002049C9 /* MockSuccessInterceptor.swift in Sources */,
 				E237D16B1FBB80D90036ED66 /* InterceptorChainTests.swift in Sources */,
