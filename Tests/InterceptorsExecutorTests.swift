@@ -21,7 +21,7 @@ extension InterceptorsExecutorTests {
         var expectedNumber = 0
         
         let interceptors = Array(repeating: MockExecutionInterceptor(), count: 5)
-        let interceptions: [(@escaping InterceptorCompletion) -> ()] = interceptors.map { interceptor in
+        let interceptions: [(@escaping InterceptorCompletion<Data>) -> ()] = interceptors.map { interceptor in
             let num = number
             number += 1
             return { completion in
@@ -60,7 +60,7 @@ extension InterceptorsExecutorTests {
         var calls = 0
         
         let interceptors = Array(repeating: MockExecutionInterceptor(), count: 5)
-        let interceptions: [(@escaping InterceptorCompletion) -> ()] = interceptors.map { interceptor in
+        let interceptions: [(@escaping InterceptorCompletion<Data>) -> ()] = interceptors.map { interceptor in
             return { completion in
                 self.assertNoErrorThrown {
                     let chain = try self.chain(with: completion)
@@ -92,7 +92,7 @@ extension InterceptorsExecutorTests {
         var calls = 0
         
         let interceptors = Array(repeating: MockExecutionInterceptor(), count: 5)
-        let interceptions: [(@escaping InterceptorCompletion) -> ()] = interceptors.map { interceptor in
+        let interceptions: [(@escaping InterceptorCompletion<Data>) -> ()] = interceptors.map { interceptor in
             return { completion in
                 self.assertNoErrorThrown {
                     let chain = try self.chain(with: completion)
@@ -120,7 +120,7 @@ extension InterceptorsExecutorTests {
 
 private extension InterceptorsExecutorTests {
     
-    func chain(with completion: @escaping InterceptorCompletion) throws -> InterceptorChain {
+    func chain(with completion: @escaping InterceptorCompletion<Data>) throws -> InterceptorChain<Data> {
         let endpoint = Endpoint()
         let dataRequest = try self.client.request(for: endpoint)
         return InterceptorChain(client: client, endpoint: endpoint, request: dataRequest, completion: completion)

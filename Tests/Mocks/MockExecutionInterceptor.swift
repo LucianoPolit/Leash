@@ -11,16 +11,16 @@ import Foundation
 
 class MockExecutionInterceptor: ExecutionInterceptor {
     
-    var completion: ((InterceptorChain?) -> ())?
+    var completion: ((InterceptorChain<Data>?) -> ())?
     
-    init(completion: ((InterceptorChain?) -> ())? = nil) {
+    init(completion: ((InterceptorChain<Data>?) -> ())? = nil) {
         self.completion = completion
     }
     
     var interceptCalled = false
-    var interceptParameterChain: InterceptorChain?
+    var interceptParameterChain: InterceptorChain<Data>?
     
-    func intercept(chain: InterceptorChain) {
+    func intercept(chain: InterceptorChain<Data>) {
         interceptCalled = true
         interceptParameterChain = chain
         completion?(chain)

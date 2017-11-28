@@ -146,9 +146,9 @@ extension DataRequest {
 
 private extension Client {
     
-    typealias Interceptions = [(@escaping InterceptorCompletion) -> ()]
+    typealias Interceptions<T> = [(@escaping InterceptorCompletion<T>) -> ()]
     
-    func executionInterceptions(endpoint: Endpoint, request: DataRequest) -> Interceptions {
+    func executionInterceptions(endpoint: Endpoint, request: DataRequest) -> Interceptions<Data> {
         return manager.executionInterceptors.map { interceptor in
             return { completion in
                 let chain = InterceptorChain(client: self, endpoint: endpoint, request: request, completion: completion)
@@ -157,7 +157,7 @@ private extension Client {
         }
     }
     
-    func failureInterceptions(endpoint: Endpoint, request: DataRequest, error: Swift.Error) -> Interceptions {
+    func failureInterceptions(endpoint: Endpoint, request: DataRequest, error: Swift.Error) -> Interceptions<Data> {
         return manager.failureInterceptors.map { interceptor in
             return { completion in
                 let chain = InterceptorChain(client: self, endpoint: endpoint, request: request, completion: completion)
@@ -166,7 +166,7 @@ private extension Client {
         }
     }
     
-    func successInterceptions(endpoint: Endpoint, request: DataRequest, response: HTTPURLResponse, data: Data) -> Interceptions {
+    func successInterceptions(endpoint: Endpoint, request: DataRequest, response: HTTPURLResponse, data: Data) -> Interceptions<Data> {
         return manager.successInterceptors.map { interceptor in
             return { completion in
                 let chain = InterceptorChain(client: self, endpoint: endpoint, request: request, completion: completion)
@@ -175,7 +175,7 @@ private extension Client {
         }
     }
     
-    func completionInterceptions(endpoint: Endpoint, request: DataRequest, response: Response<Data>) -> Interceptions {
+    func completionInterceptions(endpoint: Endpoint, request: DataRequest, response: Response<Data>) -> Interceptions<Data> {
         return manager.completionInterceptors.map { interceptor in
             return { completion in
                 let chain = InterceptorChain(client: self, endpoint: endpoint, request: request, completion: completion)

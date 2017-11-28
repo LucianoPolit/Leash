@@ -27,16 +27,16 @@ import Foundation
 /// Responsible for executing the interceptors in a queue order (asynchronously).
 /// After all the interceptors are executed, the finally handler is called.
 /// In case that any of the interceptors requests to finish the operation, no more interceptors are called (neither the finally handler).
-class InterceptorsExecutor {
+class InterceptorsExecutor<T> {
     
-    private var interceptions: [(@escaping InterceptorCompletion) -> ()]
-    private let completion: (Response<Data>) -> ()
-    private let finally: (@escaping (Response<Data>) -> ()) -> ()
+    private var interceptions: [(@escaping InterceptorCompletion<T>) -> ()]
+    private let completion: (Response<T>) -> ()
+    private let finally: (@escaping (Response<T>) -> ()) -> ()
     
     @discardableResult
-    init(interceptions: [(@escaping InterceptorCompletion) -> ()],
-         completion: @escaping (Response<Data>) -> (),
-         finally: @escaping (@escaping (Response<Data>) -> ()) -> ()) {
+    init(interceptions: [(@escaping InterceptorCompletion<T>) -> ()],
+         completion: @escaping (Response<T>) -> (),
+         finally: @escaping (@escaping (Response<T>) -> ()) -> ()) {
         self.interceptions = interceptions
         self.completion = completion
         self.finally = finally

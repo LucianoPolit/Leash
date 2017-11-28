@@ -185,7 +185,7 @@ extension AlamofireLeashTests {
             let endpoint = successEndpoint
             let dataRequest = try client.request(for: endpoint)
             let serializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
-            dataRequest.response(client: client, endpoint: endpoint, responseSerializer: serializer) { response in
+            dataRequest.response(client: client, endpoint: endpoint, serializer: serializer) { response in
                 guard case .success = response else {
                     XCTFail()
                     return
@@ -330,9 +330,10 @@ private extension AlamofireLeashTests {
 }
 
 private protocol MockInterceptor: class {
-    var completion: ((InterceptorChain?) -> ())? { get set }
+    associatedtype T
+    var completion: ((InterceptorChain<T>?) -> ())? { get set }
     var interceptCalled: Bool { get }
-    var interceptParameterChain: InterceptorChain? { get }
+    var interceptParameterChain: InterceptorChain<T>? { get }
 }
 
 extension MockExecutionInterceptor: MockInterceptor { }

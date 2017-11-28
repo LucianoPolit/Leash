@@ -11,17 +11,17 @@ import Foundation
 
 class MockFailureInterceptor: FailureInterceptor {
     
-    var completion: ((InterceptorChain?) -> ())?
+    var completion: ((InterceptorChain<Data>?) -> ())?
     
-    init(completion: ((InterceptorChain?) -> ())? = nil) {
+    init(completion: ((InterceptorChain<Data>?) -> ())? = nil) {
         self.completion = completion
     }
     
     var interceptCalled = false
-    var interceptParameterChain: InterceptorChain?
+    var interceptParameterChain: InterceptorChain<Data>?
     var interceptParameterError: Swift.Error?
     
-    func intercept(chain: InterceptorChain, error: Swift.Error) {
+    func intercept(chain: InterceptorChain<Data>, error: Swift.Error) {
         interceptCalled = true
         interceptParameterChain = chain
         interceptParameterError = error

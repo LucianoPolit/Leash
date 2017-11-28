@@ -27,5 +27,5 @@ import Foundation
 /// Interceptor that is called before a request is executed.
 public protocol ExecutionInterceptor {
     /// Main method responsible for handling the interception.
-    func intercept(chain: InterceptorChain)
+    func intercept(chain: InterceptorChain<Data>)
 }

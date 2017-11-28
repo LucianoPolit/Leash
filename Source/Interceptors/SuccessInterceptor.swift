@@ -27,5 +27,5 @@ import Foundation
 /// Interceptor that is called when there is no problem executing a request.
 public protocol SuccessInterceptor {
     /// Main method responsible for handling the interception.
-    func intercept(chain: InterceptorChain, response: HTTPURLResponse, data: Data)
+    func intercept(chain: InterceptorChain<Data>, response: HTTPURLResponse, data: Data)
 }

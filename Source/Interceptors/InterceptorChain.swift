@@ -26,10 +26,10 @@ import Foundation
 import Alamofire
 
 /// Completion handler of the interception.
-typealias InterceptorCompletion = ((response: Response<Data>, finish: Bool)?) -> ()
+typealias InterceptorCompletion<T> = ((response: Response<T>, finish: Bool)?) -> ()
 
 /// Contains all the information that an interceptor might require.
-open class InterceptorChain {
+open class InterceptorChain<T> {
     
     /// The client that is requesting the interception.
     public let client: Client
@@ -38,12 +38,12 @@ open class InterceptorChain {
     /// The request that is being intercepted.
     public let request: DataRequest
     /// The completion handler of the interception.
-    fileprivate let completion: InterceptorCompletion
+    fileprivate let completion: InterceptorCompletion<T>
     /// Determines if the interception is completed or not.
     fileprivate var completed = false
     
     /// Initializes and returns a newly allocated object with the specified parameters.
-    init(client: Client, endpoint: Endpoint, request: DataRequest, completion: @escaping InterceptorCompletion) {
+    init(client: Client, endpoint: Endpoint, request: DataRequest, completion: @escaping InterceptorCompletion<T>) {
         self.client = client
         self.endpoint = endpoint
         self.request = request
@@ -59,23 +59,12 @@ extension InterceptorChain {
         complete(nil)
     }
     
-    /// Retries the operation with the same completion handler.
-    ///
-    /// - Returns: The new request.
-    @discardableResult
-    public func retry() throws -> DataRequest {
-        let request = try client.request(for: endpoint)
-        return request.response(client: client, endpoint: endpoint) { [weak self] response in
-            self?.complete(with: response)
-        }
-    }
-    
     /// Completes the interception injecting the specified response.
     ///
     /// - Parameter response: The response that is being injected.
     /// - Parameter finish: Determines if the process should be finished or not.
     ///                     In case that it is false, the completion handler will receive multiple calls.
-    public func complete(with response: Response<Data>, finish: Bool = true) {
+    public func complete(with response: Response<T>, finish: Bool = true) {
         complete((response, finish))
     }
     
@@ -86,7 +75,7 @@ extension InterceptorChain {
     ///                    The purpose of this parameter is to be used by another interceptor or by the completion handler.
     /// - Parameter finish: Determines if the process should be finished or not.
     ///                     In case that it is false, the completion handler will receive multiple calls.
-    public func complete(with value: Data, extra: Any? = nil, finish: Bool = true) {
+    public func complete(with value: T, extra: Any? = nil, finish: Bool = true) {
         complete(with: .success(value: value, extra: extra), finish: finish)
     }
     
@@ -100,10 +89,25 @@ extension InterceptorChain {
     }
     
     /// Completes the interception with the specified tuple.
-    private func complete(_ tuple: (Response<Data>, Bool)?) {
+    private func complete(_ tuple: (Response<T>, Bool)?) {
         guard !completed else { return }
         completed = true
         completion(tuple)
+    }
+    
+}
+
+extension InterceptorChain where T == Data {
+    
+    /// Retries the operation with the same completion handler.
+    ///
+    /// - Returns: The new request.
+    @discardableResult
+    public func retry() throws -> DataRequest {
+        let request = try client.request(for: endpoint)
+        return request.response(client: client, endpoint: endpoint) { [weak self] response in
+            self?.complete(with: response)
+        }
     }
     
 }

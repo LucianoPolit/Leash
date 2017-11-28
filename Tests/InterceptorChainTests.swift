@@ -16,7 +16,7 @@ class InterceptorChainTests: BaseTestCase {
     
     var count = 0
     var result: (response: Response<Data>, finish: Bool)?
-    var chain: InterceptorChain!
+    var chain: InterceptorChain<Data>!
     
     override func setUp() {
         super.setUp()

@@ -11,18 +11,18 @@ import Foundation
 
 class MockSuccessInterceptor: SuccessInterceptor {
     
-    var completion: ((InterceptorChain?) -> ())?
+    var completion: ((InterceptorChain<Data>?) -> ())?
     
-    init(completion: ((InterceptorChain?) -> ())? = nil) {
+    init(completion: ((InterceptorChain<Data>?) -> ())? = nil) {
         self.completion = completion
     }
     
     var interceptCalled = false
-    var interceptParameterChain: InterceptorChain?
+    var interceptParameterChain: InterceptorChain<Data>?
     var interceptParameterResponse: HTTPURLResponse?
     var interceptParameterData: Data?
     
-    func intercept(chain: InterceptorChain, response: HTTPURLResponse, data: Data) {
+    func intercept(chain: InterceptorChain<Data>, response: HTTPURLResponse, data: Data) {
         interceptCalled = true
         interceptParameterChain = chain
         interceptParameterResponse = response
