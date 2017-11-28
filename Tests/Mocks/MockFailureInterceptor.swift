@@ -9,23 +9,23 @@
 import Foundation
 @testable import Leash
 
-class MockFailureInterceptor<U: Decodable>: FailureInterceptor {
+class MockFailureInterceptor: FailureInterceptor {
     
-    var completion: ((InterceptorChain<U>?) -> ())?
+    var completion: ((InterceptorChain?) -> ())?
     
-    init(completion: ((InterceptorChain<U>?) -> ())? = nil) {
+    init(completion: ((InterceptorChain?) -> ())? = nil) {
         self.completion = completion
     }
     
     var interceptCalled = false
-    var interceptParameterChain: InterceptorChain<U>?
+    var interceptParameterChain: InterceptorChain?
     var interceptParameterError: Swift.Error?
     
-    func intercept<T>(chain: InterceptorChain<T>, error: Swift.Error) {
+    func intercept(chain: InterceptorChain, error: Swift.Error) {
         interceptCalled = true
-        interceptParameterChain = chain as? InterceptorChain<U>
+        interceptParameterChain = chain
         interceptParameterError = error
-        completion?(chain as? InterceptorChain<U>)
+        completion?(chain)
     }
     
 }

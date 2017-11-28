@@ -60,7 +60,7 @@ extension ManagerTests {
     // MARK: - Interceptors
     
     func testExecutionInterceptor() {
-        let interceptor = MockExecutionInterceptor<Int>()
+        let interceptor = MockExecutionInterceptor()
         
         manager = Manager.Builder()
             .url(baseURL)
@@ -71,7 +71,7 @@ extension ManagerTests {
     }
     
     func testFailureInterceptor() {
-        let interceptor = MockFailureInterceptor<Int>()
+        let interceptor = MockFailureInterceptor()
         
         manager = Manager.Builder()
             .url(baseURL)
@@ -82,7 +82,7 @@ extension ManagerTests {
     }
     
     func testSuccessInterceptor() {
-        let interceptor = MockSuccessInterceptor<Int>()
+        let interceptor = MockSuccessInterceptor()
         
         manager = Manager.Builder()
             .url(baseURL)
@@ -93,7 +93,7 @@ extension ManagerTests {
     }
     
     func testCompletionInterceptor() {
-        let interceptor = MockCompletionInterceptor<Int>()
+        let interceptor = MockCompletionInterceptor()
         
         manager = Manager.Builder()
             .url(baseURL)

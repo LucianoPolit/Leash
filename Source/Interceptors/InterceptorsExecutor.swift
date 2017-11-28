@@ -27,27 +27,27 @@ import Foundation
 /// Responsible for executing the interceptors in a queue order (asynchronously).
 /// After all the interceptors are executed, the finally handler is called.
 /// In case that any of the interceptors requests to finish the operation, no more interceptors are called (neither the finally handler).
-class InterceptorsExecutor<T> {
+class InterceptorsExecutor {
     
-    private var queue: [(@escaping InterceptorCompletion<T>) -> ()]
-    private let completion: (Response<T>) -> ()
-    private let finally: (@escaping (Response<T>) -> ()) -> ()
+    private var interceptions: [(@escaping InterceptorCompletion) -> ()]
+    private let completion: (Response<Data>) -> ()
+    private let finally: (@escaping (Response<Data>) -> ()) -> ()
     
     @discardableResult
-    init(queue: [(@escaping InterceptorCompletion<T>) -> ()],
-         completion: @escaping (Response<T>) -> (),
-         finally: @escaping (@escaping (Response<T>) -> ()) -> ()) {
-        self.queue = queue
+    init(interceptions: [(@escaping InterceptorCompletion) -> ()],
+         completion: @escaping (Response<Data>) -> (),
+         finally: @escaping (@escaping (Response<Data>) -> ()) -> ()) {
+        self.interceptions = interceptions
         self.completion = completion
         self.finally = finally
         startNext()
     }
     
     private func startNext() {
-        if (queue.isEmpty) {
+        if (interceptions.isEmpty) {
             finally(completion)
         } else {
-            let interception = queue.removeFirst()
+            let interception = interceptions.removeFirst()
             interception { [weak self] result in
                 guard let `self` = self else { return }
                 guard let result = result else { return self.startNext() }

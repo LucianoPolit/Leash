@@ -23,10 +23,9 @@
 //
 
 import Foundation
-import Alamofire
 
 /// Interceptor that is called when there is no problem executing a request.
 public protocol SuccessInterceptor {
     /// Main method responsible for handling the interception.
-    func intercept<T>(chain: InterceptorChain<T>, response: DefaultDataResponse)
+    func intercept(chain: InterceptorChain, response: HTTPURLResponse, data: Data)
 }

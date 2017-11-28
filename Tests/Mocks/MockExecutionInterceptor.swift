@@ -9,21 +9,21 @@
 import Foundation
 @testable import Leash
 
-class MockExecutionInterceptor<U: Decodable>: ExecutionInterceptor {
+class MockExecutionInterceptor: ExecutionInterceptor {
     
-    var completion: ((InterceptorChain<U>?) -> ())?
+    var completion: ((InterceptorChain?) -> ())?
     
-    init(completion: ((InterceptorChain<U>?) -> ())? = nil) {
+    init(completion: ((InterceptorChain?) -> ())? = nil) {
         self.completion = completion
     }
     
     var interceptCalled = false
-    var interceptParameterChain: InterceptorChain<U>?
+    var interceptParameterChain: InterceptorChain?
     
-    func intercept<T>(chain: InterceptorChain<T>) {
+    func intercept(chain: InterceptorChain) {
         interceptCalled = true
-        interceptParameterChain = chain as? InterceptorChain<U>
-        completion?(chain as? InterceptorChain<U>)
+        interceptParameterChain = chain
+        completion?(chain)
     }
     
 }

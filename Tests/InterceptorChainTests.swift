@@ -14,11 +14,9 @@ import OHHTTPStubs
 
 class InterceptorChainTests: BaseTestCase {
     
-    typealias T = Data
-    
     var count = 0
-    var result: (response: Response<T>, finish: Bool)?
-    var chain: InterceptorChain<T>!
+    var result: (response: Response<Data>, finish: Bool)?
+    var chain: InterceptorChain!
     
     override func setUp() {
         super.setUp()

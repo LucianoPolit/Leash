@@ -26,10 +26,11 @@ import Foundation
 import Alamofire
 
 /// Completion handler of the interception.
-typealias InterceptorCompletion<T> = ((response: Response<T>, finish: Bool)?) -> ()
+typealias InterceptorCompletion = ((response: Response<Data>, finish: Bool)?) -> ()
 
 /// Contains all the information that an interceptor might require.
-open class InterceptorChain<T: Decodable> {
+open class InterceptorChain {
+    
     /// The client that is requesting the interception.
     public let client: Client
     /// The endpoint that is being intercepted.
@@ -37,17 +38,18 @@ open class InterceptorChain<T: Decodable> {
     /// The request that is being intercepted.
     public let request: DataRequest
     /// The completion handler of the interception.
-    fileprivate let completion: InterceptorCompletion<T>
+    fileprivate let completion: InterceptorCompletion
     /// Determines if the interception is completed or not.
     fileprivate var completed = false
     
     /// Initializes and returns a newly allocated object with the specified parameters.
-    init(client: Client, endpoint: Endpoint, request: DataRequest, completion: @escaping InterceptorCompletion<T>) {
+    init(client: Client, endpoint: Endpoint, request: DataRequest, completion: @escaping InterceptorCompletion) {
         self.client = client
         self.endpoint = endpoint
         self.request = request
         self.completion = completion
     }
+    
 }
 
 extension InterceptorChain {
@@ -63,7 +65,7 @@ extension InterceptorChain {
     @discardableResult
     public func retry() throws -> DataRequest {
         let request = try client.request(for: endpoint)
-        return request.response(client, endpoint) { [weak self] response in
+        return request.response(client: client, endpoint: endpoint) { [weak self] response in
             self?.complete(with: response)
         }
     }
@@ -73,7 +75,7 @@ extension InterceptorChain {
     /// - Parameter response: The response that is being injected.
     /// - Parameter finish: Determines if the process should be finished or not.
     ///                     In case that it is false, the completion handler will receive multiple calls.
-    public func complete(with response: Response<T>, finish: Bool = true) {
+    public func complete(with response: Response<Data>, finish: Bool = true) {
         complete((response, finish))
     }
     
@@ -84,7 +86,7 @@ extension InterceptorChain {
     ///                    The purpose of this parameter is to be used by another interceptor or by the completion handler.
     /// - Parameter finish: Determines if the process should be finished or not.
     ///                     In case that it is false, the completion handler will receive multiple calls.
-    public func complete(with value: T, extra: Any? = nil, finish: Bool = true) {
+    public func complete(with value: Data, extra: Any? = nil, finish: Bool = true) {
         complete(with: .success(value: value, extra: extra), finish: finish)
     }
     
@@ -98,7 +100,7 @@ extension InterceptorChain {
     }
     
     /// Completes the interception with the specified tuple.
-    private func complete(_ tuple: (Response<T>, Bool)?) {
+    private func complete(_ tuple: (Response<Data>, Bool)?) {
         guard !completed else { return }
         completed = true
         completion(tuple)

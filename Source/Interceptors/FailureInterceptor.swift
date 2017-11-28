@@ -27,5 +27,5 @@ import Foundation
 /// Interceptor that is called when there is a problem executing a request.
 public protocol FailureInterceptor {
     /// Main method responsible for handling the interception.
-    func intercept<T>(chain: InterceptorChain<T>, error: Swift.Error)
+    func intercept(chain: InterceptorChain, error: Swift.Error)
 }

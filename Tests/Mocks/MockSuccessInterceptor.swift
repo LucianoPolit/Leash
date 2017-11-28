@@ -7,26 +7,27 @@
 //
 
 import Foundation
-import Alamofire
 @testable import Leash
 
-class MockSuccessInterceptor<U: Decodable>: SuccessInterceptor {
+class MockSuccessInterceptor: SuccessInterceptor {
     
-    var completion: ((InterceptorChain<U>?) -> ())?
+    var completion: ((InterceptorChain?) -> ())?
     
-    init(completion: ((InterceptorChain<U>?) -> ())? = nil) {
+    init(completion: ((InterceptorChain?) -> ())? = nil) {
         self.completion = completion
     }
     
     var interceptCalled = false
-    var interceptParameterChain: InterceptorChain<U>?
-    var interceptParameterResponse: DefaultDataResponse?
+    var interceptParameterChain: InterceptorChain?
+    var interceptParameterResponse: HTTPURLResponse?
+    var interceptParameterData: Data?
     
-    func intercept<T>(chain: InterceptorChain<T>, response: DefaultDataResponse) {
+    func intercept(chain: InterceptorChain, response: HTTPURLResponse, data: Data) {
         interceptCalled = true
-        interceptParameterChain = chain as? InterceptorChain<U>
+        interceptParameterChain = chain
         interceptParameterResponse = response
-        completion?(chain as? InterceptorChain<U>)
+        interceptParameterData = data
+        completion?(chain)
     }
     
 }

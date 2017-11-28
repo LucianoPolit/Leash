@@ -9,23 +9,23 @@
 import Foundation
 @testable import Leash
 
-class MockCompletionInterceptor<U: Decodable>: CompletionInterceptor {
+class MockCompletionInterceptor: CompletionInterceptor {
     
-    var completion: ((InterceptorChain<U>?) -> ())?
+    var completion: ((InterceptorChain?) -> ())?
     
-    init(completion: ((InterceptorChain<U>?) -> ())? = nil) {
+    init(completion: ((InterceptorChain?) -> ())? = nil) {
         self.completion = completion
     }
     
     var interceptCalled = false
-    var interceptParameterChain: InterceptorChain<U>?
-    var interceptParameterResponse: Response<U>?
+    var interceptParameterChain: InterceptorChain?
+    var interceptParameterResponse: Response<Data>?
     
-    func intercept<T>(chain: InterceptorChain<T>, response: Response<T>) {
+    func intercept(chain: InterceptorChain, response: Response<Data>) {
         interceptCalled = true
-        interceptParameterChain = chain as? InterceptorChain<U>
-        interceptParameterResponse = response as? Response<U>
-        completion?(chain as? InterceptorChain<U>)
+        interceptParameterChain = chain
+        interceptParameterResponse = response
+        completion?(chain)
     }
     
 }

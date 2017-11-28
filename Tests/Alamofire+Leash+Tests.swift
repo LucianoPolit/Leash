@@ -38,7 +38,7 @@ extension AlamofireLeashTests {
     
     func testCallsExecutionInterceptors() {
         let expectation = self.expectation(description: "Expected to call all the interceptors")
-        let interceptors = Array(repeating: MockExecutionInterceptor<T>(), count: 3)
+        let interceptors = Array(repeating: MockExecutionInterceptor(), count: 3)
         var builder = self.builder
         interceptors.forEach {
             builder = builder.add(interceptor: $0)
@@ -52,7 +52,7 @@ extension AlamofireLeashTests {
     
     func testCallsFailureInterceptorsWhenFailure() {
         let expectation = self.expectation(description: "Expected to call all the interceptors")
-        let interceptors = Array(repeating: MockFailureInterceptor<T>(), count: 3)
+        let interceptors = Array(repeating: MockFailureInterceptor(), count: 3)
         var builder = self.builder
         interceptors.forEach {
             builder = builder.add(interceptor: $0)
@@ -66,7 +66,7 @@ extension AlamofireLeashTests {
     
     func testNotCallsFailureInterceptorsWhenSuccess() {
         let expectation = self.expectation(description: "Expected to not call any interceptor")
-        let interceptors = Array(repeating: MockFailureInterceptor<T>(), count: 3)
+        let interceptors = Array(repeating: MockFailureInterceptor(), count: 3)
         var builder = self.builder
         interceptors.forEach {
             builder = builder.add(interceptor: $0)
@@ -80,7 +80,7 @@ extension AlamofireLeashTests {
     
     func testNotCallsSuccessInterceptorsWhenFailure() {
         let expectation = self.expectation(description: "Expected to not call any interceptor")
-        let interceptors = Array(repeating: MockSuccessInterceptor<T>(), count: 3)
+        let interceptors = Array(repeating: MockSuccessInterceptor(), count: 3)
         var builder = self.builder
         interceptors.forEach {
             builder = builder.add(interceptor: $0)
@@ -94,7 +94,7 @@ extension AlamofireLeashTests {
     
     func testCallsSuccessInterceptorsWhenSuccess() {
         let expectation = self.expectation(description: "Expected to call all the interceptors")
-        let interceptors = Array(repeating: MockSuccessInterceptor<T>(), count: 3)
+        let interceptors = Array(repeating: MockSuccessInterceptor(), count: 3)
         var builder = self.builder
         interceptors.forEach {
             builder = builder.add(interceptor: $0)
@@ -108,7 +108,7 @@ extension AlamofireLeashTests {
     
     func testCallsCompletionInterceptorsWhenFailure() {
         let expectation = self.expectation(description: "Expected to call all the interceptors")
-        let interceptors = Array(repeating: MockCompletionInterceptor<T>(), count: 3)
+        let interceptors = Array(repeating: MockCompletionInterceptor(), count: 3)
         var builder = self.builder
         interceptors.forEach {
             builder = builder.add(interceptor: $0)
@@ -122,7 +122,7 @@ extension AlamofireLeashTests {
     
     func testCallsCompletionInterceptorsWhenSuccess() {
         let expectation = self.expectation(description: "Expected to call all the interceptors")
-        let interceptors = Array(repeating: MockCompletionInterceptor<T>(), count: 3)
+        let interceptors = Array(repeating: MockCompletionInterceptor(), count: 3)
         var builder = self.builder
         interceptors.forEach {
             builder = builder.add(interceptor: $0)
@@ -137,12 +137,12 @@ extension AlamofireLeashTests {
     func testCallsInterceptorsWhenRetry() {
         let expectation = self.expectation(description: "Expected to call all the interceptors")
         var first = true
-        let executionInterceptor = MockExecutionInterceptor<T> { chain in
+        let executionInterceptor = MockExecutionInterceptor { chain in
             defer { chain?.proceed() }
             guard !first else { return }
             expectation.fulfill()
         }
-        let completionInterceptor = MockCompletionInterceptor<T> { chain in
+        let completionInterceptor = MockCompletionInterceptor { chain in
             defer { chain?.proceed() }
             guard first else { return }
             first = false
@@ -297,10 +297,9 @@ private extension AlamofireLeashTests {
 }
 
 private protocol MockInterceptor: class {
-    associatedtype T: Decodable
-    var completion: ((InterceptorChain<T>?) -> ())? { get set }
+    var completion: ((InterceptorChain?) -> ())? { get set }
     var interceptCalled: Bool { get }
-    var interceptParameterChain: InterceptorChain<T>? { get }
+    var interceptParameterChain: InterceptorChain? { get }
 }
 
 extension MockExecutionInterceptor: MockInterceptor { }

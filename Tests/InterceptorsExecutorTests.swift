@@ -10,11 +10,7 @@ import Foundation
 import XCTest
 @testable import Leash
 
-class InterceptorsExecutorTests: BaseTestCase {
-    
-    typealias T = Int
-    
-}
+class InterceptorsExecutorTests: BaseTestCase { }
 
 // MARK: - Order
 
@@ -24,30 +20,30 @@ extension InterceptorsExecutorTests {
         var number = 0
         var expectedNumber = 0
         
-        let interceptors = Array(repeating: MockExecutionInterceptor<T>(), count: 5)
-        let queue: [(@escaping InterceptorCompletion<T>) -> ()] = interceptors.map { interceptor in
+        let interceptors = Array(repeating: MockExecutionInterceptor(), count: 5)
+        let interceptions: [(@escaping InterceptorCompletion) -> ()] = interceptors.map { interceptor in
             let num = number
             number += 1
             return { completion in
                 self.assertNoErrorThrown {
                     let chain = try self.chain(with: completion)
                     interceptor.intercept(chain: chain)
-                    chain.complete(with: num, extra: nil, finish: false)
+                    chain.complete(with: Data(count: num), extra: nil, finish: false)
                 }
             }
         }
         
-        let completion = { (response: Response<T>) in
+        let completion = { (response: Response<Data>) in
             guard case .success(let result) = response else {
                 XCTFail()
                 return
             }
-            XCTAssertEqual(result.value, expectedNumber)
+            XCTAssertEqual(result.value.count, expectedNumber)
             expectedNumber += 1
         }
         
-        InterceptorsExecutor(queue: queue, completion: completion) { completion in
-            completion(.success(value: number, extra: nil))
+        InterceptorsExecutor(interceptions: interceptions, completion: completion) { completion in
+            completion(.success(value: Data(count: number), extra: nil))
         }
         
         XCTAssertEqual(expectedNumber, number + 1)
@@ -63,24 +59,24 @@ extension InterceptorsExecutorTests {
     func testFinish() {
         var calls = 0
         
-        let interceptors = Array(repeating: MockExecutionInterceptor<T>(), count: 5)
-        let queue: [(@escaping InterceptorCompletion<T>) -> ()] = interceptors.map { interceptor in
+        let interceptors = Array(repeating: MockExecutionInterceptor(), count: 5)
+        let interceptions: [(@escaping InterceptorCompletion) -> ()] = interceptors.map { interceptor in
             return { completion in
                 self.assertNoErrorThrown {
                     let chain = try self.chain(with: completion)
                     interceptor.intercept(chain: chain)
-                    chain.complete(with: 0, extra: nil)
+                    chain.complete(with: Data(), extra: nil)
                 }
             }
         }
         
-        let completion = { (response: Response<T>) in
+        let completion = { (response: Response<Data>) in
             XCTAssertEqual(calls, 0)
             calls += 1
         }
         
-        InterceptorsExecutor(queue: queue, completion: completion) { completion in
-            completion(.success(value: 0, extra: nil))
+        InterceptorsExecutor(interceptions: interceptions, completion: completion) { completion in
+            completion(.success(value: Data(), extra: nil))
         }
         
         XCTAssertEqual(calls, 1)
@@ -95,8 +91,8 @@ extension InterceptorsExecutorTests {
     func testNoResult() {
         var calls = 0
         
-        let interceptors = Array(repeating: MockExecutionInterceptor<T>(), count: 5)
-        let queue: [(@escaping InterceptorCompletion<T>) -> ()] = interceptors.map { interceptor in
+        let interceptors = Array(repeating: MockExecutionInterceptor(), count: 5)
+        let interceptions: [(@escaping InterceptorCompletion) -> ()] = interceptors.map { interceptor in
             return { completion in
                 self.assertNoErrorThrown {
                     let chain = try self.chain(with: completion)
@@ -106,13 +102,13 @@ extension InterceptorsExecutorTests {
             }
         }
         
-        let completion = { (response: Response<T>) in
+        let completion = { (response: Response<Data>) in
             XCTAssertEqual(calls, 0)
             calls += 1
         }
         
-        InterceptorsExecutor(queue: queue, completion: completion) { completion in
-            completion(.success(value: 0, extra: nil))
+        InterceptorsExecutor(interceptions: interceptions, completion: completion) { completion in
+            completion(.success(value: Data(), extra: nil))
         }
         
         XCTAssertEqual(calls, 1)
@@ -124,7 +120,7 @@ extension InterceptorsExecutorTests {
 
 private extension InterceptorsExecutorTests {
     
-    func chain(with completion: @escaping InterceptorCompletion<T>) throws -> InterceptorChain<T> {
+    func chain(with completion: @escaping InterceptorCompletion) throws -> InterceptorChain {
         let endpoint = Endpoint()
         let dataRequest = try self.client.request(for: endpoint)
         return InterceptorChain(client: client, endpoint: endpoint, request: dataRequest, completion: completion)
