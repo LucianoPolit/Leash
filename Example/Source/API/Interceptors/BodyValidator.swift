@@ -8,16 +8,14 @@
 
 import Foundation
 import Leash
-import Alamofire
 
 /// Interceptor responsible for validating the body.
 /// In some cases, the body may contain an API error with extra information.
 /// In case that an API error is found, the interception is completed with it.
 class BodyValidator: SuccessInterceptor {
     
-    func intercept<T>(chain: InterceptorChain<T>, response: DefaultDataResponse) {
+    func intercept(chain: InterceptorChain<Data>, response: HTTPURLResponse, data: Data) {
         defer { chain.proceed() }
-        guard let data = response.data else { return }
         
         if let error = try? chain.client.manager.jsonDecoder.decode(APIError.self, from: data) {
             chain.complete(with: Error.server(error))

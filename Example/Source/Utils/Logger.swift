@@ -59,8 +59,8 @@ class Logger {
     
     func logResponse<T>(_ response: Response<T>) {
         switch response {
-        case .success(_): logDebug("success")
-        case .failure(_): logDebug("failure")
+        case .success: logDebug("success")
+        case .failure: logDebug("failure")
         }
     }
     

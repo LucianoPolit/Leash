@@ -8,13 +8,14 @@
 
 import Foundation
 import Leash
+import Alamofire
 
 /// Interceptor responsible for logging the requests and responses.
-class LoggerInterceptor: ExecutionInterceptor, CompletionInterceptor {
+class LoggerInterceptor: ExecutionInterceptor, CompletionInterceptor, SerializationInterceptor {
     
     // MARK: - ExecutionInterceptor
     
-    func intercept<T>(chain: InterceptorChain<T>) {
+    func intercept(chain: InterceptorChain<Data>) {
         defer { chain.proceed() }
         guard let request = chain.request.request,
             let method = request.httpMethod,
@@ -25,17 +26,37 @@ class LoggerInterceptor: ExecutionInterceptor, CompletionInterceptor {
     
     // MARK: - CompletionInterceptor
     
-    func intercept<T>(chain: InterceptorChain<T>, response: Response<T>) {
+    func intercept(chain: InterceptorChain<Data>, response: Response<Data>) {
         defer { chain.proceed() }
         guard let request = chain.request.request,
             let method = request.httpMethod,
             let url = request.url?.absoluteString else { return }
         
         switch(response) {
-        case .success(_):
+        case .success:
             Logger.shared.logDebug("✔✔✔ \(method) \(url)")
         case .failure(let error):
             Logger.shared.logDebug("✖✖✖ \(method) \(url)")
+            Logger.shared.logError(error)
+        }
+    }
+    
+    // MARK: - SerializationInterceptor
+    
+    func intercept<T>(chain: InterceptorChain<T.SerializedObject>,
+                      result: Result<T.SerializedObject>,
+                      serializer: T) where T : DataResponseSerializerProtocol {
+        defer { chain.proceed() }
+        guard let request = chain.request.request,
+            let method = request.httpMethod,
+            let url = request.url?.absoluteString else { return }
+        
+        switch(result) {
+        case .success:
+            Logger.shared.logDebug("✔✔✔ \(method) \(url) (Serialization)")
+        case .failure(let error):
+            guard case Leash.Error.decoding = error else { return }
+            Logger.shared.logDebug("✖✖✖ \(method) \(url) (Serialization)")
             Logger.shared.logError(error)
         }
     }
