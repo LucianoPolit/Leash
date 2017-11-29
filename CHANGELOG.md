@@ -2,11 +2,24 @@
 All notable changes to this project will be documented in this file.
 `Leash` adheres to [Semantic Versioning](http://semver.org/).
 
+#### 2.x Releases
+- `2.0.x` Releases - [2.0.0](#200)
+
 #### 1.x Releases
 - `1.1.x` Releases - [1.1.0](#110)
 - `1.0.x` Releases - [1.0.0](#100)
 
 ---
+
+## [2.0.0](https://github.com/LucianoPolit/Leash/releases/tag/2.0.0)
+Released on 2017-11-30.
+
+- Customization of the `DispatchQueue` on which the completion handlers are called.
+- Implementation of an `OperationQueue` on the `InterceptorsExecutor`.
+- Addition of `SerializationInterceptor`.
+- Change of the response handling with the purpose of being serializable.
+- Usage of `Data` instead of `T` on the `Interceptors`.
+- Improvement of the `Response` to include some utilities.
 
 ## [1.1.0](https://github.com/LucianoPolit/Leash/releases/tag/1.1.0)
 Released on 2017-11-27.

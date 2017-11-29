@@ -34,7 +34,7 @@ Moreover, `Leash` also includes some processes that are common on the network la
 To run the example project there are two possibilities:
 
 - Run `pod try Leash`.
-- Clone the repo and run `pod install` from the Example directory first.
+- Clone the repo and run `pod install` from the `Example` directory first.
 
 ## Requirements
 
@@ -43,10 +43,10 @@ To run the example project there are two possibilities:
 
 ## Installation
 
-Leash is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your Podfile:
+`Leash` is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your `Podfile`:
 
 ```ruby
-pod 'Leash', '~> 1.1'
+pod 'Leash', '~> 2.0'
 ```
 
 ## Usage
@@ -134,8 +134,8 @@ extension APIEndpoint: Endpoint {
 
 Three different classes are being used to encode the parameters:
 
-- [URLEncoding](https://github.com/Alamofire/Alamofire#url-encoding): to encode `QueryEncodable` and `[String : CustomStringConvertible]`.
-- [JSONEncoding](https://github.com/Alamofire/Alamofire#json-encoding): to encode `[String : Any]`.
+- [URLEncoding](https://github.com/Alamofire/Alamofire/tree/4.5.0#url-encoding): to encode `QueryEncodable` and `[String : CustomStringConvertible]`.
+- [JSONEncoding](https://github.com/Alamofire/Alamofire/tree/4.5.0#json-encoding): to encode `[String : Any]`.
 - [JSONEncoder](https://developer.apple.com/documentation/foundation/jsonencoder): to encode `Encodable`.
 
 In case you want to encode the parameters in a different way, you have to override the method `Client.urlRequest(for:)`.
@@ -150,7 +150,54 @@ client.execute(APIEndpoint.readAllUsers) { (response: Response<[User]>) in
 }
 ```
 
-The only available option to decode the body of the response is using the [JSONDecoder](https://developer.apple.com/documentation/foundation/jsondecoder). In case you need to do it in a different way, you should consider doing it through a [SuccessInterceptor](#success).
+The only available option to serialize the response is through the [JSONDecoder](https://developer.apple.com/documentation/foundation/jsondecoder). In case you need to do it in a different way, you should implement your own [response serializer](https://github.com/Alamofire/Alamofire/tree/4.5.0#custom-response-serialization). Yes, it uses the `DataResponseSerializer` provided by `Alamofire`!
+
+For example, here is how a `JSON` response handler might be implemented:
+
+```swift
+extension DataRequest {
+
+    @discardableResult
+    func responseJSON(client: Client,
+                      endpoint: Endpoint,
+                      completion: @escaping (Response<Any>) -> ()) -> Self {
+        return response(client: client,
+                        endpoint: endpoint,
+                        serializer: DataRequest.jsonResponseSerializer(),
+                        completion: completion)
+    }
+
+}
+```
+
+To facilitate the process of executing requests, you should add a method like this to the `Client`:
+
+```swift
+extension Client {
+
+    @discardableResult
+    func execute(_ endpoint: Endpoint, completion: @escaping (Response<Any>) -> ()) -> DataRequest? {
+        do {
+            let request = try self.request(for: endpoint)
+            return request.responseJSON(client: self, endpoint: endpoint, completion: completion)
+        } catch {
+            completion(.failure(Error.encoding(error)))
+            return nil
+        }
+    }
+
+}
+```
+
+An example of the result of these extensions could be:
+
+```swift
+client.execute(APIEndpoint.readAllUsers) { (response: Response<Any>) in
+    // Here, in case of a successful response, the `response.value` is of the type `Any`.
+}
+```
+
+Now, you are able to create your own `DataResponseSerializer` and use all the features of `Leash`!
 
 ### Authenticator
 
@@ -185,24 +232,34 @@ let manager = Manager.Builder()
     .build()
 ```
 
-Now, you have all your requests authenticated. But, are you wondering about token expiration? [Here](#completion) is the solution (the last example)!
+Now, you have all your requests authenticated. But, are you wondering about token expiration? [Here](#completion) is the solution!
 
 ### Interceptors
 
-Now, it is the moment of the most powerful tool of this framework. The `Interceptors` gives you the capability to intercept the requests in different moments of its life cycle. There are four different moments to be explicit:
+Now, it is the moment of the most powerful tool of this framework. The `Interceptors` gives you the capability to intercept the requests in different moments of its life cycle. There are five different moments to be explicit:
 
 - Execution: called before a request is executed.
 - Failure: called when there is a problem executing a request.
 - Success: called when there is no problem executing a request.
 - Completion: called before the completion handler.
+- Serialization: called after a serialization operation.
 
-As you may deduce, three types of `Interceptors` are called in every request (`Execution`, `Failure` or `Success`, `Completion`).
+Three types of `Interceptors` are called in every request (`Execution`, `Failure` or `Success`, `Completion`). Also, there is one more type that is called depending if you are serializing the response or not (`Serialization`).
 
 The `Manager` can store as many `Interceptors` as you need. And, at the moment of being called, it is done one per time, asynchronously, in a queue order (the same order in which they were added). In case that one of any type is completed requesting to finish the operation, no more `Interceptors` of that type are called.
 
 One of the best advantages is that the `Interceptors` does not depend between them to work. So, any of them is a piece that can be taken out of your project at any moment (without having to deal with compilation issues). Moreover, you can take any of these pieces and reuse them in any other project without having to make changes at all!
 
 Below I will show you how to interact with the different types with some examples. There are a lot more use cases, it is up to you and your requirements!
+
+Just as a reminder, do not forget to add the `Interceptors` to the `Manager`, like this:
+
+```swift
+let manager = Manager.Builder()
+    { ... }
+    .add(interceptor: Interceptor())
+    .build()
+```
 
 #### Execution
 
@@ -213,7 +270,7 @@ First, the simplest one, we need to log every request that is executed:
 ```swift
 class LoggerInterceptor: ExecutionInterceptor {
 
-    func intercept<T>(chain: InterceptorChain<T>) {
+    func intercept(chain: InterceptorChain<Data>) {
         defer { chain.proceed() }
         guard let request = chain.request.request,
             let method = request.httpMethod,
@@ -230,12 +287,12 @@ Now, one more complex, but not more difficult to implement:
 ```swift
 class CacheInterceptor: ExecutionInterceptor {
 
-    func intercept<T>(chain: InterceptorChain<T>) {
+    func intercept(chain: InterceptorChain<Data>) {
         // On that case, the cache controller may need to finish the operation or not (depending on the policies).
         // So, we can easily tell the chain wether the operation should be finished or not.
         defer { chain.proceed() }
-        guard let cachedResponse: (T, Bool) = try? CacheController().cachedResponse(for: chain.endpoint) else { return }
-        chain.complete(with: cachedResponse.0, finish: cachedResponse.1)
+        guard let cachedResponse = try? CacheController().cachedResponse(for: chain.endpoint) else { return }
+        chain.complete(with: cachedResponse.data, finish: cachedResponse.finish)
     }
 
 }
@@ -248,10 +305,10 @@ Basically, the purpose of this `Interceptor` is to intercept when `Alamofire` re
 ```swift
 class ErrorValidator: FailureInterceptor {
 
-    func intercept<T>(chain: InterceptorChain<T>, error: Swift.Error) {
+    func intercept(chain: InterceptorChain<Data>, error: Swift.Error) {
         defer { chain.proceed() }
-        guard case SomeError.some = error else { return }
-        chain.complete(with: SomeError.another)
+        guard case Error.some = error else { return }
+        chain.complete(with: Error.another)
     }
 
 }
@@ -266,9 +323,8 @@ We know that, sometimes, the `API` could retrieve a custom error with more infor
 ```swift
 class BodyValidator: SuccessInterceptor {
 
-    func intercept<T>(chain: InterceptorChain<T>, response: DefaultDataResponse) {
+    func intercept(chain: InterceptorChain<Data>, response: HTTPURLResponse, data: Data) {
         defer { chain.proceed() }
-        guard let data = response.data else { return }
 
         if let error = try? chain.client.manager.jsonDecoder.decode(APIError.self, from: data) {
             chain.complete(with: Error.server(error))
@@ -283,13 +339,12 @@ Maybe, there is no custom error, but we still need to validate the status code o
 ```swift
 class ResponseValidator: SuccessInterceptor {
 
-    func intercept<T>(chain: InterceptorChain<T>, response: DefaultDataResponse) {
+    func intercept(chain: InterceptorChain<Data>, response: HTTPURLResponse, data: Data) {
         defer { chain.proceed() }
-        guard let statusCode = response.response?.statusCode else { return }
 
         let error: Error
 
-        switch statusCode {
+        switch response.statusCode {
             // You should match your errors here.
             case 200...299: return
             case 401, 403: error = .unauthorized
@@ -304,14 +359,14 @@ class ResponseValidator: SuccessInterceptor {
 
 #### Completion
 
-The purpose of this `Interceptor` is to intercept before the completion handler is called. Let me show you three examples:
+The purpose of this `Interceptor` is to intercept before the completion handler is called. Let me show you two examples:
 
 Again, the simplest one, we need to log every response:
 
 ```swift
 class LoggerInterceptor: CompletionInterceptor {
 
-    func intercept<T>(chain: InterceptorChain<T>, response: Response<T>) {
+    func intercept(chain: InterceptorChain<Data>, response: Response<Data>) {
         defer { chain.proceed() }
         guard let request = chain.request.request,
             let method = request.httpMethod,
@@ -329,30 +384,16 @@ class LoggerInterceptor: CompletionInterceptor {
 }
 ```
 
-We started before with the `CacheController`, right? Well, now we need to update the cache if needed:
-
-```swift
-class CacheInterceptor: CompletionInterceptor {
-
-    func intercept<T>(chain: InterceptorChain<T>, response: Response<T>) {
-        defer { chain.proceed() }
-        guard case .success(let value) = response else { return }
-        CacheController().updateCacheIfNeeded(for: chain.endpoint, value: value)
-    }
-
-}
-```
-
 Now, one more complex, we have to update the `authentication` when expired. There are two options here:
 
-- Use the `Adapter` and `Retrier` provided by `Alamofire`.
-- Use the [Authenticator](#authenticator) and an `Interceptor`! Let me show you how the `Interceptor` should look like:
+- Use the [Adapter](https://github.com/Alamofire/Alamofire/tree/4.5.0#requestadapter) and [Retrier](https://github.com/Alamofire/Alamofire/tree/4.5.0#requestretrier) provided by `Alamofire`.
+- Use the [Authenticator](#authenticator) and an `Interceptor`! Let me show you how it should look like:
 
 ```swift
 class AuthenticationValidator: CompletionInterceptor {
 
-    func intercept<T>(chain: InterceptorChain<T>, response: Response<T>) {
-        guard case .failure(let error) = response, case Error.unauthorized = error else {
+    func intercept(chain: InterceptorChain<Data>, response: Response<Data>) {
+        guard let error = response.error, case Error.unauthorized = error else {
             chain.proceed()
             return
         }
@@ -376,6 +417,29 @@ class AuthenticationValidator: CompletionInterceptor {
 }
 ```
 
+#### Serialization
+
+This is the last `Interceptor` in being called. Also, it is optional. It depends if you are [serializing](#decoding) your response or you only need the `Data`. In most cases, you probably do it.
+
+The serialization process is built on top of the process of getting the `Data` from the request. This is why it is called after all the previous `Interceptors`. Let me show you an example:
+
+We started before with the `CacheController`, right? Well, now we need to update the cache in case that the response was serialized successfully:
+
+```swift
+class CacheInterceptor: SerializationInterceptor {
+
+    func intercept<T: DataResponseSerializerProtocol>(chain: InterceptorChain<T.SerializedObject>,
+                                                      response: Response<Data>,
+                                                      result: Result<T.SerializedObject>,
+                                                      serializer: T) {
+        defer { chain.proceed() }
+        guard let value = response.value, result.isSuccess else { return }
+        CacheController().updateCacheIfNeeded(for: chain.endpoint, value: value)
+    }
+
+}
+```
+
 ## Communication
 
 - If you **need help**, open an issue.
@@ -389,4 +453,4 @@ Luciano Polit, lucianopolit@gmail.com
 
 ## License
 
-Leash is available under the MIT license. See the LICENSE file for more info.
+`Leash` is available under the MIT license. See the [LICENSE](https://github.com/LucianoPolit/Leash/blob/master/LICENSE) file for more info.
