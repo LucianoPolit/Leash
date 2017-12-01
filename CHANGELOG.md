@@ -3,13 +3,18 @@ All notable changes to this project will be documented in this file.
 `Leash` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 2.x Releases
-- `2.0.x` Releases - [2.0.0](#200)
+- `2.0.x` Releases - [2.0.0](#200) | [2.0.1](#201)
 
 #### 1.x Releases
 - `1.1.x` Releases - [1.1.0](#110)
 - `1.0.x` Releases - [1.0.0](#100)
 
 ---
+
+## [2.0.1](https://github.com/LucianoPolit/Leash/releases/tag/2.0.1)
+Released on 2017-12-01.
+
+- Addition of some typealiases to avoid unnecessary imports.
 
 ## [2.0.0](https://github.com/LucianoPolit/Leash/releases/tag/2.0.0)
 Released on 2017-11-30.
