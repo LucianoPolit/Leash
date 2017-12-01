@@ -8,7 +8,6 @@
 
 import Foundation
 import Leash
-import Alamofire
 
 class Client<Target: Endpoint>: Leash.Client {
     

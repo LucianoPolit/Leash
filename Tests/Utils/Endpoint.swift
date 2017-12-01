@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Alamofire
 @testable import Leash
 
 struct Endpoint: Leash.Endpoint {

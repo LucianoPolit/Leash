@@ -23,7 +23,6 @@
 //
 
 import Foundation
-import Alamofire
 
 /// Contains all the information needed to create a request.
 public protocol Endpoint {

@@ -23,7 +23,6 @@
 //
 
 import Foundation
-import Alamofire
 
 /// Contains all the information needed to properly reach an API.
 public class Manager {

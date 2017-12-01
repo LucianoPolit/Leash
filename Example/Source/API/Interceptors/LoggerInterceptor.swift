@@ -8,7 +8,6 @@
 
 import Foundation
 import Leash
-import Alamofire
 
 /// Interceptor responsible for logging the requests and responses.
 class LoggerInterceptor: ExecutionInterceptor, CompletionInterceptor, SerializationInterceptor {

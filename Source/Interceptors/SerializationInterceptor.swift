@@ -23,7 +23,6 @@
 //
 
 import Foundation
-import Alamofire
 
 /// Interceptor that is called after a serialization operation.
 public protocol SerializationInterceptor {

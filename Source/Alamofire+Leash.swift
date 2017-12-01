@@ -25,6 +25,17 @@
 import Foundation
 import Alamofire
 
+/// Specific type of `Request` that manages an underlying `URLSessionDataTask`.
+public typealias DataRequest = Alamofire.DataRequest
+/// The type in which all data response serializers must conform to in order to serialize a response.
+public typealias DataResponseSerializerProtocol = Alamofire.DataResponseSerializerProtocol
+/// HTTP method definitions.
+public typealias HTTPMethod = Alamofire.HTTPMethod
+/// Used to represent whether a request was successful or encountered an error.
+public typealias Result = Alamofire.Result
+/// Responsible for creating and managing `Request` objects, as well as their underlying `NSURLSession`.
+public typealias SessionManager = Alamofire.SessionManager
+
 // MARK: - Data
 
 extension DataRequest {

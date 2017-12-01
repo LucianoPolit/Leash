@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Alamofire
+import Leash
 
 /// Expenses endpoints of the API that can be reached.
 /// It contains all the information needed to create the requests.

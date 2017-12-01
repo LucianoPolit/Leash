@@ -23,7 +23,6 @@
 //
 
 import Foundation
-import Alamofire
 
 /// Completion handler of the interception.
 typealias InterceptorCompletion<T> = ((response: Response<T>, finish: Bool)?) -> ()
