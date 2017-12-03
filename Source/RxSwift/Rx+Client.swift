@@ -31,14 +31,30 @@ extension Client: ReactiveCompatible { }
 
 extension Reactive where Base: Client {
     
-    public func execute<T: Decodable>(_ endpoint: Endpoint, queue: DispatchQueue? = nil) -> Single<ReactiveResponse<T>> {
+    /// Creates and executes the request for the specified endpoint.
+    ///
+    /// - Parameter endpoint: Contains all the information needed to create the request.
+    /// - Parameter type: The type on which the response has to be decoded.
+    /// - Parameter queue: The queue on which the completion handler is dispatched.
+    ///
+    /// - Returns: A single with the response.
+    public func execute<T: Decodable>(_ endpoint: Endpoint,
+                                      type: ReactiveResponse<T>.Type = ReactiveResponse<T>.self,
+                                      queue: DispatchQueue? = nil) -> Single<ReactiveResponse<T>> {
         return base.execute(endpoint, queue: queue)
     }
     
-    public func execute<T: Decodable>(_ endpoint: Endpoint, queue: DispatchQueue? = nil) -> Observable<T> {
-        return base.execute(endpoint, queue: queue)
-            .asObservable()
-            .withoutExtra()
+    /// Creates and executes the request for the specified endpoint.
+    ///
+    /// - Parameter endpoint: Contains all the information needed to create the request.
+    /// - Parameter type: The type on which the response has to be decoded.
+    /// - Parameter queue: The queue on which the completion handler is dispatched.
+    ///
+    /// - Returns: A single with the value of the response.
+    public func execute<T: Decodable>(_ endpoint: Endpoint,
+                                      type: T.Type = T.self,
+                                      queue: DispatchQueue? = nil) -> Single<T> {
+        return base.execute(endpoint, queue: queue).justValue()
     }
     
 }

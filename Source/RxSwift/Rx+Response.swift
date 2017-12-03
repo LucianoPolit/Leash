@@ -25,17 +25,27 @@
 import Foundation
 import RxSwift
 
+// MARK: - Reactive
+
+/// Type of the response.
 public protocol ReactiveResponseType {
+    /// Type of the value.
     associatedtype Value
+    /// The value of the response.
     var value: Value { get }
+    /// The extra information of the response.
     var extra: Any? { get }
 }
 
+/// Represents a successful response of a request.
 public struct ReactiveResponse<Value>: ReactiveResponseType {
     
+    /// The value of the response.
     public let value: Value
+    /// The extra information of the response.
     public let extra: Any?
     
+    /// Initializes and returns a newly allocated object with the specified parameters.
     init(_ value: Value, _ extra: Any?) {
         self.value = value
         self.extra = extra

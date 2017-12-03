@@ -31,16 +31,57 @@ extension DataRequest: ReactiveCompatible { }
 
 extension Reactive where Base: DataRequest {
     
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// Also, it is responsible for calling the interceptors when needed (all asynchronous and executed in a queue order):
+    ///
+    /// - Execution: called before the request is executed.
+    /// - Failure: called when there is a problem executing the request.
+    /// - Success: called when there is no problem executing the request.
+    /// - Completion: called before the completion handler.
+    /// - Serialization: called after the serialization operation.
+    ///
+    /// Any of the interceptors might have as result to call the completion handler with the specified response.
+    /// Moreover, it could finish the operation if it is required.
+    ///
+    /// - Parameter queue: The queue on which the completion handler is dispatched.
+    /// - Parameter client: The client that created the request. It also contains the interceptors that must be called.
+    /// - Parameter endpoint: The endpoint that was used to create the request.
+    /// - Parameter type: The type on which the response has to be serialized.
+    /// - Parameter serializer: The serializer responsible for serializing the request, response and data.
+    ///
+    /// - Returns: A single with the response.
     public func response<T: DataResponseSerializerProtocol>(queue: DispatchQueue? = nil,
                                                             client: Client,
                                                             endpoint: Endpoint,
+                                                            type: T.SerializedObject.Type = T.SerializedObject.self,
                                                             serializer: T) -> Single<ReactiveResponse<T.SerializedObject>> {
         return base.response(queue: queue, client: client, endpoint: endpoint, serializer: serializer)
     }
     
+    /// Adds a handler to be called once the request has finished.
+    ///
+    /// Also, it is responsible for calling the interceptors when needed (all asynchronous and executed in a queue order):
+    ///
+    /// - Execution: called before the request is executed.
+    /// - Failure: called when there is a problem executing the request.
+    /// - Success: called when there is no problem executing the request.
+    /// - Completion: called before the completion handler.
+    /// - Serialization: called after the serialization operation.
+    ///
+    /// Any of the interceptors might have as result to call the completion handler with the specified response.
+    /// Moreover, it could finish the operation if it is required.
+    ///
+    /// - Parameter queue: The queue on which the completion handler is dispatched.
+    /// - Parameter client: The client that created the request. It also contains the interceptors that must be called.
+    /// - Parameter endpoint: The endpoint that was used to create the request.
+    /// - Parameter type: The type on which the response has to be decoded.
+    ///
+    /// - Returns: A single with the response.
     public func responseDecodable<T: Decodable>(queue: DispatchQueue? = nil,
                                                 client: Client,
-                                                endpoint: Endpoint) -> Single<ReactiveResponse<T>> {
+                                                endpoint: Endpoint,
+                                                type: T.Type = T.self) -> Single<ReactiveResponse<T>> {
         return base.responseDecodable(queue: queue, client: client, endpoint: endpoint)
     }
     
