@@ -17,6 +17,7 @@
     - [Decoding](#decoding)
     - [Authenticator](#authenticator)
     - [Interceptors](#interceptors)
+    - [RxSwift](#rxswift)
 - [Communication](#communication)
 - [Author](#author)
 - [License](#license)
@@ -46,7 +47,11 @@ To run the example project there are two possibilities:
 `Leash` is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your `Podfile`:
 
 ```ruby
-pod 'Leash', '~> 2.0'
+pod 'Leash', '~> 2.1'
+
+# or
+
+pod 'Leash/RxSwift', '~> 2.1'
 ```
 
 ## Usage
@@ -439,6 +444,26 @@ class CacheInterceptor: SerializationInterceptor {
 
 }
 ```
+
+### RxSwift
+
+Do you use [RxSwift](https://github.com/ReactiveX/RxSwift)? There is an extension for that! Let me show you how to use it:
+
+```swift
+client.rx.execute(APIEndpoint.readAllUsers, type: [User].self).subscribe { event in
+    // Do whatever you have to do with the response here.
+}
+```
+
+Ok, that is good. But, what if we just want to call it like this?
+
+```swift
+usersClient.rx.readAll().subscribe { event in
+    // Do whatever you have to do with the response here.
+}
+```
+
+Much simpler, again, huh? As mentioned before, to keep your project as simple and clean as possible, follow the architecture of the [example project](#example).
 
 ## Communication
 
