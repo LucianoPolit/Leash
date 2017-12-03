@@ -342,7 +342,7 @@ private extension AlamofireLeashTests {
     
 }
 
-private protocol MockInterceptor: class {
+protocol MockInterceptor: class {
     associatedtype T
     var completion: ((InterceptorChain<T>?) -> ())? { get set }
     var interceptCalled: Bool { get }

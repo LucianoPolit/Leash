@@ -207,8 +207,8 @@ extension ClientTests {
     }
     
     func testExecuteCallsResponse() {
-        let endpoint = Endpoint(path: "response/123")
         let expectation = self.expectation(description: "Expected to find a success response")
+        let endpoint = Endpoint(path: "response/123")
         let json = ["some" : "123"]
         stub(condition: isEndpoint(endpoint)) { _ in
             return OHHTTPStubsResponse(jsonObject: json, statusCode: 200, headers: nil)
@@ -218,7 +218,7 @@ extension ClientTests {
                 XCTFail()
                 return
             }
-            XCTAssertEqual(result.value, ["some" : "123"])
+            XCTAssertEqual(result.value, json)
             expectation.fulfill()
         }
         waitForExpectations(timeout: 5)
@@ -231,8 +231,8 @@ extension ClientTests {
 extension ClientTests {
     
     func testEncodingError() {
-        let endpoint = Endpoint(method: .post, parameters: Data())
         let expectation = self.expectation(description: "Expected to find a failure response")
+        let endpoint = Endpoint(method: .post, parameters: Data())
         client.execute(endpoint) { (response: Response<Data>) in
             guard case .failure(let error) = response, case Leash.Error.encoding = error else {
                 XCTFail()
@@ -247,7 +247,7 @@ extension ClientTests {
 
 // MARK: - Utils
 
-private class MockSessionManager: SessionManager {
+class MockSessionManager: SessionManager {
     
     var requestCalled = false
     var requestParameterURLRequest: URLRequestConvertible?

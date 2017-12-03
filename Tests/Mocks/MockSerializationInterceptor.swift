@@ -22,10 +22,10 @@ class MockSerializationInterceptor<U>: SerializationInterceptor {
     var interceptParameterResponse: Response<Data>?
     var interceptParameterResult: Result<U>?
     
-    func intercept<T>(chain: InterceptorChain<T.SerializedObject>,
-                      response: Response<Data>,
-                      result: Result<T.SerializedObject>,
-                      serializer: T) where T : DataResponseSerializerProtocol {
+    func intercept<T: DataResponseSerializerProtocol>(chain: InterceptorChain<T.SerializedObject>,
+                                                      response: Response<Data>,
+                                                      result: Result<T.SerializedObject>,
+                                                      serializer: T) {
         interceptCalled = true
         interceptParameterChain = chain as? InterceptorChain<U>
         interceptParameterResponse = response

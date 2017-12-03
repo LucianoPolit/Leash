@@ -21,6 +21,9 @@
 		E25AD4801FBB6DB500E843B6 /* Alamofire+Leash+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25AD47E1FBB6DAF00E843B6 /* Alamofire+Leash+Tests.swift */; };
 		E273165C1FBB5DC600FC20CE /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E273165B1FBB5DC600FC20CE /* Info.plist */; };
 		E273165F1FBB5F8D00FC20CE /* Authenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E273165D1FBB5F8500FC20CE /* Authenticator.swift */; };
+		E29E99991FD4064C002A1C6F /* Rx+Alamofire+Leash+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29E99971FD40632002A1C6F /* Rx+Alamofire+Leash+Tests.swift */; };
+		E29E999E1FD41800002A1C6F /* Rx+Response+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29E999C1FD417E7002A1C6F /* Rx+Response+Tests.swift */; };
+		E29E999F1FD41818002A1C6F /* Rx+Client+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29E999A1FD417DD002A1C6F /* Rx+Client+Tests.swift */; };
 		E2B7CFD71FBB71E1009FA962 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B7CFD51FBB71B8009FA962 /* BaseTestCase.swift */; };
 		E2B8F8D41FB77EF500B2A60A /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D31FB77EF500B2A60A /* API.swift */; };
 		E2B8F8D61FB77EFF00B2A60A /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D51FB77EFF00B2A60A /* APIError.swift */; };
@@ -84,6 +87,9 @@
 		E25AD4831FBB6DE600E843B6 /* InterceptorsExecutorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterceptorsExecutorTests.swift; sourceTree = "<group>"; };
 		E273165B1FBB5DC600FC20CE /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E273165D1FBB5F8500FC20CE /* Authenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authenticator.swift; sourceTree = "<group>"; };
+		E29E99971FD40632002A1C6F /* Rx+Alamofire+Leash+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rx+Alamofire+Leash+Tests.swift"; sourceTree = "<group>"; };
+		E29E999A1FD417DD002A1C6F /* Rx+Client+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rx+Client+Tests.swift"; sourceTree = "<group>"; };
+		E29E999C1FD417E7002A1C6F /* Rx+Response+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rx+Response+Tests.swift"; sourceTree = "<group>"; };
 		E2B7CFD51FBB71B8009FA962 /* BaseTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 		E2B8F8D31FB77EF500B2A60A /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		E2B8F8D51FB77EFF00B2A60A /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
@@ -160,6 +166,16 @@
 				E2320C0B1FBB0A0A002049C9 /* Entity.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		E29E99961FD405EF002A1C6F /* RxSwift */ = {
+			isa = PBXGroup;
+			children = (
+				E29E99971FD40632002A1C6F /* Rx+Alamofire+Leash+Tests.swift */,
+				E29E999A1FD417DD002A1C6F /* Rx+Client+Tests.swift */,
+				E29E999C1FD417E7002A1C6F /* Rx+Response+Tests.swift */,
+			);
+			path = RxSwift;
 			sourceTree = "<group>";
 		};
 		E2B8F8D21FB77ED900B2A60A /* API */ = {
@@ -267,6 +283,7 @@
 		F1C238701DF5A93D00D68ED3 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				E29E99961FD405EF002A1C6F /* RxSwift */,
 				E2320BE91FB98B37002049C9 /* Mocks */,
 				E2320BFD1FBB05D2002049C9 /* Utils */,
 				E25AD47E1FBB6DAF00E843B6 /* Alamofire+Leash+Tests.swift */,
@@ -415,14 +432,17 @@
 				E2320C061FBB0672002049C9 /* MockCompletionInterceptor.swift in Sources */,
 				E2B7CFD71FBB71E1009FA962 /* BaseTestCase.swift in Sources */,
 				E2FE52B11FCD7AF500032064 /* MockSerializationInterceptor.swift in Sources */,
+				E29E99991FD4064C002A1C6F /* Rx+Alamofire+Leash+Tests.swift in Sources */,
 				E2320C081FBB0678002049C9 /* MockFailureInterceptor.swift in Sources */,
 				E2F50F241FCC64C800296FB7 /* ManagerTests.swift in Sources */,
 				E2320C101FBB1629002049C9 /* Entity.swift in Sources */,
+				E29E999E1FD41800002A1C6F /* Rx+Response+Tests.swift in Sources */,
 				E25AD4801FBB6DB500E843B6 /* Alamofire+Leash+Tests.swift in Sources */,
 				E237D16C1FBB80DC0036ED66 /* InterceptorsExecutorTests.swift in Sources */,
 				E273165F1FBB5F8D00FC20CE /* Authenticator.swift in Sources */,
 				E2320C051FBB066F002049C9 /* Endpoint.swift in Sources */,
 				E2F50F2B1FCD602800296FB7 /* ResponseTests.swift in Sources */,
+				E29E999F1FD41818002A1C6F /* Rx+Client+Tests.swift in Sources */,
 				E2320C071FBB0675002049C9 /* MockExecutionInterceptor.swift in Sources */,
 				E2320C091FBB067B002049C9 /* MockSuccessInterceptor.swift in Sources */,
 				E237D16B1FBB80D90036ED66 /* InterceptorChainTests.swift in Sources */,
