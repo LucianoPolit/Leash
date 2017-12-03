@@ -3,9 +3,9 @@ platform :ios, '8.0'
 def myPods
     use_frameworks!
     if ENV['TRAVIS']
-        pod 'Leash', :git => 'https://github.com/lucianopolit/Leash.git', :branch => ENV['TRAVIS_BRANCH']
+        pod 'Leash/RxSwift', :path => '../'
     else
-        pod 'Leash'
+        pod 'Leash/RxSwift'
     end
 end
 
