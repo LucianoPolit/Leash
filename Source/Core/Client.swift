@@ -120,7 +120,7 @@ private extension URLRequest {
     mutating func encode(endpoint: Endpoint, with jsonEncoder: JSONEncoder) throws {
         guard let parameters = endpoint.parameters else { return }
         
-        if endpoint.method.isBodyEncodable, let json = parameters as? [String : Any] {
+        if endpoint.method.isBodyEncodable, let json = parameters as? [String: Any] {
             return try encode(json: json)
         }
         
@@ -128,7 +128,7 @@ private extension URLRequest {
             return try encode(encodable: encodable, with: jsonEncoder)
         }
         
-        if endpoint.method.isQueryEncodable, let query = parameters as? [String : CustomStringConvertible] {
+        if endpoint.method.isQueryEncodable, let query = parameters as? [String: CustomStringConvertible] {
             return try encode(query: query)
         }
         
@@ -137,7 +137,7 @@ private extension URLRequest {
         }
     }
     
-    mutating func encode(json: [String : Any]) throws {
+    mutating func encode(json: [String: Any]) throws {
         self = try JSONEncoding().encode(self, with: json)
     }
     
@@ -146,7 +146,7 @@ private extension URLRequest {
         httpBody = try encodable.encoded(with: jsonEncoder)
     }
     
-    mutating func encode(query: [String : CustomStringConvertible]) throws {
+    mutating func encode(query: [String: CustomStringConvertible]) throws {
         self = try URLEncoding().encode(self, with: query)
     }
     

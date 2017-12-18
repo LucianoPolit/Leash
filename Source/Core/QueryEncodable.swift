@@ -28,5 +28,5 @@ import Foundation
 /// This is to send the information on the URL of the request.
 public protocol QueryEncodable {
     /// Retrieves the information needed.
-    func toQuery() -> [String : CustomStringConvertible]
+    func toQuery() -> [String: CustomStringConvertible]
 }
