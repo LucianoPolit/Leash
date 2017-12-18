@@ -31,7 +31,7 @@ extension ExpensesEndpoint {
         }
     }
     
-    var pathParameters: [String : CustomStringConvertible]? {
+    var pathParameters: [String: CustomStringConvertible]? {
         switch self {
         case .readAll: return nil
         case .create: return nil

@@ -31,7 +31,7 @@ class LoggerInterceptor: ExecutionInterceptor, CompletionInterceptor, Serializat
             let method = request.httpMethod,
             let url = request.url?.absoluteString else { return }
         
-        switch(response) {
+        switch response {
         case .success:
             Logger.shared.logDebug("✔✔✔ \(method) \(url)")
         case .failure(let error):
@@ -51,7 +51,7 @@ class LoggerInterceptor: ExecutionInterceptor, CompletionInterceptor, Serializat
             let method = request.httpMethod,
             let url = request.url?.absoluteString else { return }
         
-        switch(result) {
+        switch result {
         case .success:
             Logger.shared.logDebug("✔✔✔ \(method) \(url) (Serialization)")
         case .failure(let error):

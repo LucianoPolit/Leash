@@ -12,10 +12,6 @@ import Leash
 /// Responsible for configuring all the requirements to reach the API.
 class API {
     
-    // MARK: - Shared
-    
-    static let shared = API(authenticator: APIAuthenticator(id: nil))
-    
     // MARK: - Domain
     
     static let scheme = "http"
@@ -25,8 +21,8 @@ class API {
     
     // MARK: - Properties
     
-    var manager: Manager
-    var authenticator: APIAuthenticator
+    let manager: Manager
+    let authenticator: APIAuthenticator
     
     // MARK: - Clients
     

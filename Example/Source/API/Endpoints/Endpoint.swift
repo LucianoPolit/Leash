@@ -11,7 +11,7 @@ import Leash
 
 protocol Endpoint: Leash.Endpoint {
     var basePath: String { get }
-    var pathParameters: [String : CustomStringConvertible]? { get }
+    var pathParameters: [String: CustomStringConvertible]? { get }
 }
 
 extension Endpoint {
