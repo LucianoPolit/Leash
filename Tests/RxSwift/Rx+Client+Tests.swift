@@ -33,11 +33,11 @@ extension ClientTests {
         let expectation = self.expectation(description: "Expected to find a success response")
         let disposeBag = DisposeBag()
         let endpoint = Endpoint(path: "response/123")
-        let json = ["some" : "123"]
+        let json = ["some": "123"]
         stub(condition: isEndpoint(endpoint)) { _ in
             return OHHTTPStubsResponse(jsonObject: json, statusCode: 200, headers: nil)
         }
-        let single: Single<[String : String]> = client.rx.execute(endpoint)
+        let single: Single<[String: String]> = client.rx.execute(endpoint)
         single
             .subscribe(onSuccess: { value in
                 XCTAssertEqual(value, json)
@@ -57,7 +57,7 @@ extension ClientTests {
         let expectation = self.expectation(description: "Expected to find a failure response")
         let disposeBag = DisposeBag()
         let endpoint = Endpoint(method: .post, parameters: Data())
-        let single: Single<ReactiveResponse<Data>> = client.rx.execute(endpoint)
+        let single: Single<ReactiveResponse<Data>> = FailureClient(manager: manager).rx.execute(endpoint)
         single
             .subscribe(onError: { error in
                 guard case Leash.Error.encoding = error else {

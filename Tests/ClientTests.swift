@@ -114,7 +114,7 @@ extension ClientTests {
             let urlRequest = try client.urlRequest(for: endpoint)
             guard let body = urlRequest.httpBody else { return XCTFail() }
             let decoded = try manager.jsonDecoder.decode(DatedEntity.self, from: body)
-            let dictionary = try JSONSerialization.jsonObject(with: body) as? [String : Any]
+            let dictionary = try JSONSerialization.jsonObject(with: body) as? [String: Any]
             XCTAssertEqual(decoded, entity)
             XCTAssertEqual(dictionary?["date"] as? String, "1970-01-01T00:01:40.0Z")
         }
@@ -131,13 +131,13 @@ extension ClientTests {
         assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
             guard let body = urlRequest.httpBody else { return XCTFail() }
-            let dictionary = try JSONSerialization.jsonObject(with: body) as? [String : Any]
+            let dictionary = try JSONSerialization.jsonObject(with: body) as? [String: Any]
             XCTAssertEqual(dictionary?["date"] as? String, "1970-01-01T00:01:40Z")
         }
     }
     
     func testBodyWithDictionary() {
-        let entity: [String : Any] = PrimitiveEntity(first: "some", second: 10, third: true).toJSON()
+        let entity: [String: Any] = PrimitiveEntity(first: "some", second: 10, third: true).toJSON()
         let endpoint = Endpoint(method: .post, parameters: entity)
         assertNoErrorThrown {
             let urlRequest = try client.urlRequest(for: endpoint)
@@ -209,11 +209,11 @@ extension ClientTests {
     func testExecuteCallsResponse() {
         let expectation = self.expectation(description: "Expected to find a success response")
         let endpoint = Endpoint(path: "response/123")
-        let json = ["some" : "123"]
+        let json = ["some": "123"]
         stub(condition: isEndpoint(endpoint)) { _ in
             return OHHTTPStubsResponse(jsonObject: json, statusCode: 200, headers: nil)
         }
-        client.execute(endpoint) { (response: Response<[String : String]>) in
+        client.execute(endpoint) { (response: Response<[String: String]>) in
             guard case .success(let result) = response else {
                 XCTFail()
                 return
@@ -233,7 +233,7 @@ extension ClientTests {
     func testEncodingError() {
         let expectation = self.expectation(description: "Expected to find a failure response")
         let endpoint = Endpoint(method: .post, parameters: Data())
-        client.execute(endpoint) { (response: Response<Data>) in
+        FailureClient(manager: manager).execute(endpoint) { (response: Response<Data>) in
             guard case .failure(let error) = response, case Leash.Error.encoding = error else {
                 XCTFail()
                 return
@@ -256,6 +256,14 @@ class MockSessionManager: SessionManager {
         requestCalled = true
         requestParameterURLRequest = urlRequest
         return super.request(urlRequest)
+    }
+    
+}
+
+class FailureClient: Client {
+    
+    override func urlRequest(for endpoint: Leash.Endpoint) throws -> URLRequest {
+        throw Leash.Error.unknown
     }
     
 }

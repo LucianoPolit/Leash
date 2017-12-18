@@ -15,11 +15,11 @@ struct PrimitiveEntity: Codable, Equatable {
     let second: Int
     let third: Bool
     
-    func toJSON() -> [String : Any] {
+    func toJSON() -> [String: Any] {
         return [
-            "first" : first,
-            "second" : second,
-            "third" : third
+            "first": first,
+            "second": second,
+            "third": third
         ]
     }
     
@@ -45,11 +45,11 @@ struct QueryEntity: QueryEncodable {
     let second: Int
     let third: Bool
     
-    func toQuery() -> [String : CustomStringConvertible] {
+    func toQuery() -> [String: CustomStringConvertible] {
         return [
-            "first" : first,
-            "second" : second,
-            "third" : third
+            "first": first,
+            "second": second,
+            "third": third
         ]
     }
     
