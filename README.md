@@ -97,17 +97,17 @@ Much simpler, huh? To keep your project as simple and clean as possible, follow 
 
 Now that you know how to execute the requests you may be asking how to configure the parameters (because `Any` is accepted). There are different options depending if the endpoint is query or body encodable:
 
-- Query types: `QueryEncodable` or `[String : CustomStringConvertible]`.
-- Body types: `Encodable` or `[String : Any]`.
+- Query types: `QueryEncodable` or `[String: CustomStringConvertible]`.
+- Body types: `Encodable` or `[String: Any]`.
 
 Here is an example with all the possibilities:
 
 ```swift
 enum APIEndpoint {
     case first(QueryEncodable)
-    case second([String : CustomStringConvertible])
+    case second([String: CustomStringConvertible])
     case third(Encodable)
-    case fourth([String : Any])
+    case fourth([String: Any])
 }
 
 extension APIEndpoint: Endpoint {
@@ -128,9 +128,9 @@ extension APIEndpoint: Endpoint {
     var parameters: Any? {
         switch self {
         case .first(let request): return request // This is `QueryEncodable`.
-        case .second(let request): return request // This is `[String : CustomStringConvertible]`.
+        case .second(let request): return request // This is `[String: CustomStringConvertible]`.
         case .third(let request): return request // This is `Encodable`.
-        case .fourth(let request): return request // This is `[String : Any]`.
+        case .fourth(let request): return request // This is `[String: Any]`.
         }
     }
     
@@ -139,8 +139,8 @@ extension APIEndpoint: Endpoint {
 
 Three different classes are being used to encode the parameters:
 
-- [URLEncoding](https://github.com/Alamofire/Alamofire/tree/4.5.0#url-encoding): to encode `QueryEncodable` and `[String : CustomStringConvertible]`.
-- [JSONEncoding](https://github.com/Alamofire/Alamofire/tree/4.5.0#json-encoding): to encode `[String : Any]`.
+- [URLEncoding](https://github.com/Alamofire/Alamofire/tree/4.5.0#url-encoding): to encode `QueryEncodable` and `[String: CustomStringConvertible]`.
+- [JSONEncoding](https://github.com/Alamofire/Alamofire/tree/4.5.0#json-encoding): to encode `[String: Any]`.
 - [JSONEncoder](https://developer.apple.com/documentation/foundation/jsonencoder): to encode `Encodable`.
 
 In case you want to encode the parameters in a different way, you have to override the method `Client.urlRequest(for:)`.
@@ -377,7 +377,7 @@ class LoggerInterceptor: CompletionInterceptor {
             let method = request.httpMethod,
             let url = request.url?.absoluteString else { return }
 
-        switch(response) {
+        switch response {
         case .success(_):
             Logger.shared.logDebug("✔✔✔ \(method) \(url)")
         case .failure(let error):
