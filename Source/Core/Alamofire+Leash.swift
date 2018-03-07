@@ -152,8 +152,8 @@ extension DataRequest {
     /// Creates a response serializer that returns a decoded object result type
     /// constructed from the response data using the specified JSON decoder.
     public static func decodableResponseSerializer<T: Decodable>(jsonDecoder: JSONDecoder) -> DataResponseSerializer<T> {
-        return DataResponseSerializer { _, _, data, _ in
-            guard let data = data else { return .failure(Error.unknown) }
+        return DataResponseSerializer { _, _, data, error in
+            guard let data = data else { return .failure(error ?? Error.unknown) }
             
             do {
                 let value = try jsonDecoder.decode(T.self, from: data)
