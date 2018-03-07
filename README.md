@@ -3,7 +3,6 @@
 [![Version](https://img.shields.io/cocoapods/v/Leash.svg)](http://cocoapods.org/pods/Leash)
 [![Build](https://api.travis-ci.org/LucianoPolit/Leash.svg)](https://travis-ci.org/LucianoPolit/Leash)
 [![Coverage](https://codecov.io/gh/LucianoPolit/Leash/graph/badge.svg)](https://codecov.io/gh/LucianoPolit/Leash)
-[![Documentation](https://img.shields.io/cocoapods/metrics/doc-percent/Leash.svg)](http://cocoadocs.org/docsets/Leash)
 
 ## Index
 
