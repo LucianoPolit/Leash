@@ -90,7 +90,7 @@ extension InterceptorChain {
     /// Completes the interception with the specified tuple.
     private func complete(_ tuple: (Response<T>, Bool)?) {
         guard !completed else { return }
-        completed = true
+        completed = tuple?.1 ?? true
         completion(tuple)
     }
     
