@@ -67,22 +67,6 @@ extension InterceptorChainTests {
         XCTAssertEqual(count, 1)
     }
     
-    func testFinishFalse() {
-        XCTAssertEqual(count, 0)
-        chain.complete(with: Data(), finish: false)
-        chain.complete(with: Data(), finish: false)
-        chain.complete(with: Data(), finish: false)
-        XCTAssertEqual(count, 3)
-    }
-    
-    func testFinishTrue() {
-        XCTAssertEqual(count, 0)
-        chain.complete(with: Data(), finish: false)
-        chain.complete(with: Data(), finish: true)
-        chain.complete(with: Data())
-        XCTAssertEqual(count, 2)
-    }
-    
 }
 
 // MARK: - Result
