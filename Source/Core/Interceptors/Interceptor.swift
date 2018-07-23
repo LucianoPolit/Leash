@@ -1,5 +1,5 @@
 //
-//  Error.swift
+//  Interceptor.swift
 //
 //  Copyright (c) 2017-2018 Luciano Polit <lucianopolit@gmail.com>
 //
@@ -24,12 +24,5 @@
 
 import Foundation
 
-/// Represents the possible errors that can be produced by Leash.
-public enum Error: Swift.Error {
-    /// Represents that an encoding error has occurred.
-    case encoding(Swift.Error)
-    /// Represents that a decoding error has occurred.
-    case decoding(Swift.Error)
-    /// Represents that something unexpected has occurred.
-    case unknown
-}
+/// Interceptor.
+public protocol Interceptor { }

@@ -1,7 +1,7 @@
 //
 //  SuccessInterceptor.swift
 //
-//  Copyright (c) 2017 Luciano Polit <lucianopolit@gmail.com>
+//  Copyright (c) 2017-2018 Luciano Polit <lucianopolit@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 import Foundation
 
 /// Interceptor that is called when there is no problem executing a request.
-public protocol SuccessInterceptor {
+public protocol SuccessInterceptor: Interceptor {
     /// Main method responsible for handling the interception.
     func intercept(chain: InterceptorChain<Data>, response: HTTPURLResponse, data: Data)
 }

@@ -1,7 +1,7 @@
 //
 //  Manager.swift
 //
-//  Copyright (c) 2017 Luciano Polit <lucianopolit@gmail.com>
+//  Copyright (c) 2017-2018 Luciano Polit <lucianopolit@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -135,33 +135,13 @@ public class Manager {
             return self
         }
         
-        /// Adds an execution interceptor.
-        public func add(interceptor: ExecutionInterceptor) -> Self {
-            executionInterceptors.append(interceptor)
-            return self
-        }
-        
-        /// Adds a failure interceptor.
-        public func add(interceptor: FailureInterceptor) -> Self {
-            failureInterceptors.append(interceptor)
-            return self
-        }
-        
-        /// Adds a success interceptor.
-        public func add(interceptor: SuccessInterceptor) -> Self {
-            successInterceptors.append(interceptor)
-            return self
-        }
-        
-        /// Adds a completion interceptor.
-        public func add(interceptor: CompletionInterceptor) -> Self {
-            completionInterceptors.append(interceptor)
-            return self
-        }
-        
-        /// Adds a serialization interceptor.
-        public func add(interceptor: SerializationInterceptor) -> Self {
-            serializationInterceptors.append(interceptor)
+        /// Adds an interceptor.
+        public func add(interceptor: Interceptor) -> Self {
+            executionInterceptors.appendIfPossible(interceptor)
+            failureInterceptors.appendIfPossible(interceptor)
+            successInterceptors.appendIfPossible(interceptor)
+            completionInterceptors.appendIfPossible(interceptor)
+            serializationInterceptors.appendIfPossible(interceptor)
             return self
         }
         
@@ -217,6 +197,15 @@ private extension URL {
         }
         
         self.init(string: baseURL)
+    }
+    
+}
+
+private extension Array {
+    
+    mutating func appendIfPossible(_ newElement: Any) {
+        guard let newElement = newElement as? Element else { return }
+        append(newElement)
     }
     
 }

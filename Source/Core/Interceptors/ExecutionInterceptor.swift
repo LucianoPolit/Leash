@@ -1,7 +1,7 @@
 //
 //  ExecutionInterceptor.swift
 //
-//  Copyright (c) 2017 Luciano Polit <lucianopolit@gmail.com>
+//  Copyright (c) 2017-2018 Luciano Polit <lucianopolit@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 import Foundation
 
 /// Interceptor that is called before a request is executed.
-public protocol ExecutionInterceptor {
+public protocol ExecutionInterceptor: Interceptor {
     /// Main method responsible for handling the interception.
     func intercept(chain: InterceptorChain<Data>)
 }

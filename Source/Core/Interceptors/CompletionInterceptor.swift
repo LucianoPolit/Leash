@@ -1,7 +1,7 @@
 //
 //  CompletionInterceptor.swift
 //
-//  Copyright (c) 2017 Luciano Polit <lucianopolit@gmail.com>
+//  Copyright (c) 2017-2018 Luciano Polit <lucianopolit@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 import Foundation
 
 /// Interceptor that is called before the completion handler.
-public protocol CompletionInterceptor {
+public protocol CompletionInterceptor: Interceptor {
     /// Main method responsible for handling the interception.
     func intercept(chain: InterceptorChain<Data>, response: Response<Data>)
 }
