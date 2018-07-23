@@ -32,7 +32,6 @@ class API {
     
     init(authenticator: APIAuthenticator) {
         self.authenticator = authenticator
-        let logger = LoggerInterceptor()
         manager = Manager.Builder()
             .scheme(API.scheme)
             .host(API.host)
@@ -42,9 +41,7 @@ class API {
             .jsonDateFormatter(APIDateFormatter)
             .add(interceptor: BodyValidator())
             .add(interceptor: ResponseValidator())
-            .add(interceptor: logger as ExecutionInterceptor)
-            .add(interceptor: logger as CompletionInterceptor)
-            .add(interceptor: logger as SerializationInterceptor)
+            .add(interceptor: LoggerInterceptor())
             .build()
         expenses = ExpensesClient(manager: manager)
     }
