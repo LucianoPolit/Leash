@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Leash` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 2.x Releases
+- `2.2.x` Releases - [2.2.0](#220)
 - `2.1.x` Releases - [2.1.0](#210) | [2.1.1](#211) | [2.1.2](#212) | ~~[2.1.3](#213)~~ | [2.1.4](#214)
 - `2.0.x` Releases - [2.0.0](#200) | [2.0.1](#201)
 
@@ -11,6 +12,14 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100)
 
 ---
+
+## [2.2.0](https://github.com/LucianoPolit/Leash/releases/tag/2.2.0)
+Released on 2018-07-25.
+
+- Addition of `Interceptors` module. It contains three customizable `Interceptors`:
+    - `LoggerInterceptor`.
+    - `BodyValidator`.
+    - `CacheInterceptor`.
 
 ## [2.1.4](https://github.com/LucianoPolit/Leash/releases/tag/2.1.4)
 Released on 2018-07-23.

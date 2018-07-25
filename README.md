@@ -46,11 +46,9 @@ To run the example project there are two possibilities:
 `Leash` is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your `Podfile`:
 
 ```ruby
-pod 'Leash', '~> 2.1'
-
-# or
-
-pod 'Leash/RxSwift', '~> 2.1'
+pod 'Leash', '~> 2.2'
+pod 'Leash/RxSwift', '~> 2.2'
+pod 'Leash/Interceptors', '~> 2.2'
 ```
 
 ## Usage
