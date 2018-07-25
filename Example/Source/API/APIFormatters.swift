@@ -9,8 +9,15 @@
 import Foundation
 
 /// Date formatter with the format that the API requires.
-var APIDateFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SZ"
-    return formatter
-}()
+class APIDateFormatter: DateFormatter {
+    
+    override init() {
+        super.init()
+        dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SZ"
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+}

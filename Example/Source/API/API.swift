@@ -38,10 +38,11 @@ class API {
             .port(API.port)
             .path(API.path)
             .authenticator(authenticator)
-            .jsonDateFormatter(APIDateFormatter)
+            .jsonDateFormatter(APIDateFormatter())
+            .add(interceptor: LoggerInterceptor())
             .add(interceptor: BodyValidator())
             .add(interceptor: ResponseValidator())
-            .add(interceptor: LoggerInterceptor())
+            .add(interceptor: CacheInterceptor())
             .build()
         expenses = ExpensesClient(manager: manager)
     }

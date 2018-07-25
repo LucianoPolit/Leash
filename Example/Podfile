@@ -3,9 +3,13 @@ platform :ios, '8.0'
 def myPods
     use_frameworks!
     if ENV['TRAVIS']
+        pod 'Leash', :path => '../'
         pod 'Leash/RxSwift', :path => '../'
+        pod 'Leash/Interceptors', :path => '../'
     else
+        pod 'Leash'
         pod 'Leash/RxSwift'
+        pod 'Leash/Interceptors'
     end
 end
 
