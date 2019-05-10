@@ -31,6 +31,7 @@
 		BC2C0DBC223829BD00F31192 /* Rx+Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2C0DA3223829BD00F31192 /* Rx+Response.swift */; };
 		BC2C0DBD223829BD00F31192 /* Rx+Alamofire+Leash.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2C0DA4223829BD00F31192 /* Rx+Alamofire+Leash.swift */; };
 		BC2C0DC9223829EF00F31192 /* Leash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCC1330C223828FD004A7E21 /* Leash.framework */; };
+		BC4D65382285B4010004BE7D /* OHHTTPStubs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC4D65372285B4010004BE7D /* OHHTTPStubs.framework */; };
 		BC81677B22382A43007AFE82 /* Alamofire+Leash+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC81676222382A42007AFE82 /* Alamofire+Leash+Tests.swift */; };
 		BC81677C22382A43007AFE82 /* MockSerializationInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC81676422382A42007AFE82 /* MockSerializationInterceptor.swift */; };
 		BC81677D22382A43007AFE82 /* MockSuccessInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC81676522382A42007AFE82 /* MockSuccessInterceptor.swift */; };
@@ -97,6 +98,7 @@
 		BC2C0DA6223829BD00F31192 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC2C0DC4223829EF00F31192 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC2C0DC8223829EF00F31192 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BC4D65372285B4010004BE7D /* OHHTTPStubs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OHHTTPStubs.framework; path = Carthage/Build/iOS/OHHTTPStubs.framework; sourceTree = "<group>"; };
 		BC81676222382A42007AFE82 /* Alamofire+Leash+Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Alamofire+Leash+Tests.swift"; sourceTree = "<group>"; };
 		BC81676422382A42007AFE82 /* MockSerializationInterceptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockSerializationInterceptor.swift; sourceTree = "<group>"; };
 		BC81676522382A42007AFE82 /* MockSuccessInterceptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockSuccessInterceptor.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC8167A222382C33007AFE82 /* Alamofire.framework in Frameworks */,
+				BC4D65382285B4010004BE7D /* OHHTTPStubs.framework in Frameworks */,
 				BC2C0DC9223829EF00F31192 /* Leash.framework in Frameworks */,
 				BC81679C22382C33007AFE82 /* RxSwift.framework in Frameworks */,
 			);
@@ -275,6 +278,7 @@
 			isa = PBXGroup;
 			children = (
 				BC81679722382C33007AFE82 /* Alamofire.framework */,
+				BC4D65372285B4010004BE7D /* OHHTTPStubs.framework */,
 				BC81679422382C33007AFE82 /* RxSwift.framework */,
 			);
 			name = Dependencies;
@@ -320,6 +324,7 @@
 				BC2C0DC0223829EF00F31192 /* Sources */,
 				BC2C0DC1223829EF00F31192 /* Frameworks */,
 				BC2C0DC2223829EF00F31192 /* Resources */,
+				BC4D65392285B4840004BE7D /* Carthage Run Script */,
 			);
 			buildRules = (
 			);
@@ -360,10 +365,11 @@
 				TargetAttributes = {
 					BC2C0DC3223829EF00F31192 = {
 						CreatedOnToolsVersion = 10.1;
-						LastSwiftMigration = 1010;
+						LastSwiftMigration = 1020;
 					};
 					BCC1330B223828FD004A7E21 = {
 						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1020;
 					};
 				};
 			};
@@ -373,6 +379,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = BCC13302223828FD004A7E21;
 			productRefGroup = BCC1330D223828FD004A7E21 /* Products */;
@@ -401,6 +408,33 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		BC4D65392285B4840004BE7D /* Carthage Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/OHHTTPStubs.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
+			);
+			name = "Carthage Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Alamofire.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/OHHTTPStubs.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		BC2C0DC0223829EF00F31192 /* Sources */ = {
@@ -490,9 +524,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Tests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -515,8 +549,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Tests-Bridging-Header.h";
-				SWIFT_VERSION = 4.2;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -667,7 +701,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.Leash;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -696,7 +730,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.Leash;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
