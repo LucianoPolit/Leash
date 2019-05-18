@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
     ss.dependency      'RxSwift', '~> 4.0'
     ss.dependency      'Leash/Core'
   end
-  
+
   s.subspec 'Interceptors' do |ss|
     ss.source_files  = 'Source/Interceptors/*.swift'
     ss.dependency      'Leash/Core'
