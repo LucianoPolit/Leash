@@ -195,14 +195,13 @@ extension ClientTests {
     
     func testRequestCallsSessionManager() {
         let endpoint = Endpoint()
-        let sessionManager = MockSessionManager()
+        let session = MockSession()
         manager = builder
-            .sessionManager(sessionManager)
+            .session(session)
             .build()
         assertNoErrorThrown {
-            let dataRequest = try client.request(for: endpoint)
-            XCTAssertTrue(sessionManager.requestCalled)
-            XCTAssertTrue(dataRequest.request?.url?.absoluteString.contains(baseURL) ?? false)
+            let _ = try client.request(for: endpoint)
+            XCTAssertTrue(session.requestCalled)
         }
     }
     
@@ -213,12 +212,12 @@ extension ClientTests {
         stub(condition: isEndpoint(endpoint)) { _ in
             return OHHTTPStubsResponse(jsonObject: json, statusCode: 200, headers: nil)
         }
-        client.execute(endpoint) { (response: Response<[String: String]>) in
+        client.execute(endpoint) { (response: Result<[String: String], Swift.Error>) in
             guard case .success(let result) = response else {
                 XCTFail()
                 return
             }
-            XCTAssertEqual(result.value, json)
+            XCTAssertEqual(result, json)
             expectation.fulfill()
         }
         waitForExpectations(timeout: 5)
@@ -247,12 +246,16 @@ extension ClientTests {
 
 // MARK: - Utils
 
-class MockSessionManager: SessionManager {
+class MockSession: Session {
     
     var requestCalled = false
     var requestParameterURLRequest: URLRequestConvertible?
     
-    override func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
+    convenience init() {
+        self.init(startRequestsImmediately: false)
+    }
+    
+    override func request(_ urlRequest: URLRequestConvertible, interceptor: RequestInterceptor? = nil) -> DataRequest {
         requestCalled = true
         requestParameterURLRequest = urlRequest
         return super.request(urlRequest)

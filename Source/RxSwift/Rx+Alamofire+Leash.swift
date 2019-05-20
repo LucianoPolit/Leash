@@ -1,7 +1,7 @@
 //
 //  Rx+Alamofire+Leash.swift
 //
-//  Copyright (c) 2017-2019 Luciano Polit <lucianopolit@gmail.com>
+//  Copyright (c) 2017-2020 Luciano Polit <lucianopolit@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -23,9 +23,8 @@
 //
 
 import Foundation
+import Alamofire
 import RxSwift
-
-// MARK: - Reactive
 
 extension DataRequest: ReactiveCompatible { }
 
@@ -56,7 +55,16 @@ extension Reactive where Base: DataRequest {
                                                             endpoint: Endpoint,
                                                             type: T.SerializedObject.Type = T.SerializedObject.self,
                                                             serializer: T) -> Single<ReactiveResponse<T.SerializedObject>> {
-        return base.response(queue: queue, client: client, endpoint: endpoint, serializer: serializer)
+        return Single.create { single in
+            self.base.response(queue: queue,
+                               client: client,
+                               endpoint: endpoint,
+                               serializer: serializer) { response in
+                single(SingleEvent.fromResponse(response))
+            }
+            
+            return Disposables.create { }
+        }
     }
     
     /// Adds a handler to be called once the request has finished.
@@ -82,48 +90,10 @@ extension Reactive where Base: DataRequest {
                                                 client: Client,
                                                 endpoint: Endpoint,
                                                 type: T.Type = T.self) -> Single<ReactiveResponse<T>> {
-        return base.responseDecodable(queue: queue, client: client, endpoint: endpoint)
-    }
-    
-}
-
-// MARK: - Utils
-
-private extension DataRequest {
-    
-    func response<T: DataResponseSerializerProtocol>(queue: DispatchQueue? = nil,
-                                                     client: Client,
-                                                     endpoint: Endpoint,
-                                                     serializer: T) -> Single<ReactiveResponse<T.SerializedObject>> {
-        return Single.create { single in
-            self.response(queue: queue, client: client, endpoint: endpoint, serializer: serializer) { response in
-                single(SingleEvent.fromResponse(response))
-            }
-            
-            return Disposables.create { }
-        }
-    }
-    
-    func responseDecodable<T: Decodable>(queue: DispatchQueue? = nil,
-                                         client: Client,
-                                         endpoint: Endpoint) -> Single<ReactiveResponse<T>> {
         return response(queue: queue,
                         client: client,
                         endpoint: endpoint,
-                        serializer: DataRequest.decodableResponseSerializer(jsonDecoder: client.manager.jsonDecoder))
-    }
-    
-}
-
-private extension SingleEvent {
-    
-    static func fromResponse(_ response: Response<Element>) -> SingleEvent<ReactiveResponse<Element>> {
-        switch response {
-        case .success(let value, let extra):
-            return .success(ReactiveResponse(value, extra))
-        case .failure(let error):
-            return .error(error)
-        }
+                        serializer: DecodableResponseSerializer(decoder: client.manager.jsonDecoder))
     }
     
 }

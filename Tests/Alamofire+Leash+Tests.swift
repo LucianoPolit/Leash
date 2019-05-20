@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Alamofire
 import XCTest
 import OHHTTPStubs
 @testable import Leash
@@ -197,7 +198,7 @@ extension AlamofireLeashTests {
         assertNoErrorThrown {
             let endpoint = successEndpoint
             let dataRequest = try client.request(for: endpoint)
-            let serializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
+            let serializer = JSONResponseSerializer()
             dataRequest.response(client: client, endpoint: endpoint, serializer: serializer) { response in
                 guard case .success = response else {
                     XCTFail()
@@ -297,7 +298,7 @@ extension AlamofireLeashTests {
         let expectation = self.expectation(description: "Expected to find a decoding error")
         let undecodableEndpoint = Endpoint(path: "decoding/error")
         stub(condition: isEndpoint(undecodableEndpoint)) { _ in
-            return OHHTTPStubsResponse(data: Data(), statusCode: 200, headers: nil)
+            return OHHTTPStubsResponse(jsonObject: ["some": "some"], statusCode: 200, headers: nil)
         }
         executeRequest(builder: builder, endpoint: undecodableEndpoint) { response in
             guard case .failure(let error) = response, case Leash.Error.decoding = error else {

@@ -1,7 +1,7 @@
 //
 //  Response.swift
 //
-//  Copyright (c) 2017-2019 Luciano Polit <lucianopolit@gmail.com>
+//  Copyright (c) 2017-2020 Luciano Polit <lucianopolit@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -87,6 +87,18 @@ extension Response {
             return error
         case .success:
             return nil
+        }
+    }
+    
+}
+
+extension Response {
+    
+    /// The response represented as a result without the extra.
+    public func justValue() -> Result<T, Swift.Error> {
+        switch self {
+        case .success(let value, _): return .success(value)
+        case .failure(let error): return .failure(error)
         }
     }
     

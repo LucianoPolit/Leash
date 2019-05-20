@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Alamofire
 import XCTest
 @testable import Leash
 
@@ -85,7 +86,7 @@ extension LoggerInterceptorTests {
         interceptor.intercept(chain: sChain,
                               response: .success(value: Data(), extra: nil),
                               result: .success(0),
-                              serializer: DataRequest.decodableResponseSerializer(jsonDecoder: JSONDecoder()))
+                              serializer: DecodableResponseSerializer())
         assertResultAndCount()
         assertValues()
         assertNoError()
@@ -96,7 +97,7 @@ extension LoggerInterceptorTests {
         interceptor.intercept(chain: sChain,
                               response: .success(value: Data(), extra: nil),
                               result: .failure(Leash.Error.decoding(Leash.Error.unknown)),
-                              serializer: DataRequest.decodableResponseSerializer(jsonDecoder: JSONDecoder()))
+                              serializer: DecodableResponseSerializer())
         assertResultAndCount()
         assertValues()
         assertError(.decoding(Leash.Error.unknown))
@@ -107,7 +108,7 @@ extension LoggerInterceptorTests {
         interceptor.intercept(chain: sChain,
                               response: .success(value: Data(), extra: nil),
                               result: .failure(Leash.Error.unknown),
-                              serializer: DataRequest.decodableResponseSerializer(jsonDecoder: JSONDecoder()))
+                              serializer: DecodableResponseSerializer())
         assertResultAndCount()
         assertNoValues()
         assertNoError()
@@ -159,7 +160,7 @@ private extension LoggerInterceptorTests {
 private extension LoggerInterceptorTests {
     
     func message<T>(chain: InterceptorChain<T>, pre: String, post: String) -> String {
-        guard let request = chain.request.request,
+        guard let request = try? chain.request.convertible.asURLRequest(),
             let method = request.httpMethod,
             let url = request.url?.absoluteString else { return "" }
         return "\(pre) \(method) \(url) \(post)"

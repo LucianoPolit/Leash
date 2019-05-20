@@ -30,8 +30,8 @@ Moreover, `Leash` also includes some processes that are common on the network la
 
 ## Requirements
 
-- Xcode 9.0+
-- Swift 4.0+
+- Xcode 10.0+
+- Swift 5.0+
 
 ## Installation
 
@@ -40,9 +40,9 @@ Moreover, `Leash` also includes some processes that are common on the network la
 To integrate `Leash` into your project using [CocoaPods](http://cocoapods.org), specify it in your `Podfile`:
 
 ```ruby
-pod 'Leash', '~> 2.3'
-pod 'Leash/RxSwift', '~> 2.3'
-pod 'Leash/Interceptors', '~> 2.3'
+pod 'Leash', '~> 3.0'
+pod 'Leash/RxSwift', '~> 3.0'
+pod 'Leash/Interceptors', '~> 3.0'
 ```
 
 ### Carthage
@@ -50,14 +50,14 @@ pod 'Leash/Interceptors', '~> 2.3'
 To integrate `Leash` into your project using [Carthage](https://github.com/Carthage/Carthage), specify it in your `Cartfile`:
 
 ```ogdl
-github "LucianoPolit/Leash" ~> 2.3
+github "LucianoPolit/Leash" ~> 3.0
 ```
 
 ## Usage
 
 ### Setup
 
-First, we need to configure a `Manager`.  You can see [here](https://github.com/LucianoPolit/Leash/blob/master/Source/Manager.swift) all the options available. Here is an example:
+First, we need to configure a `Manager`.  You can see [here](https://github.com/LucianoPolit/Leash/blob/master/Source/Core/Manager.swift) all the options available. Here is an example:
 
 ```swift
 let manager = Manager.Builder()
@@ -138,8 +138,8 @@ extension APIEndpoint: Endpoint {
 
 Three different classes are being used to encode the parameters:
 
-- [URLEncoding](https://github.com/Alamofire/Alamofire/tree/4.5.0#url-encoding): to encode `QueryEncodable` and `[String: CustomStringConvertible]`.
-- [JSONEncoding](https://github.com/Alamofire/Alamofire/tree/4.5.0#json-encoding): to encode `[String: Any]`.
+- [URLEncoding](https://github.com/Alamofire/Alamofire/blob/5.0.0/Source/ParameterEncoding.swift#L59): to encode `QueryEncodable` and `[String: CustomStringConvertible]`.
+- [JSONEncoding](https://github.com/Alamofire/Alamofire/blob/5.0.0/Source/ParameterEncoding.swift#L238): to encode `[String: Any]`.
 - [JSONEncoder](https://developer.apple.com/documentation/foundation/jsonencoder): to encode `Encodable`.
 
 In case you want to encode the parameters in a different way, you have to override the method `Client.urlRequest(for:)`.
@@ -154,7 +154,7 @@ client.execute(APIEndpoint.readAllUsers) { (response: Response<[User]>) in
 }
 ```
 
-The only available option to serialize the response is through the [JSONDecoder](https://developer.apple.com/documentation/foundation/jsondecoder). In case you need to do it in a different way, you should implement your own [response serializer](https://github.com/Alamofire/Alamofire/tree/4.5.0#custom-response-serialization). Yes, it uses the `DataResponseSerializer` provided by `Alamofire`!
+The only available option to serialize the response is through the [JSONDecoder](https://developer.apple.com/documentation/foundation/jsondecoder). In case you need to do it in a different way, you should implement your own [response serializer](https://github.com/Alamofire/Alamofire/blob/5.0.0/Documentation/AdvancedUsage.md#creating-a-custom-response-serializer). Yes, it uses the [DataResponseSerializerProtocol](https://github.com/Alamofire/Alamofire/blob/5.0.0/Source/ResponseSerialization.swift#L30) provided by `Alamofire`!
 
 For example, here is how a `JSON` response handler might be implemented:
 
@@ -167,7 +167,7 @@ extension DataRequest {
                       completion: @escaping (Response<Any>) -> ()) -> Self {
         return response(client: client,
                         endpoint: endpoint,
-                        serializer: DataRequest.jsonResponseSerializer(),
+                        serializer: JSONResponseSerializer(),
                         completion: completion)
     }
 
@@ -276,7 +276,7 @@ class LoggerInterceptor: ExecutionInterceptor {
 
     func intercept(chain: InterceptorChain<Data>) {
         defer { chain.proceed() }
-        guard let request = chain.request.request,
+        guard let request = try? chain.request.convertible.asURLRequest(),
             let method = request.httpMethod,
             let url = request.url?.absoluteString else { return }
 
@@ -286,7 +286,7 @@ class LoggerInterceptor: ExecutionInterceptor {
 }
 ```
 
-Now, one more complex, but not more difficult to implement:
+Now, one more complex, but not more complicated to implement:
 
 ```swift
 class CacheInterceptor: ExecutionInterceptor {
@@ -372,7 +372,7 @@ class LoggerInterceptor: CompletionInterceptor {
 
     func intercept(chain: InterceptorChain<Data>, response: Response<Data>) {
         defer { chain.proceed() }
-        guard let request = chain.request.request,
+        guard let request = try? chain.request.convertible.asURLRequest(),
             let method = request.httpMethod,
             let url = request.url?.absoluteString else { return }
 
@@ -390,7 +390,7 @@ class LoggerInterceptor: CompletionInterceptor {
 
 Now, one more complex, we have to update the `authentication` when expired. There are two options here:
 
-- Use the [Adapter](https://github.com/Alamofire/Alamofire/tree/4.5.0#requestadapter) and [Retrier](https://github.com/Alamofire/Alamofire/tree/4.5.0#requestretrier) provided by `Alamofire`.
+- Use the [Adapter](https://github.com/Alamofire/Alamofire/blob/5.0.0/Documentation/AdvancedUsage.md#requestadapter) and [Retrier](https://github.com/Alamofire/Alamofire/blob/5.0.0/Documentation/AdvancedUsage.md#requestretrier) provided by `Alamofire`.
 - Use the [Authenticator](#authenticator) and an `Interceptor`! Let me show you how it should look like:
 
 ```swift
@@ -423,7 +423,7 @@ class AuthenticationValidator: CompletionInterceptor {
 
 #### Serialization
 
-This is the last `Interceptor` in being called. Also, it is optional. It depends if you are [serializing](#decoding) your response or you only need the `Data`. In most cases, you probably do it.
+This is the last `Interceptor` in being called. Also, it is optional. It depends if you are [serializing](#decoding) your response or you only need the `Data`.
 
 The serialization process is built on top of the process of getting the `Data` from the request. This is why it is called after all the previous `Interceptors`. Let me show you an example:
 
@@ -434,10 +434,10 @@ class CacheInterceptor: SerializationInterceptor {
 
     func intercept<T: DataResponseSerializerProtocol>(chain: InterceptorChain<T.SerializedObject>,
                                                       response: Response<Data>,
-                                                      result: Result<T.SerializedObject>,
+                                                      result: Result<T.SerializedObject, Swift.Error>,
                                                       serializer: T) {
         defer { chain.proceed() }
-        guard let value = response.value, result.isSuccess else { return }
+        guard let value = response.value, (try? result.get()) != nil else { return }
         CacheController().updateCacheIfNeeded(for: chain.endpoint, value: value)
     }
 

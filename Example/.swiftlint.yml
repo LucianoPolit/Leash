@@ -7,7 +7,7 @@ opt_in_rules:
 identifier_name:
   excluded:
     - id
-line_length: 130
+line_length: 140
 included:
   - Source
   - ../Source

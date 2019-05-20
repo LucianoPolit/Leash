@@ -18,14 +18,13 @@ extension ClientTests {
     
     func testRxRequestCallsSessionManager() {
         let endpoint = Endpoint()
-        let sessionManager = MockSessionManager()
+        let session = MockSession()
         manager = builder
-            .sessionManager(sessionManager)
+            .session(session)
             .build()
         assertNoErrorThrown {
-            let dataRequest = try client.request(for: endpoint)
-            XCTAssertTrue(sessionManager.requestCalled)
-            XCTAssertTrue(dataRequest.request?.url?.absoluteString.contains(baseURL) ?? false)
+            let _ = try client.request(for: endpoint)
+            XCTAssertTrue(session.requestCalled)
         }
     }
     

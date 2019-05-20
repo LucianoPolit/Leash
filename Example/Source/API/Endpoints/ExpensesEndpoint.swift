@@ -9,7 +9,7 @@
 import Foundation
 import Leash
 
-/// Expenses endpoints of the API that can be reached.
+/// Expenses endpoints that can be reached.
 /// It contains all the information needed to create the requests.
 enum ExpensesEndpoint: Endpoint {
     case readAll

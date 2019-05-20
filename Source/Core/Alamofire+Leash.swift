@@ -1,7 +1,7 @@
 //
 //  Alamofire+Leash.swift
 //
-//  Copyright (c) 2017-2019 Luciano Polit <lucianopolit@gmail.com>
+//  Copyright (c) 2017-2020 Luciano Polit <lucianopolit@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,16 +25,15 @@
 import Foundation
 import Alamofire
 
-/// Specific type of `Request` that manages an underlying `URLSessionDataTask`.
+/// `Request` subclass which handles in-memory `Data` download using `URLSessionDataTask`.
 public typealias DataRequest = Alamofire.DataRequest
-/// The type in which all data response serializers must conform to in order to serialize a response.
+/// The type to which all data response serializers must conform in order to serialize a response.
 public typealias DataResponseSerializerProtocol = Alamofire.DataResponseSerializerProtocol
-/// HTTP method definitions.
+/// Type representing HTTP methods.
 public typealias HTTPMethod = Alamofire.HTTPMethod
-/// Used to represent whether a request was successful or encountered an error.
-public typealias Result = Alamofire.Result
-/// Responsible for creating and managing `Request` objects, as well as their underlying `NSURLSession`.
-public typealias SessionManager = Alamofire.SessionManager
+/// `Session` creates and manages Alamofire's `Request` types during their lifetimes. It also provides common
+/// functionality for all `Request`s, including queuing, interception, trust management, redirect handling, and response cache handling.
+public typealias Session = Alamofire.Session
 
 // MARK: - Data
 
@@ -76,7 +75,7 @@ extension DataRequest {
                                      queue: queue,
                                      completion: callback) { $0(.success(value: data, extra: nil)) }
                 } else {
-                    let error = response.error ?? Error.unknown
+                    let error: Swift.Error = response.error ?? Error.unknown
                     client.intercept(.failure(endpoint: endpoint, request: self, error: error),
                                      queue: queue,
                                      completion: callback) { $0(.failure(error)) }
@@ -126,7 +125,17 @@ extension DataRequest {
                                                             serializer: T,
                                                             completion: @escaping (Response<T.SerializedObject>) -> ()) -> Self {
         return response(queue: .global(qos: .utility), client: client, endpoint: endpoint) { response in
-            let result = serializer.serializeResponse(self.request, self.response, response.value, response.error)
+            let result: Result<T.SerializedObject, Swift.Error>
+            do {
+                let serialized = try serializer.serialize(request: self.request,
+                                                          response: self.response,
+                                                          data: response.value,
+                                                          error: response.error)
+                result = .success(serialized)
+            } catch {
+                result = .failure(response.error ?? Error.decoding(error))
+            }
+            
             let interceptions = client.serializationInterceptions(endpoint: endpoint,
                                                                   request: self,
                                                                   response: response,
@@ -148,21 +157,6 @@ extension DataRequest {
 // MARK: - Decodable
 
 extension DataRequest {
-    
-    /// Creates a response serializer that returns a decoded object result type
-    /// constructed from the response data using the specified JSON decoder.
-    public static func decodableResponseSerializer<T: Decodable>(jsonDecoder: JSONDecoder) -> DataResponseSerializer<T> {
-        return DataResponseSerializer { _, _, data, error in
-            guard let data = data else { return .failure(error ?? Error.unknown) }
-            
-            do {
-                let value = try jsonDecoder.decode(T.self, from: data)
-                return .success(value)
-            } catch {
-                return .failure(Error.decoding(error))
-            }
-        }
-    }
     
     /// Adds a handler to be called once the request has finished.
     ///
@@ -191,7 +185,7 @@ extension DataRequest {
         return response(queue: queue,
                         client: client,
                         endpoint: endpoint,
-                        serializer: DataRequest.decodableResponseSerializer(jsonDecoder: client.manager.jsonDecoder),
+                        serializer: DecodableResponseSerializer(decoder: client.manager.jsonDecoder),
                         completion: completion)
     }
     
@@ -298,7 +292,7 @@ private extension Client {
     func serializationInterceptions<T: DataResponseSerializerProtocol>(endpoint: Endpoint,
                                                                        request: DataRequest,
                                                                        response: Response<Data>,
-                                                                       result: Result<T.SerializedObject>,
+                                                                       result: Result<T.SerializedObject, Swift.Error>,
                                                                        serializer: T) -> [Interception<T.SerializedObject>] {
         return manager.serializationInterceptors.map { interceptor in
             return { completion in

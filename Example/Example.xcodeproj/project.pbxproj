@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A242F23822B46FA0003509FC /* APIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A242F23722B46FA0003509FC /* APIResponse.swift */; };
 		E231631E1FC1806D004D2251 /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E231631D1FC1806D004D2251 /* Endpoint.swift */; };
 		E23163201FC18075004D2251 /* ExpensesEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E231631F1FC18075004D2251 /* ExpensesEndpoint.swift */; };
 		E2320C051FBB066F002049C9 /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2320BFE1FBB05DA002049C9 /* Endpoint.swift */; };
@@ -74,6 +75,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A242F23722B46FA0003509FC /* APIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResponse.swift; sourceTree = "<group>"; };
 		E231631D1FC1806D004D2251 /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
 		E231631F1FC18075004D2251 /* ExpensesEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpensesEndpoint.swift; sourceTree = "<group>"; };
 		E2320BEB1FB98BBE002049C9 /* MockCompletionInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCompletionInterceptor.swift; sourceTree = "<group>"; };
@@ -139,6 +141,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DCF3085A8F4EA73D2530D328 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		E231631C1FC18060004D2251 /* Endpoints */ = {
 			isa = PBXGroup;
 			children = (
@@ -202,6 +211,7 @@
 				E2B8F8DE1FB77F5500B2A60A /* Responses */,
 				E2B8F8D31FB77EF500B2A60A /* API.swift */,
 				E2B8F8D91FB77F1600B2A60A /* APIAuthenticator.swift */,
+				A242F23722B46FA0003509FC /* APIResponse.swift */,
 				E2B8F8D51FB77EFF00B2A60A /* APIError.swift */,
 				E2B8F8DB1FB77F2300B2A60A /* APIFormatters.swift */,
 			);
@@ -266,6 +276,7 @@
 				F1B9F4531D3950070049F179 /* Source */,
 				F1C238701DF5A93D00D68ED3 /* Tests */,
 				F1B9F4521D3950070049F179 /* Products */,
+				DCF3085A8F4EA73D2530D328 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -357,7 +368,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0810;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Luciano Polit";
 				TargetAttributes = {
 					F1B9F4501D3950070049F179 = {
@@ -373,10 +384,9 @@
 			};
 			buildConfigurationList = F1B9F44C1D3950070049F179 /* Build configuration list for PBXProject "Example" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 			);
@@ -433,6 +443,7 @@
 				E23163201FC18075004D2251 /* ExpensesEndpoint.swift in Sources */,
 				E231631E1FC1806D004D2251 /* Endpoint.swift in Sources */,
 				E2B8F8E81FB7802E00B2A60A /* UpdateExpenseRequest.swift in Sources */,
+				A242F23822B46FA0003509FC /* APIResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -499,6 +510,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -508,12 +520,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -555,6 +569,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -564,12 +579,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -609,9 +626,9 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = LP.Example;
+				PRODUCT_BUNDLE_IDENTIFIER = Leash.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -624,9 +641,9 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = LP.Example;
+				PRODUCT_BUNDLE_IDENTIFIER = Leash.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -643,7 +660,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = LP.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Example.app/Example";
 			};
 			name = Debug;
@@ -660,7 +677,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = LP.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Example.app/Example";
 			};
 			name = Release;

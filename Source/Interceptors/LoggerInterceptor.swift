@@ -1,7 +1,7 @@
 //
 //  LoggerInterceptor.swift
 //
-//  Copyright (c) 2017-2019 Luciano Polit <lucianopolit@gmail.com>
+//  Copyright (c) 2017-2020 Luciano Polit <lucianopolit@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@ open class LoggerInterceptor {
     }
     
     open func log<T>(chain: InterceptorChain<T>, pre: String, post: String) {
-        guard let request = chain.request.request,
+        guard let request = try? chain.request.convertible.asURLRequest(),
             let method = request.httpMethod,
             let url = request.url?.absoluteString else { return }
         logger.log(message: "\(pre) \(method) \(url) \(post)")
@@ -97,7 +97,7 @@ extension LoggerInterceptor: SerializationInterceptor {
     
     public func intercept<T: DataResponseSerializerProtocol>(chain: InterceptorChain<T.SerializedObject>,
                                                              response: Response<Data>,
-                                                             result: Result<T.SerializedObject>,
+                                                             result: Result<T.SerializedObject, Swift.Error>,
                                                              serializer: T) {
         defer { chain.proceed() }
         switch result {

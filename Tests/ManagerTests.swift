@@ -132,14 +132,14 @@ extension ManagerTests {
     }
     
     func testSessionManager() {
-        let sessionManager = SessionManager()
+        let session = Session(startRequestsImmediately: false)
         
         manager = Manager.Builder()
             .url(baseURL)
-            .sessionManager(sessionManager)
+            .session(session)
             .build()
         
-        XCTAssertTrue(sessionManager === manager.sessionManager)
+        XCTAssertTrue(session === manager.session)
     }
     
     func testJSONEncoder() {

@@ -13,19 +13,19 @@ import RxSwift
 /// Main client of the project.
 class ExpensesClient: Client<ExpensesEndpoint> {
     
-    func readAll(completion: @escaping (Response<[Expense]>) -> ()) {
+    func readAll(completion: @escaping APICompletion<[Expense]>) {
         execute(.readAll, completion: completion)
     }
     
-    func create(_ request: CreateExpenseRequest, completion: @escaping (Response<Expense>) -> ()) {
+    func create(_ request: CreateExpenseRequest, completion: @escaping APICompletion<Expense>) {
         execute(.create(request), completion: completion)
     }
     
-    func update(_ request: UpdateExpenseRequest, completion: @escaping (Response<Expense>) -> ()) {
+    func update(_ request: UpdateExpenseRequest, completion: @escaping APICompletion<Expense>) {
         execute(.update(request), completion: completion)
     }
     
-    func delete(_ expense: String, completion: @escaping (Response<EmptyResponse>) -> ()) {
+    func delete(_ expense: String, completion: @escaping APICompletion<EmptyResponse>) {
         execute(.delete(expense), completion: completion)
     }
     
@@ -34,19 +34,19 @@ class ExpensesClient: Client<ExpensesEndpoint> {
 extension Reactive where Base: ExpensesClient {
     
     func readAll() -> Single<[Expense]> {
-        return execute(.readAll)
+        return execute(base.readAll)
     }
     
     func create(_ request: CreateExpenseRequest) -> Single<Expense> {
-        return execute(.create(request))
+        return execute(base.create, with: request)
     }
     
     func update(_ request: UpdateExpenseRequest) -> Single<Expense> {
-        return execute(.update(request))
+        return execute(base.update, with: request)
     }
     
     func delete(_ expense: String) -> Single<EmptyResponse> {
-        return execute(.delete(expense))
+        return execute(base.delete, with: expense)
     }
     
 }

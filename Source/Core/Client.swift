@@ -1,7 +1,7 @@
 //
 //  Client.swift
 //
-//  Copyright (c) 2017-2019 Luciano Polit <lucianopolit@gmail.com>
+//  Copyright (c) 2017-2020 Luciano Polit <lucianopolit@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -52,6 +52,22 @@ open class Client {
     @discardableResult
     open func execute<T: Decodable>(_ endpoint: Endpoint,
                                     queue: DispatchQueue? = nil,
+                                    completion: @escaping (Result<T, Swift.Error>) -> ()) -> DataRequest? {
+        return execute(endpoint, queue: queue) { response in
+            completion(response.justValue())
+        }
+    }
+    
+    /// Creates and executes the request for the specified endpoint.
+    ///
+    /// - Parameter endpoint: Contains all the information needed to create the request.
+    /// - Parameter queue: The queue on which the completion handler is dispatched.
+    /// - Parameter completion: Handler of the response.
+    ///
+    /// - Returns: The created request.
+    @discardableResult
+    open func execute<T: Decodable>(_ endpoint: Endpoint,
+                                    queue: DispatchQueue? = nil,
                                     completion: @escaping (Response<T>) -> ()) -> DataRequest? {
         do {
             let request = try self.request(for: endpoint)
@@ -72,7 +88,7 @@ open class Client {
     /// - Returns: The created request.
     open func request(for endpoint: Endpoint) throws -> DataRequest {
         let urlRequest = try self.urlRequest(for: endpoint)
-        return manager.sessionManager.request(urlRequest)
+        return manager.session.request(urlRequest)
     }
     
     /// Creates the URL request for the specified endpoint.

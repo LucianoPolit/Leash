@@ -1,7 +1,7 @@
 //
 //  Manager.swift
 //
-//  Copyright (c) 2017-2019 Luciano Polit <lucianopolit@gmail.com>
+//  Copyright (c) 2017-2020 Luciano Polit <lucianopolit@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@ public class Manager {
     public let serializationInterceptors: [SerializationInterceptor]
     
     /// Responsible for executing the requests and calling the interceptors when needed.
-    public let sessionManager: SessionManager
+    public let session: Session
     /// Encoder of the body of the requests.
     public let jsonEncoder: JSONEncoder
     /// Decoder of the body of the responses.
@@ -52,7 +52,7 @@ public class Manager {
     
     /// Initializes and returns a newly allocated object with the specified builder.
     public init(builder: Builder) {
-        guard let builderURL = builder.url ?? URL(builder: builder) else { fatalError("Leash -> Manager -> Invalid URL") }
+        guard let builderURL = builder.url ?? URL(builder: builder) else { preconditionFailure("Leash -> Manager -> Invalid URL") }
         
         url = builderURL
         authenticator = builder.authenticator
@@ -63,9 +63,7 @@ public class Manager {
         completionInterceptors = builder.completionInterceptors
         serializationInterceptors = builder.serializationInterceptors
         
-        sessionManager = builder.sessionManager
-        sessionManager.startRequestsImmediately = false
-        
+        session = builder.session
         jsonEncoder = builder.jsonEncoder
         jsonDecoder = builder.jsonDecoder
     }
@@ -86,7 +84,7 @@ public class Manager {
         var completionInterceptors: [CompletionInterceptor] = []
         var serializationInterceptors: [SerializationInterceptor] = []
         
-        var sessionManager = SessionManager.default
+        var session = Session(startRequestsImmediately: false)
         var jsonEncoder = JSONEncoder()
         var jsonDecoder = JSONDecoder()
         
@@ -146,8 +144,9 @@ public class Manager {
         }
         
         /// Sets the session manager.
-        public func sessionManager(_ sessionManager: SessionManager) -> Self {
-            self.sessionManager = sessionManager
+        public func session(_ session: Session) -> Self {
+            precondition(!session.startRequestsImmediately, "Leash -> Manager -> Session -> Start requests immediately should be false")
+            self.session = session
             return self
         }
         

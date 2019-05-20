@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 `Leash` adheres to [Semantic Versioning](http://semver.org/).
 
+#### 3.x Releases
+- `3.0.x` Releases - [3.0.0](#300)
+
 #### 2.x Releases
 - `2.3.x` Releases - [2.3.0](#230)
 - `2.2.x` Releases - [2.2.0](#220)
@@ -13,6 +16,12 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100)
 
 ---
+
+## [3.0.0](https://github.com/LucianoPolit/Leash/releases/tag/3.0.0)
+Released on 2020-02-15.
+
+- Migration to Swift 5.
+- Migration to [Alamofire](https://github.com/Alamofire/Alamofire) 5.
 
 ## [2.3.0](https://github.com/LucianoPolit/Leash/releases/tag/2.3.0)
 Released on 2019-05-20.

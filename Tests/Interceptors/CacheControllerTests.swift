@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Alamofire
 import XCTest
 @testable import Leash
 
@@ -163,7 +164,7 @@ extension CacheControllerTests {
         interceptor.intercept(chain: sChain,
                               response: .success(value: Data(), extra: nil),
                               result: .success(entity),
-                              serializer: DataRequest.decodableResponseSerializer(jsonDecoder: JSONDecoder()))
+                              serializer: DecodableResponseSerializer())
         XCTAssertTrue(policy.shouldSaveAfterSuccessCalled)
         XCTAssertEqual(count, 1)
         XCTAssertNil(result)
@@ -175,7 +176,7 @@ extension CacheControllerTests {
         interceptor.intercept(chain: sChain,
                               response: .success(value: data, extra: nil),
                               result: .success(entity),
-                              serializer: DataRequest.decodableResponseSerializer(jsonDecoder: JSONDecoder()))
+                              serializer: DecodableResponseSerializer())
         XCTAssertTrue(dataStore.saveCalled)
         XCTAssertEqual(dataStore.saveParameterData, data)
     }
@@ -185,7 +186,7 @@ extension CacheControllerTests {
         interceptor.intercept(chain: sChain,
                               response: .success(value: Data(), extra: nil),
                               result: .success(entity),
-                              serializer: DataRequest.decodableResponseSerializer(jsonDecoder: JSONDecoder()))
+                              serializer: DecodableResponseSerializer())
         XCTAssertTrue(policy.shouldSaveAfterSuccessCalled)
         XCTAssertEqual(count, 1)
         XCTAssertNil(result)
@@ -197,7 +198,7 @@ extension CacheControllerTests {
         interceptor.intercept(chain: sChain,
                               response: .success(value: Data(), extra: CacheExtra()),
                               result: .success(entity),
-                              serializer: DataRequest.decodableResponseSerializer(jsonDecoder: JSONDecoder()))
+                              serializer: DecodableResponseSerializer())
         XCTAssertFalse(policy.shouldSaveAfterSuccessCalled)
         XCTAssertEqual(count, 1)
         XCTAssertNil(result)

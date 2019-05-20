@@ -1,7 +1,7 @@
 //
 //  CacheInterceptor.swift
 //
-//  Copyright (c) 2017-2019 Luciano Polit <lucianopolit@gmail.com>
+//  Copyright (c) 2017-2020 Luciano Polit <lucianopolit@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -91,13 +91,13 @@ extension CacheInterceptor: SerializationInterceptor {
     
     public func intercept<T: DataResponseSerializerProtocol>(chain: InterceptorChain<T.SerializedObject>,
                                                              response: Response<Data>,
-                                                             result: Result<T.SerializedObject>,
+                                                             result: Result<T.SerializedObject, Swift.Error>,
                                                              serializer: T) {
         defer { chain.proceed() }
         guard let policy = policy(for: chain.endpoint),
             let value = response.value,
             !(response.extra is CacheExtra),
-            result.isSuccess,
+            (try? result.get()) != nil,
             policy.shouldSaveAfterSuccess() else { return }
         dataStore.save(value, for: chain.endpoint)
     }

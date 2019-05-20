@@ -1,7 +1,7 @@
 //
 //  Rx+Response.swift
 //
-//  Copyright (c) 2017-2019 Luciano Polit <lucianopolit@gmail.com>
+//  Copyright (c) 2017-2020 Luciano Polit <lucianopolit@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -69,6 +69,19 @@ extension Observable where Element: ReactiveResponseType {
     /// Transforms the element on its value.
     public func justValue() -> Observable<Element.Value> {
         return map { $0.value }
+    }
+    
+}
+
+extension SingleEvent {
+    
+    static func fromResponse(_ response: Response<Element>) -> SingleEvent<ReactiveResponse<Element>> {
+        switch response {
+        case .success(let value, let extra):
+            return .success(ReactiveResponse(value, extra))
+        case .failure(let error):
+            return .error(error)
+        }
     }
     
 }
