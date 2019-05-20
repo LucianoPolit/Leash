@@ -86,9 +86,7 @@ extension InterceptorChainTests {
             .authenticator(authenticator)
             .build()
         chain = InterceptorChain(client: client, endpoint: chain.endpoint, request: chain.request) { result in
-            guard let result = result,
-                case .failure(let error) = result.response,
-                case Leash.Error.unknown = error else { return XCTFail() }
+            guard let result = result, case .failure(_) = result.response else { return XCTFail() }
             XCTAssertTrue(result.finish)
             expectation.fulfill()
         }

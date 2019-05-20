@@ -24,7 +24,6 @@
 		E263A2A92108C4E300E4CC9D /* CacheControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E263A2A72107F7F700E4CC9D /* CacheControllerTests.swift */; };
 		E263A2AB2108D81100E4CC9D /* CacheInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E263A2AA2108D81100E4CC9D /* CacheInterceptor.swift */; };
 		E263A2AD2108D81900E4CC9D /* BodyValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E263A2AC2108D81900E4CC9D /* BodyValidator.swift */; };
-		E273165C1FBB5DC600FC20CE /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E273165B1FBB5DC600FC20CE /* Info.plist */; };
 		E273165F1FBB5F8D00FC20CE /* Authenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E273165D1FBB5F8500FC20CE /* Authenticator.swift */; };
 		E29E99991FD4064C002A1C6F /* Rx+Alamofire+Leash+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29E99971FD40632002A1C6F /* Rx+Alamofire+Leash+Tests.swift */; };
 		E29E999E1FD41800002A1C6F /* Rx+Response+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29E999C1FD417E7002A1C6F /* Rx+Response+Tests.swift */; };
@@ -377,6 +376,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -396,7 +396,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E273165C1FBB5DC600FC20CE /* Info.plist in Resources */,
 				F1B9F45F1D3950070049F179 /* LaunchScreen.storyboard in Resources */,
 				F1B9F45C1D3950070049F179 /* Assets.xcassets in Resources */,
 				F1B9F45A1D3950070049F179 /* Main.storyboard in Resources */,

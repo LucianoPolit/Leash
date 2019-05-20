@@ -7,7 +7,6 @@
 ## Index
 
 - [Introduction](#introduction)
-- [Example](#example)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -29,26 +28,29 @@ Now, instead of creating a network layer, you create `Interceptors`, which are r
 
 Moreover, `Leash` also includes some processes that are common on the network layers, such as [encoding](#encoding), [decoding](#decoding), [authentication](#authenticator) and more. And, just to clarify, it also uses `Alamofire`.
 
-## Example
-
-To run the example project there are two possibilities:
-
-- Run `pod try Leash`.
-- Clone the repo and run `pod install` from the `Example` directory first.
-
 ## Requirements
 
 - Xcode 9.0+
-- Swift 3.2+
+- Swift 4.0+
 
 ## Installation
 
-`Leash` is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your `Podfile`:
+### CocoaPods
+
+To integrate `Leash` into your project using [CocoaPods](http://cocoapods.org), specify it in your `Podfile`:
 
 ```ruby
-pod 'Leash', '~> 2.2'
-pod 'Leash/RxSwift', '~> 2.2'
-pod 'Leash/Interceptors', '~> 2.2'
+pod 'Leash', '~> 2.3'
+pod 'Leash/RxSwift', '~> 2.3'
+pod 'Leash/Interceptors', '~> 2.3'
+```
+
+### Carthage
+
+To integrate `Leash` into your project using [Carthage](https://github.com/Carthage/Carthage), specify it in your `Cartfile`:
+
+```ogdl
+github "LucianoPolit/Leash" ~> 2.3
 ```
 
 ## Usage
@@ -88,7 +90,7 @@ usersClient.readAll { response in
 }
 ```
 
-Much simpler, huh? To keep your project as simple and clean as possible, follow the architecture of the [example project](#example).
+Much simpler, huh? To keep your project as simple and clean as possible, follow the architecture of the [example project](https://github.com/LucianoPolit/Leash/tree/master/Example).
 
 ### Encoding
 
@@ -460,7 +462,7 @@ usersClient.rx.readAll().subscribe { event in
 }
 ```
 
-Much simpler, again, huh? As mentioned before, to keep your project as simple and clean as possible, follow the architecture of the [example project](#example).
+Much simpler, again, huh? As mentioned before, to keep your project as simple and clean as possible, follow the architecture of the [example project](https://github.com/LucianoPolit/Leash/tree/master/Example).
 
 ## Communication
 

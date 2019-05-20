@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Leash'
-  s.version          = '2.2.0'
+  s.version          = '2.3.0'
   s.summary          = 'Network Abstraction Layer'
   s.description      = <<-DESC
                           Network Abstraction Layer in Swift.
@@ -11,6 +11,7 @@ Pod::Spec.new do |s|
   s.author           = { 'Luciano Polit' => 'lucianopolit@gmail.com' }
   s.source           = { :git => 'https://github.com/lucianopolit/Leash.git', :tag => s.version.to_s }
   s.platform         = :ios, "8.0"
+  s.swift_version    = '4.0'
   s.default_subspec  = 'Core'
 
   s.subspec 'Core' do |ss|
