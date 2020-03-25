@@ -36,9 +36,9 @@ extension ClientTests {
         stub(condition: isEndpoint(endpoint)) { _ in
             return OHHTTPStubsResponse(jsonObject: json, statusCode: 200, headers: nil)
         }
-        let single: Single<[String: String]> = client.rx.execute(endpoint)
-        single
-            .subscribe(onSuccess: { value in
+        let observable: Observable<[String: String]> = client.rx.execute(endpoint)
+        observable
+            .subscribe(onNext: { value in
                 XCTAssertEqual(value, json)
                 expectation.fulfill()
             })
@@ -56,8 +56,8 @@ extension ClientTests {
         let expectation = self.expectation(description: "Expected to find a failure response")
         let disposeBag = DisposeBag()
         let endpoint = Endpoint(method: .post, parameters: Data())
-        let single: Single<ReactiveResponse<Data>> = FailureClient(manager: manager).rx.execute(endpoint)
-        single
+        let observable: Observable<ReactiveResponse<Data>> = FailureClient(manager: manager).rx.execute(endpoint)
+        observable
             .subscribe(onError: { error in
                 guard case Leash.Error.encoding = error else {
                     XCTFail()

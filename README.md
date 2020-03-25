@@ -40,9 +40,9 @@ Moreover, `Leash` also includes some processes that are common on the network la
 To integrate `Leash` into your project using [CocoaPods](http://cocoapods.org), specify it in your `Podfile`:
 
 ```ruby
-pod 'Leash', '~> 3.0'
-pod 'Leash/RxSwift', '~> 3.0'
-pod 'Leash/Interceptors', '~> 3.0'
+pod 'Leash', '~> 3.1'
+pod 'Leash/RxSwift', '~> 3.1'
+pod 'Leash/Interceptors', '~> 3.1'
 ```
 
 ### Carthage
@@ -50,7 +50,7 @@ pod 'Leash/Interceptors', '~> 3.0'
 To integrate `Leash` into your project using [Carthage](https://github.com/Carthage/Carthage), specify it in your `Cartfile`:
 
 ```ogdl
-github "LucianoPolit/Leash" ~> 3.0
+github "LucianoPolit/Leash" ~> 3.1
 ```
 
 ## Usage

@@ -79,7 +79,7 @@ extension AlamofireLeashTests {
             let dataRequest = try client.request(for: endpoint)
             let serializer = JSONResponseSerializer()
             dataRequest.rx.response(client: client, endpoint: endpoint, serializer: serializer)
-                .subscribe(onSuccess: { _ in
+                .subscribe(onNext: { _ in
                     expectation.fulfill()
                 })
                 .disposed(by: disposeBag)
@@ -91,7 +91,7 @@ extension AlamofireLeashTests {
         let expectation = self.expectation(description: "Expected to find a success response")
         let disposeBag = DisposeBag()
         rx.executeRequest(builder: builder, endpoint: successEndpoint)?
-            .subscribe(onSuccess: { _ in
+            .subscribe(onNext: { _ in
                 expectation.fulfill()
             })
             .disposed(by: disposeBag)
@@ -151,14 +151,14 @@ private extension Reactive where Base: AlamofireLeashTests {
         }
     }
     
-    func executeRequest(builder: Manager.Builder, endpoint: Endpoint) -> Single<ReactiveResponse<Base.T>>? {
-        var single: Single<ReactiveResponse<Base.T>>?
+    func executeRequest(builder: Manager.Builder, endpoint: Endpoint) -> Observable<ReactiveResponse<Base.T>>? {
+        var observable: Observable<ReactiveResponse<Base.T>>?
         base.manager = builder.build()
         base.assertNoErrorThrown {
             let dataRequest = try base.client.request(for: endpoint)
-            single = dataRequest.rx.responseDecodable(client: base.client, endpoint: endpoint)
+            observable = dataRequest.rx.responseDecodable(client: base.client, endpoint: endpoint)
         }
-        return single
+        return observable
     }
     
 }

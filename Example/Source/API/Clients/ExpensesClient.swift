@@ -33,19 +33,19 @@ class ExpensesClient: Client<ExpensesEndpoint> {
 
 extension Reactive where Base: ExpensesClient {
     
-    func readAll() -> Single<[Expense]> {
+    func readAll() -> Observable<[Expense]> {
         return execute(base.readAll)
     }
     
-    func create(_ request: CreateExpenseRequest) -> Single<Expense> {
+    func create(_ request: CreateExpenseRequest) -> Observable<Expense> {
         return execute(base.create, with: request)
     }
     
-    func update(_ request: UpdateExpenseRequest) -> Single<Expense> {
+    func update(_ request: UpdateExpenseRequest) -> Observable<Expense> {
         return execute(base.update, with: request)
     }
     
-    func delete(_ expense: String) -> Single<EmptyResponse> {
+    func delete(_ expense: String) -> Observable<EmptyResponse> {
         return execute(base.delete, with: expense)
     }
     

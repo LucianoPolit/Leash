@@ -55,15 +55,6 @@ public struct ReactiveResponse<Value>: ReactiveResponseType {
 
 // MARK: - Utils
 
-extension PrimitiveSequence where Trait == SingleTrait, Element: ReactiveResponseType {
-    
-    /// Transforms the element on its value.
-    public func justValue() -> Single<Element.Value> {
-        return map { $0.value }
-    }
-    
-}
-
 extension Observable where Element: ReactiveResponseType {
     
     /// Transforms the element on its value.
@@ -73,12 +64,12 @@ extension Observable where Element: ReactiveResponseType {
     
 }
 
-extension SingleEvent {
+extension Event {
     
-    static func fromResponse(_ response: Response<Element>) -> SingleEvent<ReactiveResponse<Element>> {
+    static func fromResponse(_ response: Response<Element>) -> Event<ReactiveResponse<Element>> {
         switch response {
         case .success(let value, let extra):
-            return .success(ReactiveResponse(value, extra))
+            return .next(ReactiveResponse(value, extra))
         case .failure(let error):
             return .error(error)
         }

@@ -49,18 +49,18 @@ extension Reactive where Base: DataRequest {
     /// - Parameter type: The type on which the response has to be serialized.
     /// - Parameter serializer: The serializer responsible for serializing the request, response and data.
     ///
-    /// - Returns: A single with the response.
+    /// - Returns: An observable with the response.
     public func response<T: DataResponseSerializerProtocol>(queue: DispatchQueue? = nil,
                                                             client: Client,
                                                             endpoint: Endpoint,
                                                             type: T.SerializedObject.Type = T.SerializedObject.self,
-                                                            serializer: T) -> Single<ReactiveResponse<T.SerializedObject>> {
-        return Single.create { single in
+                                                            serializer: T) -> Observable<ReactiveResponse<T.SerializedObject>> {
+        return Observable.create { observer in
             self.base.response(queue: queue,
                                client: client,
                                endpoint: endpoint,
                                serializer: serializer) { response in
-                single(SingleEvent.fromResponse(response))
+                observer.on(Event.fromResponse(response))
             }
             
             return Disposables.create { }
@@ -85,11 +85,11 @@ extension Reactive where Base: DataRequest {
     /// - Parameter endpoint: The endpoint that was used to create the request.
     /// - Parameter type: The type on which the response has to be decoded.
     ///
-    /// - Returns: A single with the response.
+    /// - Returns: An observable with the response.
     public func responseDecodable<T: Decodable>(queue: DispatchQueue? = nil,
                                                 client: Client,
                                                 endpoint: Endpoint,
-                                                type: T.Type = T.self) -> Single<ReactiveResponse<T>> {
+                                                type: T.Type = T.self) -> Observable<ReactiveResponse<T>> {
         return response(queue: queue,
                         client: client,
                         endpoint: endpoint,

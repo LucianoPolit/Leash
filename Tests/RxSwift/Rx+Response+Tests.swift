@@ -15,16 +15,6 @@ import XCTest
 
 extension ResponseTests {
     
-    func testRxSingleJustValue() {
-        let response = ReactiveResponse(123, nil)
-        let single = Single.just(response)
-        single.justValue()
-            .subscribe(onSuccess: { value in
-                XCTAssertEqual(response.value, value)
-            })
-            .dispose()
-    }
-    
     func testRxObservableJustValue() {
         let response = ReactiveResponse(123, nil)
         let observable = Observable.just(response)

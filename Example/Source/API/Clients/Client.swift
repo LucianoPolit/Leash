@@ -35,20 +35,20 @@ extension Client {
 
 extension Reactive where Base: Leash.Client {
     
-    func execute<T: Decodable>(_ execution: @escaping (@escaping APICompletion<T>) -> ()) -> Single<T> {
-        return Single.create { single in
+    func execute<T: Decodable>(_ execution: @escaping (@escaping APICompletion<T>) -> ()) -> Observable<T> {
+        return Observable.create { observer in
             execution { response in
-                single(SingleEvent.fromResponse(response))
+                observer.on(Event.fromResponse(response))
             }
             
             return Disposables.create { }
         }
     }
     
-    func execute<T: Decodable, U>(_ execution: @escaping (U, @escaping APICompletion<T>) -> (), with request: U) -> Single<T> {
-        return Single.create { single in
+    func execute<T: Decodable, U>(_ execution: @escaping (U, @escaping APICompletion<T>) -> (),with request: U) -> Observable<T> {
+        return Observable.create { observer in
             execution(request) { response in
-                single(SingleEvent.fromResponse(response))
+                observer.on(Event.fromResponse(response))
             }
             
             return Disposables.create { }
@@ -57,12 +57,12 @@ extension Reactive where Base: Leash.Client {
     
 }
 
-private extension SingleEvent {
+private extension Event {
     
-    static func fromResponse(_ response: APIResponse<Element>) -> SingleEvent<Element> {
+    static func fromResponse(_ response: APIResponse<Element>) -> Event<Element> {
         switch response {
         case .success(let value):
-            return .success(value)
+            return .next(value)
         case .failure(let error):
             return .error(error)
         }
