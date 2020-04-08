@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Leash` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
-- `3.1.x` Releases - [3.1.0](#310)
+- `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) 
 - `3.0.x` Releases - [3.0.0](#300)
 
 #### 2.x Releases
@@ -17,6 +17,11 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100)
 
 ---
+
+## [3.1.1](https://github.com/LucianoPolit/Leash/releases/tag/3.1.1)
+Released on 2020-04-09.
+
+- Allowance of multiple event propagation when a request is retried.
 
 ## [3.1.0](https://github.com/LucianoPolit/Leash/releases/tag/3.1.0)
 Released on 2020-03-25.

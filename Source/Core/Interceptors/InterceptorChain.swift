@@ -105,6 +105,7 @@ extension InterceptorChain where T == Data {
     public func retry() throws -> DataRequest {
         let request = try client.request(for: endpoint)
         return request.response(client: client, endpoint: endpoint) { response in
+            self.completed = false
             self.complete(with: response)
         }
     }
