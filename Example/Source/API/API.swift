@@ -30,7 +30,9 @@ class API {
     
     // MARK: - Initializers
     
-    init(authenticator: APIAuthenticator) {
+    init(
+        authenticator: APIAuthenticator
+    ) {
         self.authenticator = authenticator
         manager = Manager.Builder()
             .scheme(API.scheme)
@@ -38,13 +40,21 @@ class API {
             .port(API.port)
             .path(API.path)
             .authenticator(authenticator)
-            .jsonDateFormatter(APIDateFormatter())
-            .add(interceptor: LoggerInterceptor())
-            .add(interceptor: BodyValidator())
-            .add(interceptor: ResponseValidator())
-            .add(interceptor: CacheInterceptor())
+            .jsonDateFormatter(
+                APIDateFormatter()
+            )
+            .interceptors(
+                [
+                    LoggerInterceptor(),
+                    BodyValidator(),
+                    ResponseValidator(),
+                    CacheInterceptor()
+                ]
+            )
             .build()
-        expenses = ExpensesClient(manager: manager)
+        expenses = ExpensesClient(
+            manager: manager
+        )
     }
     
 }

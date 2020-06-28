@@ -27,5 +27,8 @@ import Foundation
 /// Interceptor that is called before the completion handler.
 public protocol CompletionInterceptor: Interceptor {
     /// Main method responsible for handling the interception.
-    func intercept(chain: InterceptorChain<Data>, response: Response<Data>)
+    func intercept(
+        chain: InterceptorChain<Data>,
+        response: Response<Data>
+    )
 }

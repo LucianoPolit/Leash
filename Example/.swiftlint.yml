@@ -1,13 +1,13 @@
 disabled_rules:
   - trailing_whitespace
-  - void_return
 opt_in_rules:
   - multiline_arguments
   - multiline_parameters
 identifier_name:
   excluded:
     - id
-line_length: 140
+function_body_length: 50
+file_length: 500
 included:
   - Source
   - ../Source

@@ -17,14 +17,15 @@ protocol Endpoint: Leash.Endpoint {
 extension Endpoint {
     
     var path: String {
-        guard let parameters = pathParameters else {
-            return basePath
-        }
+        guard let parameters = pathParameters else { return basePath }
         
         var finalPath = basePath
         
         for (parameter, value) in parameters {
-            finalPath = finalPath.replacingOccurrences(of: parameter, with: "\(value)")
+            finalPath = finalPath.replacingOccurrences(
+                of: parameter,
+                with: "\(value)"
+            )
         }
         
         return finalPath

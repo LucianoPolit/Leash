@@ -27,7 +27,10 @@ import Foundation
 /// Represents whether a request was successful or encountered an error.
 public enum Response<T> {
     /// Represents a successful response.
-    case success(value: T, extra: Any?)
+    case success(
+        value: T,
+        extra: Any?
+    )
     /// Represents a failed response.
     case failure(Swift.Error)
 }
@@ -97,8 +100,10 @@ extension Response {
     /// The response represented as a result without the extra.
     public func justValue() -> Result<T, Swift.Error> {
         switch self {
-        case .success(let value, _): return .success(value)
-        case .failure(let error): return .failure(error)
+        case .success(let value, _):
+            return .success(value)
+        case .failure(let error):
+            return .failure(error)
         }
     }
     

@@ -9,4 +9,4 @@
 import Foundation
 
 typealias APIResponse<T> = Result<T, Swift.Error>
-typealias APICompletion<T> = (APIResponse<T>) -> ()
+typealias APICompletion<T> = (APIResponse<T>) -> Void

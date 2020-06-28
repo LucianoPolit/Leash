@@ -71,13 +71,17 @@ let manager = Manager.Builder()
 Then, we need a `Client` to create and execute the requests:
 
 ```swift
-let client = Client(manager: manager)
+let client = Client(
+    manager: manager
+)
 ```
 
 Now, assuming that we have already created an `APIEndpoint` with all the reachable endpoints, we can execute requests. For example:
 
 ```swift
-client.execute(APIEndpoint.readAllUsers) { (response: Response<[User]>) in
+client.execute(
+    APIEndpoint.readAllUsers
+) { (response: Response<[User]>) in
     // Do whatever you have to do with the response here.
 }
 ```
@@ -149,8 +153,11 @@ In case you want to encode the parameters in a different way, you have to overri
 When you execute a request you have to specify the type of the response. Also, this type must conform to `Decodable`. After executing the request, in case of a successful response, you will have the response with a value of the specified type. So, a simple example could be:
 
 ```swift
-client.execute(APIEndpoint.readAllUsers) { (response: Response<[User]>) in
-    // Here, in case of a successful response, the `response.value` is of the type `[User]`.
+client.execute(
+    APIEndpoint.readAllUsers
+) { (response: Response<[User]>) in
+    // Here, in case of a successful response, 
+    // the `response.value` is of the type `[User]`.
 }
 ```
 
@@ -162,13 +169,17 @@ For example, here is how a `JSON` response handler might be implemented:
 extension DataRequest {
 
     @discardableResult
-    func responseJSON(client: Client,
-                      endpoint: Endpoint,
-                      completion: @escaping (Response<Any>) -> ()) -> Self {
-        return response(client: client,
-                        endpoint: endpoint,
-                        serializer: JSONResponseSerializer(),
-                        completion: completion)
+    func responseJSON(
+        client: Client,
+        endpoint: Endpoint,
+        completion: @escaping (Response<Any>) -> Void
+    ) -> Self {
+        return response(
+            client: client,
+            endpoint: endpoint,
+            serializer: JSONResponseSerializer(),
+            completion: completion
+        )
     }
 
 }
@@ -180,12 +191,23 @@ To facilitate the process of executing requests, you should add a method like th
 extension Client {
 
     @discardableResult
-    func execute(_ endpoint: Endpoint, completion: @escaping (Response<Any>) -> ()) -> DataRequest? {
+    func execute(
+        _ endpoint: Endpoint, 
+        completion: @escaping (Response<Any>) -> Void
+    ) -> DataRequest? {
         do {
-            let request = try self.request(for: endpoint)
-            return request.responseJSON(client: self, endpoint: endpoint, completion: completion)
+            return request(for: endpoint)
+                .responseJSON(
+                    client: self, 
+                    endpoint: endpoint, 
+                    completion: completion
+                )
         } catch {
-            completion(.failure(Error.encoding(error)))
+            completion(
+                .failure(
+                    Error.encoding(error)
+                )
+            )
             return nil
         }
     }
@@ -196,8 +218,11 @@ extension Client {
 An example of the result of these extensions could be:
 
 ```swift
-client.execute(APIEndpoint.readAllUsers) { (response: Response<Any>) in
-    // Here, in case of a successful response, the `response.value` is of the type `Any`.
+client.execute(
+    APIEndpoint.readAllUsers
+) { (response: Response<Any>) in
+    // Here, in case of a successful response, 
+    // the `response.value` is of the type `Any`.
 }
 ```
 
@@ -261,7 +286,9 @@ Just as a reminder, do not forget to add the `Interceptors` to the `Manager`, li
 ```swift
 let manager = Manager.Builder()
     { ... }
-    .add(interceptor: Interceptor())
+    .add(
+        interceptor: Interceptor()
+    )
     .build()
 ```
 
@@ -274,11 +301,14 @@ First, the simplest one, we need to log every request that is executed:
 ```swift
 class LoggerInterceptor: ExecutionInterceptor {
 
-    func intercept(chain: InterceptorChain<Data>) {
+    func intercept(
+        chain: InterceptorChain<Data>
+    ) {
         defer { chain.proceed() }
         guard let request = try? chain.request.convertible.asURLRequest(),
             let method = request.httpMethod,
-            let url = request.url?.absoluteString else { return }
+            let url = request.url?.absoluteString 
+            else { return }
 
         Logger.shared.logDebug("👉👉👉 \(method) \(url)")
     }
@@ -291,12 +321,23 @@ Now, one more complex, but not more complicated to implement:
 ```swift
 class CacheInterceptor: ExecutionInterceptor {
 
-    func intercept(chain: InterceptorChain<Data>) {
-        // On that case, the cache controller may need to finish the operation or not (depending on the policies).
-        // So, we can easily tell the chain wether the operation should be finished or not.
+    let controller = CacheController()
+
+    func intercept(
+        chain: InterceptorChain<Data>
+    ) {
+        // On that case, the cache controller may need to finish 
+        // the operation or not (depending on the policies).
+        // So, we can easily tell the chain wether the operation 
+        // should be finished or not.
         defer { chain.proceed() }
-        guard let cachedResponse = try? CacheController().cachedResponse(for: chain.endpoint) else { return }
-        chain.complete(with: cachedResponse.data, finish: cachedResponse.finish)
+        guard let cachedResponse = 
+            try? controller.cachedResponse(for: chain.endpoint) 
+            else { return }
+        chain.complete(
+            with: cachedResponse.data, 
+            finish: cachedResponse.finish
+        )
     }
 
 }
@@ -309,7 +350,10 @@ Basically, the purpose of this `Interceptor` is to intercept when `Alamofire` re
 ```swift
 class ErrorValidator: FailureInterceptor {
 
-    func intercept(chain: InterceptorChain<Data>, error: Swift.Error) {
+    func intercept(
+        chain: InterceptorChain<Data>,
+        error: Swift.Error
+    ) {
         defer { chain.proceed() }
         guard case Error.some = error else { return }
         chain.complete(with: Error.another)
@@ -327,12 +371,19 @@ We know that, sometimes, the `API` could retrieve a custom error with more infor
 ```swift
 class BodyValidator: SuccessInterceptor {
 
-    func intercept(chain: InterceptorChain<Data>, response: HTTPURLResponse, data: Data) {
+    func intercept(
+        chain: InterceptorChain<Data>, 
+        response: HTTPURLResponse, 
+        data: Data
+    ) {
         defer { chain.proceed() }
 
-        if let error = try? chain.client.manager.jsonDecoder.decode(APIError.self, from: data) {
-            chain.complete(with: Error.server(error))
-        }
+        guard let error = 
+            try? chain.client.manager.jsonDecoder.decode(APIError.self, from: data) 
+            else { return }
+        chain.complete(
+            with: Error.server(error)
+        )
     }
 
 }
@@ -343,7 +394,11 @@ Maybe, there is no custom error, but we still need to validate the status code o
 ```swift
 class ResponseValidator: SuccessInterceptor {
 
-    func intercept(chain: InterceptorChain<Data>, response: HTTPURLResponse, data: Data) {
+    func intercept(
+        chain: InterceptorChain<Data>, 
+        response: HTTPURLResponse, 
+        data: Data
+    ) {
         defer { chain.proceed() }
 
         let error: Error
@@ -370,14 +425,18 @@ Again, the simplest one, we need to log every response:
 ```swift
 class LoggerInterceptor: CompletionInterceptor {
 
-    func intercept(chain: InterceptorChain<Data>, response: Response<Data>) {
+    func intercept(
+        chain: InterceptorChain<Data>, 
+        response: Response<Data>
+    ) {
         defer { chain.proceed() }
         guard let request = try? chain.request.convertible.asURLRequest(),
             let method = request.httpMethod,
-            let url = request.url?.absoluteString else { return }
+            let url = request.url?.absoluteString
+            else { return }
 
         switch response {
-        case .success(_):
+        case .success:
             Logger.shared.logDebug("✔✔✔ \(method) \(url)")
         case .failure(let error):
             Logger.shared.logDebug("✖✖✖ \(method) \(url)")
@@ -396,7 +455,10 @@ Now, one more complex, we have to update the `authentication` when expired. Ther
 ```swift
 class AuthenticationValidator: CompletionInterceptor {
 
-    func intercept(chain: InterceptorChain<Data>, response: Response<Data>) {
+    func intercept(
+        chain: InterceptorChain<Data>, 
+        response: Response<Data>
+    ) {
         guard let error = response.error, case Error.unauthorized = error else {
             chain.proceed()
             return
@@ -432,13 +494,22 @@ We started before with the `CacheController`, right? Well, now we need to update
 ```swift
 class CacheInterceptor: SerializationInterceptor {
 
-    func intercept<T: DataResponseSerializerProtocol>(chain: InterceptorChain<T.SerializedObject>,
-                                                      response: Response<Data>,
-                                                      result: Result<T.SerializedObject, Swift.Error>,
-                                                      serializer: T) {
+    let controller = CacheController()
+
+    func intercept<T: DataResponseSerializerProtocol>(
+        chain: InterceptorChain<T.SerializedObject>,
+        response: Response<Data>,
+        result: Result<T.SerializedObject, Swift.Error>,
+        serializer: T
+    ) {
         defer { chain.proceed() }
-        guard let value = response.value, (try? result.get()) != nil else { return }
-        CacheController().updateCacheIfNeeded(for: chain.endpoint, value: value)
+        guard let value = response.value, 
+            (try? result.get()) != nil 
+            else { return }
+        controller.updateCacheIfNeeded(
+            for: chain.endpoint, 
+            value: value
+        )
     }
 
 }
@@ -449,7 +520,10 @@ class CacheInterceptor: SerializationInterceptor {
 Do you use [RxSwift](https://github.com/ReactiveX/RxSwift)? There is an extension for that! Let me show you how to use it:
 
 ```swift
-client.rx.execute(APIEndpoint.readAllUsers, type: [User].self).subscribe { event in
+client.rx.execute(
+    APIEndpoint.readAllUsers, 
+    type: [User].self
+).subscribe { event in
     // Do whatever you have to do with the response here.
 }
 ```

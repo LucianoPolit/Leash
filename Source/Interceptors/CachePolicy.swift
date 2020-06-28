@@ -26,7 +26,9 @@ import Foundation
 
 public protocol CachePolicyProtocol {
     func shouldCacheBeforeExecution() -> Bool
-    func shouldCacheOnError(_ error: Swift.Error) -> Bool
+    func shouldCacheOnError(
+        _ error: Swift.Error
+    ) -> Bool
     func shouldSaveAfterSuccess() -> Bool
     func shouldFinishAfterCache() -> Bool
 }
@@ -49,7 +51,9 @@ extension CachePolicy {
         
         public init() { }
         
-        open func isErrorCacheable(_ error: Swift.Error) -> Bool {
+        open func isErrorCacheable(
+            _ error: Swift.Error
+        ) -> Bool {
             return true
         }
         
@@ -63,7 +67,9 @@ extension CachePolicy.CacheAndRenew: CachePolicyProtocol {
         return true
     }
     
-    public func shouldCacheOnError(_ error: Swift.Error) -> Bool {
+    public func shouldCacheOnError(
+        _ error: Swift.Error
+    ) -> Bool {
         return false
     }
     
@@ -83,7 +89,9 @@ extension CachePolicy.CacheOnlyOnError: CachePolicyProtocol {
         return false
     }
     
-    public func shouldCacheOnError(_ error: Swift.Error) -> Bool {
+    public func shouldCacheOnError(
+        _ error: Swift.Error
+    ) -> Bool {
         return isErrorCacheable(error)
     }
     

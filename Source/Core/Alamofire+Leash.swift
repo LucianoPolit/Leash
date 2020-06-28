@@ -31,8 +31,9 @@ public typealias DataRequest = Alamofire.DataRequest
 public typealias DataResponseSerializerProtocol = Alamofire.DataResponseSerializerProtocol
 /// Type representing HTTP methods.
 public typealias HTTPMethod = Alamofire.HTTPMethod
-/// `Session` creates and manages Alamofire's `Request` types during their lifetimes. It also provides common
-/// functionality for all `Request`s, including queuing, interception, trust management, redirect handling, and response cache handling.
+/// `Session` creates and manages Alamofire's `Request` types during their lifetimes.
+/// It also provides common functionality for all `Request`s, including queuing, interception,
+/// trust management, redirect handling, and response cache handling.
 public typealias Session = Alamofire.Session
 
 // MARK: - Data
@@ -41,7 +42,8 @@ extension DataRequest {
     
     /// Adds a handler to be called once the request has finished.
     ///
-    /// Also, it is responsible for calling the interceptors when needed (all asynchronous and executed in a queue order):
+    /// Also, it is responsible for calling the interceptors when needed
+    /// (all asynchronous and executed in a queue order):
     ///
     /// - Execution: called before the request is executed.
     /// - Failure: called when there is a problem executing the request.
@@ -58,36 +60,78 @@ extension DataRequest {
     ///
     /// - Returns: The request.
     @discardableResult
-    public func response(queue: DispatchQueue? = nil,
-                         client: Client,
-                         endpoint: Endpoint,
-                         completion: @escaping (Response<Data>) -> ()) -> Self {
+    public func response(
+        queue: DispatchQueue? = nil,
+        client: Client,
+        endpoint: Endpoint,
+        completion: @escaping (Response<Data>) -> Void
+    ) -> Self {
         let preCompletion = { (response: Response<Data>) in
-            client.intercept(.completion(endpoint: endpoint, request: self, response: response),
-                             queue: queue,
-                             completion: completion) { $0(response) }
+            client.intercept(
+                .completion(
+                    endpoint: endpoint,
+                    request: self,
+                    response: response
+                ),
+                queue: queue,
+                completion: completion,
+                finally: { $0(response) }
+            )
         }
         
-        let finally = { (callback: @escaping InterceptorsExecutor<Data>.Completion) in
+        let finally = { (completion: @escaping InterceptorsExecutor<Data>.Completion) in
             self.responseData { response in
-                if let httpResponse = response.response, let data = response.value, response.error == nil {
-                    client.intercept(.success(endpoint: endpoint, request: self, response: httpResponse, data: data),
-                                     queue: queue,
-                                     completion: callback) { $0(.success(value: data, extra: nil)) }
+                if let httpResponse = response.response,
+                    let data = response.value,
+                    response.error == nil {
+                    client.intercept(
+                        .success(
+                            endpoint: endpoint,
+                            request: self,
+                            response: httpResponse,
+                            data: data
+                        ),
+                        queue: queue,
+                        completion: completion,
+                        finally: { completion in
+                            completion(
+                                .success(
+                                    value: data,
+                                    extra: nil
+                                )
+                            )
+                        }
+                    )
                 } else {
                     let error: Swift.Error = response.error ?? Error.unknown
-                    client.intercept(.failure(endpoint: endpoint, request: self, error: error),
-                                     queue: queue,
-                                     completion: callback) { $0(.failure(error)) }
+                    client.intercept(
+                        .failure(
+                            endpoint: endpoint,
+                            request: self,
+                            error: error
+                        ),
+                        queue: queue,
+                        completion: completion,
+                        finally: { completion in
+                            completion(
+                                .failure(error)
+                            )
+                        }
+                    )
                 }
             }
             self.resume()
         }
         
-        client.intercept(.execution(endpoint: endpoint, request: self),
-                         queue: queue,
-                         completion: preCompletion,
-                         finally: finally)
+        client.intercept(
+            .execution(
+                endpoint: endpoint,
+                request: self
+            ),
+            queue: queue,
+            completion: preCompletion,
+            finally: finally
+        )
         
         return self
     }
@@ -100,7 +144,8 @@ extension DataRequest {
     
     /// Adds a handler to be called once the request has finished.
     ///
-    /// Also, it is responsible for calling the interceptors when needed (all asynchronous and executed in a queue order):
+    /// Also, it is responsible for calling the interceptors when needed
+    /// (all asynchronous and executed in a queue order):
     ///
     /// - Execution: called before the request is executed.
     /// - Failure: called when there is a problem executing the request.
@@ -119,36 +164,63 @@ extension DataRequest {
     ///
     /// - Returns: The request.
     @discardableResult
-    public func response<T: DataResponseSerializerProtocol>(queue: DispatchQueue? = nil,
-                                                            client: Client,
-                                                            endpoint: Endpoint,
-                                                            serializer: T,
-                                                            completion: @escaping (Response<T.SerializedObject>) -> ()) -> Self {
-        return response(queue: .global(qos: .utility), client: client, endpoint: endpoint) { response in
-            let result: Result<T.SerializedObject, Swift.Error>
-            do {
-                let serialized = try serializer.serialize(request: self.request,
-                                                          response: self.response,
-                                                          data: response.value,
-                                                          error: response.error)
-                result = .success(serialized)
-            } catch {
-                result = .failure(response.error ?? Error.decoding(error))
-            }
-            
-            let interceptions = client.serializationInterceptions(endpoint: endpoint,
-                                                                  request: self,
-                                                                  response: response,
-                                                                  result: result,
-                                                                  serializer: serializer)
-            client.intercept(interceptions, queue: queue, completion: completion) { callback in
-                switch result {
-                case .failure(let error):
-                    callback(.failure(error))
-                case .success(let value):
-                    callback(.success(value: value, extra: response.extra))
+    public func response<T: DataResponseSerializerProtocol>(
+        queue: DispatchQueue? = nil,
+        client: Client,
+        endpoint: Endpoint,
+        serializer: T,
+        completion: @escaping (Response<T.SerializedObject>) -> Void
+    ) -> Self {
+        return response(
+            queue: .global(
+                qos: .utility
+            ),
+            client: client,
+            endpoint: endpoint
+        ) { response in
+            let result: Result<T.SerializedObject, Swift.Error> = {
+                do {
+                    return .success(
+                        try serializer.serialize(
+                            request: self.request,
+                            response: self.response,
+                            data: response.value,
+                            error: response.error
+                        )
+                    )
+                } catch {
+                    return .failure(
+                        response.error ?? Error.decoding(error)
+                    )
                 }
-            }
+            }()
+            
+            client.intercept(
+                client.serializationInterceptions(
+                    endpoint: endpoint,
+                    request: self,
+                    response: response,
+                    result: result,
+                    serializer: serializer
+                ),
+                queue: queue,
+                completion: completion,
+                finally: { completion in
+                    switch result {
+                    case .failure(let error):
+                        completion(
+                            .failure(error)
+                        )
+                    case .success(let value):
+                        completion(
+                            .success(
+                                value: value,
+                                extra: response.extra
+                            )
+                        )
+                    }
+                }
+            )
         }
     }
     
@@ -160,7 +232,8 @@ extension DataRequest {
     
     /// Adds a handler to be called once the request has finished.
     ///
-    /// Also, it is responsible for calling the interceptors when needed (all asynchronous and executed in a queue order):
+    /// Also, it is responsible for calling the interceptors when needed
+    /// (all asynchronous and executed in a queue order):
     ///
     /// - Execution: called before the request is executed.
     /// - Failure: called when there is a problem executing the request.
@@ -178,15 +251,21 @@ extension DataRequest {
     ///
     /// - Returns: The request.
     @discardableResult
-    public func responseDecodable<T: Decodable>(queue: DispatchQueue? = nil,
-                                                client: Client,
-                                                endpoint: Endpoint,
-                                                completion: @escaping (Response<T>) -> ()) -> Self {
-        return response(queue: queue,
-                        client: client,
-                        endpoint: endpoint,
-                        serializer: DecodableResponseSerializer(decoder: client.manager.jsonDecoder),
-                        completion: completion)
+    public func responseDecodable<T: Decodable>(
+        queue: DispatchQueue? = nil,
+        client: Client,
+        endpoint: Endpoint,
+        completion: @escaping (Response<T>) -> Void
+    ) -> Self {
+        return response(
+            queue: queue,
+            client: client,
+            endpoint: endpoint,
+            serializer: DecodableResponseSerializer(
+                decoder: client.manager.jsonDecoder
+            ),
+            completion: completion
+        )
     }
     
 }
@@ -198,46 +277,90 @@ private extension Client {
     typealias Interception<T> = InterceptorsExecutor<T>.Interception
     
     enum DataInterception {
-        case execution(endpoint: Endpoint, request: DataRequest)
-        case failure(endpoint: Endpoint, request: DataRequest, error: Swift.Error)
-        case success(endpoint: Endpoint, request: DataRequest, response: HTTPURLResponse, data: Data)
-        case completion(endpoint: Endpoint, request: DataRequest, response: Response<Data>)
+        case execution(
+            endpoint: Endpoint,
+            request: DataRequest
+        )
+        case failure(
+            endpoint: Endpoint,
+            request: DataRequest,
+            error: Swift.Error
+        )
+        case success(
+            endpoint: Endpoint,
+            request: DataRequest,
+            response: HTTPURLResponse,
+            data: Data
+        )
+        case completion(
+            endpoint: Endpoint,
+            request: DataRequest,
+            response: Response<Data>
+        )
     }
     
 }
 
 private extension Client {
     
-    func intercept<T>(_ interceptions: [Interception<T>],
-                      queue: DispatchQueue?,
-                      completion: @escaping InterceptorsExecutor<T>.Completion,
-                      finally: @escaping InterceptorsExecutor<T>.Finally) {
-        InterceptorsExecutor(queue: queue,
-                             interceptions: interceptions,
-                             completion: completion,
-                             finally: finally)
+    func intercept<T>(
+        _ interceptions: [Interception<T>],
+        queue: DispatchQueue?,
+        completion: @escaping InterceptorsExecutor<T>.Completion,
+        finally: @escaping InterceptorsExecutor<T>.Finally
+    ) {
+        InterceptorsExecutor(
+            queue: queue,
+            interceptions: interceptions,
+            completion: completion,
+            finally: finally
+        )
     }
     
-    func intercept(_ type: DataInterception,
-                   queue: DispatchQueue?,
-                   completion: @escaping InterceptorsExecutor<Data>.Completion,
-                   finally: @escaping InterceptorsExecutor<Data>.Finally) {
-        intercept(interceptions(of: type),
-                  queue: queue,
-                  completion: completion,
-                  finally: finally)
+    func intercept(
+        _ type: DataInterception,
+        queue: DispatchQueue?,
+        completion: @escaping InterceptorsExecutor<Data>.Completion,
+        finally: @escaping InterceptorsExecutor<Data>.Finally
+    ) {
+        intercept(
+            interceptions(
+                of: type
+            ),
+            queue: queue,
+            completion: completion,
+            finally: finally
+        )
     }
     
-    func interceptions(of type: DataInterception) -> [Interception<Data>] {
+    func interceptions(
+        of type: DataInterception
+    ) -> [Interception<Data>] {
         switch type {
-        case .execution(let endpoint, let request):
-            return executionInterceptions(endpoint: endpoint, request: request)
-        case .failure(let endpoint, let request, let error):
-            return failureInterceptions(endpoint: endpoint, request: request, error: error)
-        case .success(let endpoint, let request, let response, let data):
-            return successInterceptions(endpoint: endpoint, request: request, response: response, data: data)
-        case .completion(let endpoint, let request, let response):
-            return completionInterceptions(endpoint: endpoint, request: request, response: response)
+        case .execution(let value):
+            return executionInterceptions(
+                endpoint: value.endpoint,
+                request: value.request
+            )
+        case .failure(let value):
+            return failureInterceptions(
+                endpoint: value.endpoint,
+                request: value.request,
+                error: value.error
+            )
+        case .success(let value):
+            return successInterceptions(
+                endpoint: value.endpoint,
+                request: value.request,
+                response: value.response,
+                data: value.data
+            )
+        case .completion(let value):
+            return completionInterceptions(
+                endpoint: value.endpoint,
+                request: value.request,
+                response: value.response
+            )
         }
     }
     
@@ -245,59 +368,106 @@ private extension Client {
 
 private extension Client {
     
-    func executionInterceptions(endpoint: Endpoint,
-                                request: DataRequest) -> [Interception<Data>] {
+    func executionInterceptions(
+        endpoint: Endpoint,
+        request: DataRequest
+    ) -> [Interception<Data>] {
         return manager.executionInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(client: self, endpoint: endpoint, request: request, completion: completion)
-                interceptor.intercept(chain: chain)
+                interceptor.intercept(
+                    chain: InterceptorChain(
+                        client: self,
+                        endpoint: endpoint,
+                        request: request,
+                        completion: completion
+                    )
+                )
             }
         }
     }
     
-    func failureInterceptions(endpoint: Endpoint,
-                              request: DataRequest,
-                              error: Swift.Error) -> [Interception<Data>] {
+    func failureInterceptions(
+        endpoint: Endpoint,
+        request: DataRequest,
+        error: Swift.Error
+    ) -> [Interception<Data>] {
         return manager.failureInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(client: self, endpoint: endpoint, request: request, completion: completion)
-                interceptor.intercept(chain: chain, error: error)
+                interceptor.intercept(
+                    chain: InterceptorChain(
+                        client: self,
+                        endpoint: endpoint,
+                        request: request,
+                        completion: completion
+                    ),
+                    error: error
+                )
             }
         }
     }
     
-    func successInterceptions(endpoint: Endpoint,
-                              request: DataRequest,
-                              response: HTTPURLResponse,
-                              data: Data) -> [Interception<Data>] {
+    func successInterceptions(
+        endpoint: Endpoint,
+        request: DataRequest,
+        response: HTTPURLResponse,
+        data: Data
+    ) -> [Interception<Data>] {
         return manager.successInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(client: self, endpoint: endpoint, request: request, completion: completion)
-                interceptor.intercept(chain: chain, response: response, data: data)
+                interceptor.intercept(
+                    chain: InterceptorChain(
+                        client: self,
+                        endpoint: endpoint,
+                        request: request,
+                        completion: completion
+                    ),
+                    response: response,
+                    data: data
+                )
             }
         }
     }
     
-    func completionInterceptions(endpoint: Endpoint,
-                                 request: DataRequest,
-                                 response: Response<Data>) -> [Interception<Data>] {
+    func completionInterceptions(
+        endpoint: Endpoint,
+        request: DataRequest,
+        response: Response<Data>
+    ) -> [Interception<Data>] {
         return manager.completionInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(client: self, endpoint: endpoint, request: request, completion: completion)
-                interceptor.intercept(chain: chain, response: response)
+                interceptor.intercept(
+                    chain: InterceptorChain(
+                        client: self,
+                        endpoint: endpoint,
+                        request: request,
+                        completion: completion
+                    ),
+                    response: response
+                )
             }
         }
     }
     
-    func serializationInterceptions<T: DataResponseSerializerProtocol>(endpoint: Endpoint,
-                                                                       request: DataRequest,
-                                                                       response: Response<Data>,
-                                                                       result: Result<T.SerializedObject, Swift.Error>,
-                                                                       serializer: T) -> [Interception<T.SerializedObject>] {
+    func serializationInterceptions<T: DataResponseSerializerProtocol>(
+        endpoint: Endpoint,
+        request: DataRequest,
+        response: Response<Data>,
+        result: Result<T.SerializedObject, Swift.Error>,
+        serializer: T
+    ) -> [Interception<T.SerializedObject>] {
         return manager.serializationInterceptors.map { interceptor in
             return { completion in
-                let chain = InterceptorChain(client: self, endpoint: endpoint, request: request, completion: completion)
-                interceptor.intercept(chain: chain, response: response, result: result, serializer: serializer)
+                interceptor.intercept(
+                    chain: InterceptorChain(
+                        client: self,
+                        endpoint: endpoint,
+                        request: request,
+                        completion: completion
+                    ),
+                    response: response,
+                    result: result,
+                    serializer: serializer
+                )
             }
         }
     }

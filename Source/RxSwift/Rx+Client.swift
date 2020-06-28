@@ -36,12 +36,19 @@ extension Reactive where Base: Client {
     /// - Parameter queue: The queue on which the completion handler is dispatched.
     ///
     /// - Returns: An observable with the response.
-    public func execute<T: Decodable>(_ endpoint: Endpoint,
-                                      type: ReactiveResponse<T>.Type = ReactiveResponse<T>.self,
-                                      queue: DispatchQueue? = nil) -> Observable<ReactiveResponse<T>> {
+    public func execute<T: Decodable>(
+        _ endpoint: Endpoint,
+        type: ReactiveResponse<T>.Type = ReactiveResponse<T>.self,
+        queue: DispatchQueue? = nil
+    ) -> Observable<ReactiveResponse<T>> {
         return Observable.create { observer in
-            self.base.execute(endpoint, queue: queue) { response in
-                observer.on(Event.fromResponse(response))
+            self.base.execute(
+                endpoint,
+                queue: queue
+            ) { response in
+                observer.on(
+                    Event.fromResponse(response)
+                )
             }
             
             return Disposables.create { }
@@ -55,10 +62,15 @@ extension Reactive where Base: Client {
     /// - Parameter queue: The queue on which the completion handler is dispatched.
     ///
     /// - Returns: An observable with the value of the response.
-    public func execute<T: Decodable>(_ endpoint: Endpoint,
-                                      type: T.Type = T.self,
-                                      queue: DispatchQueue? = nil) -> Observable<T> {
-        return execute(endpoint, queue: queue).justValue()
+    public func execute<T: Decodable>(
+        _ endpoint: Endpoint,
+        type: T.Type = T.self,
+        queue: DispatchQueue? = nil
+    ) -> Observable<T> {
+        return execute(
+            endpoint,
+            queue: queue
+        ).justValue()
     }
     
 }

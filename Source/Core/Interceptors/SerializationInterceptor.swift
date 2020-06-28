@@ -27,8 +27,10 @@ import Foundation
 /// Interceptor that is called after a serialization operation.
 public protocol SerializationInterceptor: Interceptor {
     /// Main method responsible for handling the interception.
-    func intercept<T: DataResponseSerializerProtocol>(chain: InterceptorChain<T.SerializedObject>,
-                                                      response: Response<Data>,
-                                                      result: Result<T.SerializedObject, Swift.Error>,
-                                                      serializer: T)
+    func intercept<T: DataResponseSerializerProtocol>(
+        chain: InterceptorChain<T.SerializedObject>,
+        response: Response<Data>,
+        result: Result<T.SerializedObject, Swift.Error>,
+        serializer: T
+    )
 }

@@ -46,7 +46,10 @@ public struct ReactiveResponse<Value>: ReactiveResponseType {
     public let extra: Any?
     
     /// Initializes and returns a newly allocated object with the specified parameters.
-    init(_ value: Value, _ extra: Any?) {
+    init(
+        _ value: Value,
+        _ extra: Any?
+    ) {
         self.value = value
         self.extra = extra
     }
@@ -66,10 +69,14 @@ extension Observable where Element: ReactiveResponseType {
 
 extension Event {
     
-    static func fromResponse(_ response: Response<Element>) -> Event<ReactiveResponse<Element>> {
+    static func fromResponse(
+        _ response: Response<Element>
+    ) -> Event<ReactiveResponse<Element>> {
         switch response {
         case .success(let value, let extra):
-            return .next(ReactiveResponse(value, extra))
+            return .next(
+                ReactiveResponse(value, extra)
+            )
         case .failure(let error):
             return .error(error)
         }

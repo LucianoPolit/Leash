@@ -32,7 +32,8 @@ extension Reactive where Base: DataRequest {
     
     /// Adds a handler to be called once the request has finished.
     ///
-    /// Also, it is responsible for calling the interceptors when needed (all asynchronous and executed in a queue order):
+    /// Also, it is responsible for calling the interceptors when needed
+    /// (all asynchronous and executed in a queue order):
     ///
     /// - Execution: called before the request is executed.
     /// - Failure: called when there is a problem executing the request.
@@ -50,17 +51,23 @@ extension Reactive where Base: DataRequest {
     /// - Parameter serializer: The serializer responsible for serializing the request, response and data.
     ///
     /// - Returns: An observable with the response.
-    public func response<T: DataResponseSerializerProtocol>(queue: DispatchQueue? = nil,
-                                                            client: Client,
-                                                            endpoint: Endpoint,
-                                                            type: T.SerializedObject.Type = T.SerializedObject.self,
-                                                            serializer: T) -> Observable<ReactiveResponse<T.SerializedObject>> {
+    public func response<T: DataResponseSerializerProtocol>(
+        queue: DispatchQueue? = nil,
+        client: Client,
+        endpoint: Endpoint,
+        type: T.SerializedObject.Type = T.SerializedObject.self,
+        serializer: T
+    ) -> Observable<ReactiveResponse<T.SerializedObject>> {
         return Observable.create { observer in
-            self.base.response(queue: queue,
-                               client: client,
-                               endpoint: endpoint,
-                               serializer: serializer) { response in
-                observer.on(Event.fromResponse(response))
+            self.base.response(
+                queue: queue,
+                client: client,
+                endpoint: endpoint,
+                serializer: serializer
+            ) { response in
+                observer.on(
+                    Event.fromResponse(response)
+                )
             }
             
             return Disposables.create { }
@@ -69,7 +76,8 @@ extension Reactive where Base: DataRequest {
     
     /// Adds a handler to be called once the request has finished.
     ///
-    /// Also, it is responsible for calling the interceptors when needed (all asynchronous and executed in a queue order):
+    /// Also, it is responsible for calling the interceptors when needed
+    /// (all asynchronous and executed in a queue order):
     ///
     /// - Execution: called before the request is executed.
     /// - Failure: called when there is a problem executing the request.
@@ -86,14 +94,20 @@ extension Reactive where Base: DataRequest {
     /// - Parameter type: The type on which the response has to be decoded.
     ///
     /// - Returns: An observable with the response.
-    public func responseDecodable<T: Decodable>(queue: DispatchQueue? = nil,
-                                                client: Client,
-                                                endpoint: Endpoint,
-                                                type: T.Type = T.self) -> Observable<ReactiveResponse<T>> {
-        return response(queue: queue,
-                        client: client,
-                        endpoint: endpoint,
-                        serializer: DecodableResponseSerializer(decoder: client.manager.jsonDecoder))
+    public func responseDecodable<T: Decodable>(
+        queue: DispatchQueue? = nil,
+        client: Client,
+        endpoint: Endpoint,
+        type: T.Type = T.self
+    ) -> Observable<ReactiveResponse<T>> {
+        return response(
+            queue: queue,
+            client: client,
+            endpoint: endpoint,
+            serializer: DecodableResponseSerializer(
+                decoder: client.manager.jsonDecoder
+            )
+        )
     }
     
 }

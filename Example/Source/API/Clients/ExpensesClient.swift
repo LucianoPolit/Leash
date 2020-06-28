@@ -13,20 +13,43 @@ import RxSwift
 /// Main client of the project.
 class ExpensesClient: Client<ExpensesEndpoint> {
     
-    func readAll(completion: @escaping APICompletion<[Expense]>) {
-        execute(.readAll, completion: completion)
+    func readAll(
+        completion: @escaping APICompletion<[Expense]>
+    ) {
+        execute(
+            .readAll,
+            completion: completion
+        )
     }
     
-    func create(_ request: CreateExpenseRequest, completion: @escaping APICompletion<Expense>) {
-        execute(.create(request), completion: completion)
+    func create(
+        _ request: CreateExpenseRequest,
+        completion: @escaping APICompletion<Expense>
+    ) {
+        execute(
+            .create(request),
+            completion: completion
+        )
     }
     
-    func update(_ request: UpdateExpenseRequest, completion: @escaping APICompletion<Expense>) {
-        execute(.update(request), completion: completion)
+    func update(
+        _ request: UpdateExpenseRequest,
+        completion: @escaping APICompletion<Expense>
+    ) {
+        execute(
+            .update(request),
+            completion: completion
+        )
     }
     
-    func delete(_ expense: String, completion: @escaping APICompletion<EmptyResponse>) {
-        execute(.delete(expense), completion: completion)
+    func delete(
+        _ expense: String,
+        completion: @escaping APICompletion<EmptyResponse>
+    ) {
+        execute(
+            .delete(expense),
+            completion: completion
+        )
     }
     
 }
@@ -37,15 +60,21 @@ extension Reactive where Base: ExpensesClient {
         return execute(base.readAll)
     }
     
-    func create(_ request: CreateExpenseRequest) -> Observable<Expense> {
+    func create(
+        _ request: CreateExpenseRequest
+    ) -> Observable<Expense> {
         return execute(base.create, with: request)
     }
     
-    func update(_ request: UpdateExpenseRequest) -> Observable<Expense> {
+    func update(
+        _ request: UpdateExpenseRequest
+    ) -> Observable<Expense> {
         return execute(base.update, with: request)
     }
     
-    func delete(_ expense: String) -> Observable<EmptyResponse> {
+    func delete(
+        _ expense: String
+    ) -> Observable<EmptyResponse> {
         return execute(base.delete, with: expense)
     }
     

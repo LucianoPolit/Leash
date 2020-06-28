@@ -31,9 +31,9 @@ import Foundation
 /// The completion handler is always dispatched on the specified queue.
 class InterceptorsExecutor<T> {
     
-    typealias Interception = (@escaping InterceptorCompletion<T>) -> ()
-    typealias Completion = (Response<T>) -> ()
-    typealias Finally = (@escaping (Response<T>) -> ()) -> ()
+    typealias Interception = (@escaping InterceptorCompletion<T>) -> Void
+    typealias Completion = (Response<T>) -> Void
+    typealias Finally = (@escaping (Response<T>) -> Void) -> Void
     
     fileprivate let operationQueue = OperationQueue()
     fileprivate let queue: DispatchQueue
@@ -42,10 +42,12 @@ class InterceptorsExecutor<T> {
     fileprivate let finally: Finally
     
     @discardableResult
-    init(queue: DispatchQueue? = nil,
-         interceptions: [Interception],
-         completion: @escaping Completion,
-         finally: @escaping Finally) {
+    init(
+        queue: DispatchQueue? = nil,
+        interceptions: [Interception],
+        completion: @escaping Completion,
+        finally: @escaping Finally
+    ) {
         self.queue = queue ?? .main
         self.interceptions = interceptions
         self.completion = completion
@@ -57,11 +59,13 @@ class InterceptorsExecutor<T> {
     
     private func start() {
         while !interceptions.isEmpty {
-            let interception = interceptions.removeFirst()
-            let operation = InterceptionOperation(interception: interception,
-                                                  completionHandler: completionHandler,
-                                                  finishHandler: finishHandler)
-            operationQueue.addOperation(operation)
+            operationQueue.addOperation(
+                InterceptionOperation(
+                    interception: interceptions.removeFirst(),
+                    completionHandler: completionHandler,
+                    finishHandler: finishHandler
+                )
+            )
         }
         
         operationQueue.addOperation {
@@ -75,8 +79,12 @@ class InterceptorsExecutor<T> {
 
 private extension InterceptorsExecutor {
     
-    func dispatch(_ block: @escaping () -> ()) {
-        queue.async(execute: block)
+    func dispatch(
+        _ block: @escaping () -> Void
+    ) {
+        queue.async(
+            execute: block
+        )
     }
     
     func finallyHandler() {
@@ -85,7 +93,9 @@ private extension InterceptorsExecutor {
         }
     }
     
-    func completionHandler(response: Response<T>) {
+    func completionHandler(
+        response: Response<T>
+    ) {
         dispatch {
             self.completion(response)
         }
@@ -99,15 +109,17 @@ private extension InterceptorsExecutor {
 
 private class InterceptionOperation<T>: AsynchronousOperation {
     
-    typealias FinishHandler = () -> ()
+    typealias FinishHandler = () -> Void
     
     let interception: InterceptorsExecutor<T>.Interception
     let completionHandler: InterceptorsExecutor<T>.Completion
     let finishHandler: FinishHandler
     
-    init(interception: @escaping InterceptorsExecutor<T>.Interception,
-         completionHandler: @escaping InterceptorsExecutor<T>.Completion,
-         finishHandler: @escaping FinishHandler) {
+    init(
+        interception: @escaping InterceptorsExecutor<T>.Interception,
+        completionHandler: @escaping InterceptorsExecutor<T>.Completion,
+        finishHandler: @escaping FinishHandler
+    ) {
         self.interception = interception
         self.completionHandler = completionHandler
         self.finishHandler = finishHandler
@@ -136,12 +148,20 @@ private class AsynchronousOperation: Operation {
     
     var state: State = .ready {
         willSet {
-            willChangeValue(forKey: state.key)
-            willChangeValue(forKey: newValue.key)
+            willChangeValue(
+                forKey: state.key
+            )
+            willChangeValue(
+                forKey: newValue.key
+            )
         }
         didSet {
-            didChangeValue(forKey: oldValue.key)
-            didChangeValue(forKey: state.key)
+            didChangeValue(
+                forKey: oldValue.key
+            )
+            didChangeValue(
+                forKey: state.key
+            )
         }
     }
     

@@ -15,7 +15,9 @@ import Leash
 class BodyValidator: Leash.BodyValidator<APIError> {
     
     init() {
-        super.init(transform: { Error.server($0) })
+        super.init(
+            transform: { Error.server($0) }
+        )
     }
     
 }

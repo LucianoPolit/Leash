@@ -20,13 +20,17 @@ class APIAuthenticator {
     
     // MARK: - Initializers
     
-    init(id: String?) {
+    init(
+        id: String?
+    ) {
         userID = id
     }
     
     // MARK: - Methods
     
-    func signIn(_ id: String) {
+    func signIn(
+        _ id: String
+    ) {
         userID = id
     }
     

@@ -16,7 +16,9 @@ class APIDateFormatter: DateFormatter {
         dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SZ"
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required init?(
+        coder aDecoder: NSCoder
+    ) {
         fatalError("init(coder:) has not been implemented")
     }
     

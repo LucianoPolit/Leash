@@ -36,7 +36,9 @@ open class Client {
     // MARK: - Initializers
     
     /// Initializes and returns a newly allocated object with the specified parameters.
-    public init(manager: Manager) {
+    public init(
+        manager: Manager
+    ) {
         self.manager = manager
     }
     
@@ -50,11 +52,18 @@ open class Client {
     ///
     /// - Returns: The created request.
     @discardableResult
-    open func execute<T: Decodable>(_ endpoint: Endpoint,
-                                    queue: DispatchQueue? = nil,
-                                    completion: @escaping (Result<T, Swift.Error>) -> ()) -> DataRequest? {
-        return execute(endpoint, queue: queue) { response in
-            completion(response.justValue())
+    open func execute<T: Decodable>(
+        _ endpoint: Endpoint,
+        queue: DispatchQueue? = nil,
+        completion: @escaping (Result<T, Swift.Error>) -> Void
+    ) -> DataRequest? {
+        return execute(
+            endpoint,
+            queue: queue
+        ) { response in
+            completion(
+                response.justValue()
+            )
         }
     }
     
@@ -66,17 +75,25 @@ open class Client {
     ///
     /// - Returns: The created request.
     @discardableResult
-    open func execute<T: Decodable>(_ endpoint: Endpoint,
-                                    queue: DispatchQueue? = nil,
-                                    completion: @escaping (Response<T>) -> ()) -> DataRequest? {
+    open func execute<T: Decodable>(
+        _ endpoint: Endpoint,
+        queue: DispatchQueue? = nil,
+        completion: @escaping (Response<T>) -> Void
+    ) -> DataRequest? {
         do {
-            let request = try self.request(for: endpoint)
-            return request.responseDecodable(queue: queue,
-                                             client: self,
-                                             endpoint: endpoint,
-                                             completion: completion)
+            return try request(for: endpoint)
+                .responseDecodable(
+                    queue: queue,
+                    client: self,
+                    endpoint: endpoint,
+                    completion: completion
+                )
         } catch {
-            completion(.failure(Error.encoding(error)))
+            completion(
+                .failure(
+                    Error.encoding(error)
+                )
+            )
             return nil
         }
     }
@@ -86,9 +103,12 @@ open class Client {
     /// - Parameter endpoint: Contains all the information needed to create the request.
     ///
     /// - Returns: The created request.
-    open func request(for endpoint: Endpoint) throws -> DataRequest {
-        let urlRequest = try self.urlRequest(for: endpoint)
-        return manager.session.request(urlRequest)
+    open func request(
+        for endpoint: Endpoint
+    ) throws -> DataRequest {
+        return manager.session.request(
+            try urlRequest(for: endpoint)
+        )
     }
     
     /// Creates the URL request for the specified endpoint.
@@ -106,11 +126,22 @@ open class Client {
     /// - Parameter endpoint: Contains all the information needed to create the URL request.
     ///
     /// - Returns: The created URL request.
-    open func urlRequest(for endpoint: Endpoint) throws -> URLRequest {
-        var urlRequest = URLRequest(url: manager.url.appendingPathComponent(endpoint.path))
+    open func urlRequest(
+        for endpoint: Endpoint
+    ) throws -> URLRequest {
+        var urlRequest = URLRequest(
+            url: manager.url.appendingPathComponent(
+                endpoint.path
+            )
+        )
         urlRequest.httpMethod = endpoint.method.rawValue
-        urlRequest.addAuthenticator(manager.authenticator)
-        try urlRequest.encode(endpoint: endpoint, with: manager.jsonEncoder)
+        urlRequest.addAuthenticator(
+            manager.authenticator
+        )
+        try urlRequest.encode(
+            endpoint: endpoint,
+            with: manager.jsonEncoder
+        )
         return urlRequest
     }
     
@@ -120,49 +151,88 @@ open class Client {
 
 private extension URLRequest {
     
-    mutating func addValueIfPossible(value: String?, forHTTPHeaderField field: String?) {
-        guard let value = value, let field = field else { return }
-        addValue(value, forHTTPHeaderField: field)
+    mutating func addValueIfPossible(
+        _ value: String?,
+        forHTTPHeaderField field: String?
+    ) {
+        guard let value = value,
+            let field = field
+            else { return }
+        addValue(
+            value,
+            forHTTPHeaderField: field
+        )
     }
     
-    mutating func addAuthenticator(_ authenticator: Authenticator?) {
-        addValueIfPossible(value: authenticator?.authentication, forHTTPHeaderField: authenticator?.header)
+    mutating func addAuthenticator(
+        _ authenticator: Authenticator?
+    ) {
+        addValueIfPossible(
+            authenticator?.authentication,
+            forHTTPHeaderField: authenticator?.header
+        )
     }
     
 }
 
 private extension URLRequest {
     
-    mutating func encode(endpoint: Endpoint, with jsonEncoder: JSONEncoder) throws {
+    mutating func encode(
+        endpoint: Endpoint,
+        with jsonEncoder: JSONEncoder
+    ) throws {
         guard let parameters = endpoint.parameters else { return }
         
-        if endpoint.method.isBodyEncodable, let json = parameters as? [String: Any] {
-            return try encode(json: json)
+        if endpoint.method.isBodyEncodable,
+            let json = parameters as? [String: Any] {
+            return try encode(
+                json: json
+            )
         }
         
-        if endpoint.method.isBodyEncodable, let encodable = parameters as? Encodable {
-            return try encode(encodable: encodable, with: jsonEncoder)
+        if endpoint.method.isBodyEncodable,
+            let encodable = parameters as? Encodable {
+            return try encode(
+                encodable: encodable,
+                with: jsonEncoder
+            )
         }
         
-        if endpoint.method.isQueryEncodable, let query = parameters as? [String: CustomStringConvertible] {
-            return try encode(query: query)
+        if endpoint.method.isQueryEncodable,
+            let query = parameters as? [String: CustomStringConvertible] {
+            return try encode(
+                query: query
+            )
         }
         
-        if endpoint.method.isQueryEncodable, let queryEncodable = parameters as? QueryEncodable {
-            return try encode(query: queryEncodable.toQuery())
+        if endpoint.method.isQueryEncodable,
+            let queryEncodable = parameters as? QueryEncodable {
+            return try encode(
+                query: queryEncodable.toQuery()
+            )
         }
     }
     
-    mutating func encode(json: [String: Any]) throws {
+    mutating func encode(
+        json: [String: Any]
+    ) throws {
         self = try JSONEncoding().encode(self, with: json)
     }
     
-    mutating func encode(encodable: Encodable, with jsonEncoder: JSONEncoder) throws {
-        setValue("application/json", forHTTPHeaderField: "Content-Type")
+    mutating func encode(
+        encodable: Encodable,
+        with jsonEncoder: JSONEncoder
+    ) throws {
+        setValue(
+            "application/json",
+            forHTTPHeaderField: "Content-Type"
+        )
         httpBody = try encodable.encoded(with: jsonEncoder)
     }
     
-    mutating func encode(query: [String: CustomStringConvertible]) throws {
+    mutating func encode(
+        query: [String: CustomStringConvertible]
+    ) throws {
         self = try URLEncoding().encode(self, with: query)
     }
     
@@ -170,7 +240,9 @@ private extension URLRequest {
 
 private extension Encodable {
     
-    func encoded(with jsonEncoder: JSONEncoder) throws -> Data {
+    func encoded(
+        with jsonEncoder: JSONEncoder
+    ) throws -> Data {
         return try jsonEncoder.encode(self)
     }
     

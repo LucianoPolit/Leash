@@ -28,7 +28,10 @@ open class BodyValidator<T: Decodable> {
     
     public let transform: (T) -> Swift.Error
     
-    public init(type: T.Type = T.self, transform: @escaping (T) -> Swift.Error) {
+    public init(
+        type: T.Type = T.self,
+        transform: @escaping (T) -> Swift.Error
+    ) {
         self.transform = transform
     }
     
@@ -36,11 +39,16 @@ open class BodyValidator<T: Decodable> {
 
 extension BodyValidator: SuccessInterceptor {
     
-    public func intercept(chain: InterceptorChain<Data>, response: HTTPURLResponse, data: Data) {
+    public func intercept(
+        chain: InterceptorChain<Data>,
+        response: HTTPURLResponse,
+        data: Data
+    ) {
         defer { chain.proceed() }
-        if let value = try? chain.client.manager.jsonDecoder.decode(T.self, from: data) {
-            chain.complete(with: transform(value))
-        }
+        guard let value = try? chain.client.manager.jsonDecoder.decode(T.self, from: data) else { return }
+        chain.complete(
+            with: transform(value)
+        )
     }
     
 }

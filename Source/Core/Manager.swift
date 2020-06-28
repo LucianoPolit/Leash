@@ -51,8 +51,11 @@ public class Manager {
     public let jsonDecoder: JSONDecoder
     
     /// Initializes and returns a newly allocated object with the specified builder.
-    public init(builder: Builder) {
-        guard let builderURL = builder.url ?? URL(builder: builder) else { preconditionFailure("Leash -> Manager -> Invalid URL") }
+    public init(
+        builder: Builder
+    ) {
+        guard let builderURL = builder.url ?? URL(builder: builder)
+            else { preconditionFailure("Leash -> Manager -> Invalid URL") }
         
         url = builderURL
         authenticator = builder.authenticator
@@ -84,7 +87,9 @@ public class Manager {
         var completionInterceptors: [CompletionInterceptor] = []
         var serializationInterceptors: [SerializationInterceptor] = []
         
-        var session = Session(startRequestsImmediately: false)
+        var session = Session(
+            startRequestsImmediately: false
+        )
         var jsonEncoder = JSONEncoder()
         var jsonDecoder = JSONDecoder()
         
@@ -92,49 +97,84 @@ public class Manager {
         public init() { }
         
         /// Sets the URL of the API.
-        public func url(_ url: URL) -> Self {
+        public func url(
+            _ url: URL
+        ) -> Self {
             self.url = url
             return self
         }
         
         /// Sets the URL of the API.
-        public func url(_ url: String) -> Self {
-            self.url = URL(string: url)
+        public func url(
+            _ url: String
+        ) -> Self {
+            self.url = URL(
+                string: url
+            )
             return self
         }
         
         /// Sets the scheme of the API.
-        public func scheme(_ scheme: String) -> Self {
+        public func scheme(
+            _ scheme: String
+        ) -> Self {
             self.scheme = scheme
             return self
         }
         
         /// Sets the host of the API.
-        public func host(_ host: String) -> Self {
+        public func host(
+            _ host: String
+        ) -> Self {
             self.host = host
             return self
         }
         
         /// Sets the port of the API.
-        public func port(_ port: Int) -> Self {
+        public func port(
+            _ port: Int
+        ) -> Self {
             self.port = port
             return self
         }
         
         /// Sets the path of the API.
-        public func path(_ path: String) -> Self {
+        public func path(
+            _ path: String
+        ) -> Self {
             self.path = path
             return self
         }
         
         /// Sets the authenticator of the API.
-        public func authenticator(_ authenticator: Authenticator) -> Self {
+        public func authenticator(
+            _ authenticator: Authenticator
+        ) -> Self {
             self.authenticator = authenticator
             return self
         }
         
+        /// Sets the interceptors.
+        public func interceptors(
+            _ interceptors: [Interceptor]
+        ) -> Self {
+            executionInterceptors.removeAll()
+            failureInterceptors.removeAll()
+            successInterceptors.removeAll()
+            completionInterceptors.removeAll()
+            serializationInterceptors.removeAll()
+            interceptors.forEach {
+                _ = add(
+                    interceptor: $0
+                )
+            }
+            return self
+        }
+        
         /// Adds an interceptor.
-        public func add(interceptor: Interceptor) -> Self {
+        public func add(
+            interceptor: Interceptor
+        ) -> Self {
             executionInterceptors.appendIfPossible(interceptor)
             failureInterceptors.appendIfPossible(interceptor)
             successInterceptors.appendIfPossible(interceptor)
@@ -144,26 +184,37 @@ public class Manager {
         }
         
         /// Sets the session manager.
-        public func session(_ session: Session) -> Self {
-            precondition(!session.startRequestsImmediately, "Leash -> Manager -> Session -> Start requests immediately should be false")
+        public func session(
+            _ session: Session
+        ) -> Self {
+            precondition(
+                !session.startRequestsImmediately,
+                "Leash -> Manager -> Session -> Start requests immediately should be false"
+            )
             self.session = session
             return self
         }
         
         /// Sets the JSON encoder.
-        public func jsonEncoder(_ configuration: (JSONEncoder) -> ()) -> Self {
+        public func jsonEncoder(
+            _ configuration: (JSONEncoder) -> Void
+        ) -> Self {
             configuration(jsonEncoder)
             return self
         }
         
         /// Sets the JSON decoder.
-        public func jsonDecoder(_ configuration: (JSONDecoder) -> ()) -> Self {
+        public func jsonDecoder(
+            _ configuration: (JSONDecoder) -> Void
+        ) -> Self {
             configuration(jsonDecoder)
             return self
         }
         
         /// Sets the date formatter of the encoder and the decoder.
-        public func jsonDateFormatter(_ dateFormatter: DateFormatter) -> Self {
+        public func jsonDateFormatter(
+            _ dateFormatter: DateFormatter
+        ) -> Self {
             jsonEncoder.dateEncodingStrategy = .formatted(dateFormatter)
             jsonDecoder.dateDecodingStrategy = .formatted(dateFormatter)
             return self
@@ -171,7 +222,9 @@ public class Manager {
         
         /// Builds the manager.
         public func build() -> Manager {
-            return Manager(builder: self)
+            return Manager(
+                builder: self
+            )
         }
         
     }
@@ -182,8 +235,12 @@ public class Manager {
 
 private extension URL {
     
-    init?(builder: Manager.Builder) {
-        guard let scheme = builder.scheme, let host = builder.host else { return nil }
+    init?(
+        builder: Manager.Builder
+    ) {
+        guard let scheme = builder.scheme,
+            let host = builder.host
+            else { return nil }
         
         var baseURL = scheme + "://" + host
         
@@ -195,14 +252,18 @@ private extension URL {
             baseURL += "/\(path)"
         }
         
-        self.init(string: baseURL)
+        self.init(
+            string: baseURL
+        )
     }
     
 }
 
 private extension Array {
     
-    mutating func appendIfPossible(_ newElement: Any) {
+    mutating func appendIfPossible(
+        _ newElement: Any
+    ) {
         guard let newElement = newElement as? Element else { return }
         append(newElement)
     }

@@ -24,8 +24,13 @@
 
 import Foundation
 
+/// Parameters of the completion handler of the interception.
+typealias InterceptorCompletionTuple<T> = (
+    response: Response<T>,
+    finish: Bool
+)
 /// Completion handler of the interception.
-typealias InterceptorCompletion<T> = ((response: Response<T>, finish: Bool)?) -> ()
+typealias InterceptorCompletion<T> = (InterceptorCompletionTuple<T>?) -> Void
 
 /// Contains all the information that an interceptor might require.
 open class InterceptorChain<T> {
@@ -42,7 +47,12 @@ open class InterceptorChain<T> {
     fileprivate var completed = false
     
     /// Initializes and returns a newly allocated object with the specified parameters.
-    init(client: Client, endpoint: Endpoint, request: DataRequest, completion: @escaping InterceptorCompletion<T>) {
+    init(
+        client: Client,
+        endpoint: Endpoint,
+        request: DataRequest,
+        completion: @escaping InterceptorCompletion<T>
+    ) {
         self.client = client
         self.endpoint = endpoint
         self.request = request
@@ -63,19 +73,38 @@ extension InterceptorChain {
     /// - Parameter response: The response that is being injected.
     /// - Parameter finish: Determines if the process should be finished or not.
     ///                     In case that it is false, the completion handler will receive multiple calls.
-    public func complete(with response: Response<T>, finish: Bool = true) {
-        complete((response, finish))
+    public func complete(
+        with response: Response<T>,
+        finish: Bool = true
+    ) {
+        complete(
+            InterceptorCompletionTuple(
+                response: response,
+                finish: finish
+            )
+        )
     }
     
     /// Completes the interception injecting a successful response with the specified parameters.
     ///
     /// - Parameter value: The value of the response.
     /// - Parameter extra: Any extra information can be specified.
-    ///                    The purpose of this parameter is to be used by another interceptor or by the completion handler.
+    ///                    The purpose of this parameter is to be used by another interceptor
+    ///                    or by the completion handler.
     /// - Parameter finish: Determines if the process should be finished or not.
     ///                     In case that it is false, the completion handler will receive multiple calls.
-    public func complete(with value: T, extra: Any? = nil, finish: Bool = true) {
-        complete(with: .success(value: value, extra: extra), finish: finish)
+    public func complete(
+        with value: T,
+        extra: Any? = nil,
+        finish: Bool = true
+    ) {
+        complete(
+            with: .success(
+                value: value,
+                extra: extra
+            ),
+            finish: finish
+        )
     }
     
     /// Completes the interception injecting a failed response with the specified error.
@@ -83,12 +112,18 @@ extension InterceptorChain {
     /// - Parameter error: The error of the response.
     /// - Parameter finish: Determines if the process should be finished or not.
     ///                     In case that it is false, the completion handler will receive multiple calls.
-    public func complete(with error: Swift.Error, finish: Bool = true) {
-        complete(with: .failure(error), finish: finish)
+    public func complete(
+        with error: Swift.Error,
+        finish: Bool = true
+    ) {
+        complete(
+            with: .failure(error),
+            finish: finish
+        )
     }
     
     /// Completes the interception with the specified tuple.
-    private func complete(_ tuple: (Response<T>, Bool)?) {
+    private func complete(_ tuple: InterceptorCompletionTuple<T>?) {
         guard !completed else { return }
         completed = true
         completion(tuple)
@@ -103,11 +138,14 @@ extension InterceptorChain where T == Data {
     /// - Returns: The new request.
     @discardableResult
     public func retry() throws -> DataRequest {
-        let request = try client.request(for: endpoint)
-        return request.response(client: client, endpoint: endpoint) { response in
-            self.completed = false
-            self.complete(with: response)
-        }
+        return try client.request(for: endpoint)
+            .response(
+                client: client,
+                endpoint: endpoint
+            ) { response in
+                self.completed = false
+                self.complete(with: response)
+            }
     }
     
 }

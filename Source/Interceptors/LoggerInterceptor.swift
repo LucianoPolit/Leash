@@ -25,19 +25,27 @@
 import Foundation
 
 public protocol Logger {
-    func log(message: String)
-    func log(error: Swift.Error)
+    func log(
+        message: String
+    )
+    func log(
+        error: Swift.Error
+    )
 }
 
 public class Printer: Logger {
     
     public init() { }
     
-    public func log(message: String) {
+    public func log(
+        message: String
+    ) {
         print(message)
     }
     
-    public func log(error: Swift.Error) {
+    public func log(
+        error: Swift.Error
+    ) {
         print(error)
     }
     
@@ -46,48 +54,93 @@ public class Printer: Logger {
 open class LoggerInterceptor {
     
     public let logger: Logger
-    public var execution = (pre: "👉👉👉", post: "")
-    public var failure = (pre: "✖✖✖", post: "")
-    public var success = (pre: "✔✔✔", post: "")
-    public var serializationFailure = (pre: "✖✖✖", post: "(Serialization)")
-    public var serializationSuccess = (pre: "✔✔✔", post: "(Serialization)")
+    public var execution = (
+        pre: "👉👉👉",
+        post: ""
+    )
+    public var failure = (
+        pre: "✖✖✖",
+        post: ""
+    )
+    public var success = (
+        pre: "✔✔✔",
+        post: ""
+    )
+    public var serializationFailure = (
+        pre: "✖✖✖",
+        post: "(Serialization)"
+    )
+    public var serializationSuccess = (
+        pre: "✔✔✔",
+        post: "(Serialization)"
+    )
     
     public init(logger: Logger = Printer()) {
         self.logger = logger
     }
     
-    open func log<T>(chain: InterceptorChain<T>, pre: String, post: String) {
+    open func log<T>(
+        chain: InterceptorChain<T>,
+        pre: String,
+        post: String
+    ) {
         guard let request = try? chain.request.convertible.asURLRequest(),
             let method = request.httpMethod,
-            let url = request.url?.absoluteString else { return }
-        logger.log(message: "\(pre) \(method) \(url) \(post)")
+            let url = request.url?.absoluteString
+            else { return }
+        logger.log(
+            message: "\(pre) \(method) \(url) \(post)"
+        )
     }
     
-    open func log(error: Swift.Error) {
-        logger.log(error: error)
+    open func log(
+        error: Swift.Error
+    ) {
+        logger.log(
+            error: error
+        )
     }
     
 }
 
 extension LoggerInterceptor: ExecutionInterceptor {
     
-    public func intercept(chain: InterceptorChain<Data>) {
+    public func intercept(
+        chain: InterceptorChain<Data>
+    ) {
         defer { chain.proceed() }
-        log(chain: chain, pre: execution.pre, post: execution.post)
+        log(
+            chain: chain,
+            pre: execution.pre,
+            post: execution.post
+        )
     }
     
 }
 
 extension LoggerInterceptor: CompletionInterceptor {
     
-    public func intercept(chain: InterceptorChain<Data>, response: Response<Data>) {
+    public func intercept(
+        chain: InterceptorChain<Data>,
+        response: Response<Data>
+    ) {
         defer { chain.proceed() }
         switch response {
         case .success:
-            log(chain: chain, pre: success.pre, post: success.post)
+            log(
+                chain: chain,
+                pre: success.pre,
+                post: success.post
+            )
         case .failure(let error):
-            log(chain: chain, pre: failure.pre, post: failure.post)
-            log(error: error)
+            log(
+                chain: chain,
+                pre: failure.pre,
+                post: failure.post
+            )
+            log(
+                error: error
+            )
         }
     }
     
@@ -95,18 +148,30 @@ extension LoggerInterceptor: CompletionInterceptor {
 
 extension LoggerInterceptor: SerializationInterceptor {
     
-    public func intercept<T: DataResponseSerializerProtocol>(chain: InterceptorChain<T.SerializedObject>,
-                                                             response: Response<Data>,
-                                                             result: Result<T.SerializedObject, Swift.Error>,
-                                                             serializer: T) {
+    public func intercept<T: DataResponseSerializerProtocol>(
+        chain: InterceptorChain<T.SerializedObject>,
+        response: Response<Data>,
+        result: Result<T.SerializedObject, Swift.Error>,
+        serializer: T
+    ) {
         defer { chain.proceed() }
         switch result {
         case .success:
-            log(chain: chain, pre: serializationSuccess.pre, post: serializationSuccess.post)
+            log(
+                chain: chain,
+                pre: serializationSuccess.pre,
+                post: serializationSuccess.post
+            )
         case .failure(let error):
             guard case Error.decoding = error else { return }
-            log(chain: chain, pre: serializationFailure.pre, post: serializationFailure.post)
-            log(error: error)
+            log(
+                chain: chain,
+                pre: serializationFailure.pre,
+                post: serializationFailure.post
+            )
+            log(
+                error: error
+            )
         }
     }
     

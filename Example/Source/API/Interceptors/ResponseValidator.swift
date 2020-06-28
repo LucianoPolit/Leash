@@ -13,7 +13,11 @@ import Leash
 /// In case that the status code is matched to a known error, the interception is completed with it.
 class ResponseValidator: SuccessInterceptor {
     
-    func intercept(chain: InterceptorChain<Data>, response: HTTPURLResponse, data: Data) {
+    func intercept(
+        chain: InterceptorChain<Data>,
+        response: HTTPURLResponse,
+        data: Data
+    ) {
         defer { chain.proceed() }
         
         let error: Error
