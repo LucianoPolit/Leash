@@ -1,7 +1,9 @@
 platform :ios, '10.0'
+use_frameworks!
+inhibit_all_warnings!
 
-def myPods
-    use_frameworks!
+target 'Example' do
+  
     if ENV['TRAVIS']
         pod 'Leash', :path => '../'
         pod 'Leash/RxSwift', :path => '../'
@@ -11,13 +13,10 @@ def myPods
         pod 'Leash/RxSwift'
         pod 'Leash/Interceptors'
     end
-end
-
-target 'Example' do
-    myPods
-end
-
-target 'Tests' do
-    myPods
-    pod 'OHHTTPStubs/Swift', '~> 8.0'
+    
+    target 'Tests' do
+      inherit! :search_paths
+      pod 'OHHTTPStubs/Swift', '~> 8.0'
+    end
+    
 end
