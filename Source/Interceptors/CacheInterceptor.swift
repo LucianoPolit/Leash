@@ -23,6 +23,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
+import Leash
+#endif
 
 public struct CacheExtra { }
 

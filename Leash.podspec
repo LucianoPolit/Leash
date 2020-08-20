@@ -1,6 +1,7 @@
 Pod::Spec.new do |s|
+
   s.name             = 'Leash'
-  s.version          = '3.1.2'
+  s.version          = '3.2.0'
   s.summary          = 'Network Abstraction Layer'
   s.description      = <<-DESC
                           Network Abstraction Layer in Swift.
@@ -19,14 +20,14 @@ Pod::Spec.new do |s|
     ss.dependency      'Alamofire', '~> 5.0'
   end
 
-  s.subspec 'RxSwift' do |ss|
-    ss.source_files  = 'Source/RxSwift/*.swift'
-    ss.dependency      'RxSwift', '~> 5.0'
+  s.subspec 'Interceptors' do |ss|
+    ss.source_files  = 'Source/Interceptors/*.swift'
     ss.dependency      'Leash/Core'
   end
 
-  s.subspec 'Interceptors' do |ss|
-    ss.source_files  = 'Source/Interceptors/*.swift'
+  s.subspec 'RxSwift' do |ss|
+    ss.source_files  = 'Source/RxSwift/*.swift'
+    ss.dependency      'RxSwift', '~> 5.0'
     ss.dependency      'Leash/Core'
   end
 

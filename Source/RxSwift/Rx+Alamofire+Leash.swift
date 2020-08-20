@@ -25,6 +25,9 @@
 import Foundation
 import Alamofire
 import RxSwift
+#if !COCOAPODS
+import Leash
+#endif
 
 extension DataRequest: ReactiveCompatible { }
 

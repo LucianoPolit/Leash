@@ -10,6 +10,9 @@ import Foundation
 import XCTest
 import OHHTTPStubs
 @testable import Leash
+#if !COCOAPODS
+import OHHTTPStubsSwift
+#endif
 
 class InterceptorChainTests: BaseTestCase {
     
@@ -92,7 +95,7 @@ extension InterceptorChainTests {
         }
         stub(condition: isEndpoint(chain.endpoint)) { request in
             XCTAssertEqual(request.value(forHTTPHeaderField: Authenticator.header), futureAuthentication)
-            return OHHTTPStubsResponse(error: Leash.Error.unknown)
+            return HTTPStubsResponse(error: Leash.Error.unknown)
         }
         assertNoErrorThrown {
             authenticator.authentication = futureAuthentication

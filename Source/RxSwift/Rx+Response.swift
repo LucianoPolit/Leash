@@ -24,6 +24,9 @@
 
 import Foundation
 import RxSwift
+#if !COCOAPODS
+import Leash
+#endif
 
 // MARK: - Reactive
 

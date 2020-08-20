@@ -1,8 +1,10 @@
 # Leash
 
-[![Version](https://img.shields.io/cocoapods/v/Leash.svg)](http://cocoapods.org/pods/Leash)
 [![Build](https://api.travis-ci.org/LucianoPolit/Leash.svg)](https://travis-ci.org/LucianoPolit/Leash)
 [![Coverage](https://codecov.io/gh/LucianoPolit/Leash/graph/badge.svg)](https://codecov.io/gh/LucianoPolit/Leash)
+[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://swift.org/package-manager)
+[![Cocoapods compatible](https://img.shields.io/cocoapods/v/Leash.svg)](http://cocoapods.org/pods/Leash)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-brightgreen.svg)](https://github.com/Carthage/Carthage)
 
 ## Index
 
@@ -35,14 +37,43 @@ Moreover, `Leash` also includes some processes that are common on the network la
 
 ## Installation
 
+### Swift Package Manager
+
+To integrate `Leash` into your project using [Swift Package Manager](https://swift.org/package-manager), specify it in your `Package.swift`:
+```swift
+// swift-tools-version:5.0
+
+import PackageDescription
+
+let package = Package(
+    name: "YourPackageName",
+    dependencies: [
+        .package(
+            url: "https://github.com/LucianoPolit/Leash.git",
+            .upToNextMajor(from: "3.2.0")
+        )
+    ],
+    targets: [
+        .target(
+            name: "YourTarget",
+            dependencies: [
+                "Leash",
+                "LeashInterceptors",
+                "RxLeash"
+            ]
+        )
+    ]
+)
+```
+
 ### CocoaPods
 
 To integrate `Leash` into your project using [CocoaPods](http://cocoapods.org), specify it in your `Podfile`:
 
 ```ruby
-pod 'Leash', '~> 3.1'
-pod 'Leash/RxSwift', '~> 3.1'
-pod 'Leash/Interceptors', '~> 3.1'
+pod 'Leash', '~> 3.2'
+pod 'Leash/Interceptors', '~> 3.2'
+pod 'Leash/RxSwift', '~> 3.2'
 ```
 
 ### Carthage
@@ -50,7 +81,7 @@ pod 'Leash/Interceptors', '~> 3.1'
 To integrate `Leash` into your project using [Carthage](https://github.com/Carthage/Carthage), specify it in your `Cartfile`:
 
 ```ogdl
-github "LucianoPolit/Leash" ~> 3.1
+github "LucianoPolit/Leash" ~> 3.2
 ```
 
 ## Usage

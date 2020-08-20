@@ -23,6 +23,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
+import Leash
+#endif
 
 open class BodyValidator<T: Decodable> {
     

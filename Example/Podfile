@@ -3,20 +3,20 @@ use_frameworks!
 inhibit_all_warnings!
 
 target 'Example' do
-  
-    if ENV['TRAVIS']
-        pod 'Leash', :path => '../'
-        pod 'Leash/RxSwift', :path => '../'
-        pod 'Leash/Interceptors', :path => '../'
-    else
-        pod 'Leash'
-        pod 'Leash/RxSwift'
-        pod 'Leash/Interceptors'
-    end
-    
-    target 'Tests' do
-      inherit! :search_paths
-      pod 'OHHTTPStubs/Swift', '~> 8.0'
-    end
-    
+
+  if ENV['TRAVIS']
+    pod 'Leash', :path => '../'
+    pod 'Leash/Interceptors', :path => '../'
+    pod 'Leash/RxSwift', :path => '../'
+  else
+    pod 'Leash'
+    pod 'Leash/Interceptors'
+    pod 'Leash/RxSwift'
+  end
+
+  target 'Tests' do
+    inherit! :search_paths
+    pod 'OHHTTPStubs/Swift', '~> 9.0'
+  end
+
 end

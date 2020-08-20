@@ -11,6 +11,9 @@ import Alamofire
 import XCTest
 import OHHTTPStubs
 @testable import Leash
+#if !COCOAPODS
+import OHHTTPStubsSwift
+#endif
 
 class AlamofireLeashTests: BaseTestCase {
     
@@ -23,10 +26,10 @@ class AlamofireLeashTests: BaseTestCase {
         super.setUp()
         stub(condition: isEndpoint(successEndpoint)) { _ in
             let entity = PrimitiveEntity(first: "some", second: 10, third: true).toJSON()
-            return OHHTTPStubsResponse(jsonObject: entity, statusCode: 200, headers: nil)
+            return HTTPStubsResponse(jsonObject: entity, statusCode: 200, headers: nil)
         }
         stub(condition: isEndpoint(failureEndpoint)) { _ in
-            return OHHTTPStubsResponse(error: Leash.Error.unknown)
+            return HTTPStubsResponse(error: Leash.Error.unknown)
         }
     }
     
@@ -231,7 +234,7 @@ extension AlamofireLeashTests {
         let datedEndpoint = Endpoint(path: "dated/entity")
         stub(condition: isEndpoint(datedEndpoint)) { _ in
             let encoded = try? self.manager.jsonEncoder.encode(entity)
-            return OHHTTPStubsResponse(data: encoded ?? Data(), statusCode: 200, headers: nil)
+            return HTTPStubsResponse(data: encoded ?? Data(), statusCode: 200, headers: nil)
         }
         manager = builder
             .jsonDateFormatter(formatter)
@@ -256,7 +259,7 @@ extension AlamofireLeashTests {
         let datedEndpoint = Endpoint(path: "dated/entity")
         stub(condition: isEndpoint(datedEndpoint)) { _ in
             let encoded = try? self.manager.jsonEncoder.encode(entity)
-            return OHHTTPStubsResponse(data: encoded ?? Data(), statusCode: 200, headers: nil)
+            return HTTPStubsResponse(data: encoded ?? Data(), statusCode: 200, headers: nil)
         }
         manager = builder
             .jsonEncoder { $0.dateEncodingStrategy = .iso8601 }
@@ -298,7 +301,7 @@ extension AlamofireLeashTests {
         let expectation = self.expectation(description: "Expected to find a decoding error")
         let undecodableEndpoint = Endpoint(path: "decoding/error")
         stub(condition: isEndpoint(undecodableEndpoint)) { _ in
-            return OHHTTPStubsResponse(jsonObject: ["some": "some"], statusCode: 200, headers: nil)
+            return HTTPStubsResponse(jsonObject: ["some": "some"], statusCode: 200, headers: nil)
         }
         executeRequest(builder: builder, endpoint: undecodableEndpoint) { response in
             guard case .failure(let error) = response, case Leash.Error.decoding = error else {

@@ -11,6 +11,10 @@ import RxSwift
 import XCTest
 import OHHTTPStubs
 @testable import Leash
+#if !COCOAPODS
+import OHHTTPStubsSwift
+@testable import RxLeash
+#endif
 
 // MARK: - DataRequest
 
@@ -34,7 +38,7 @@ extension ClientTests {
         let endpoint = Endpoint(path: "response/123")
         let json = ["some": "123"]
         stub(condition: isEndpoint(endpoint)) { _ in
-            return OHHTTPStubsResponse(jsonObject: json, statusCode: 200, headers: nil)
+            return HTTPStubsResponse(jsonObject: json, statusCode: 200, headers: nil)
         }
         let observable: Observable<[String: String]> = client.rx.execute(endpoint)
         observable

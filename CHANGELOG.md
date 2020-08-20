@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Leash` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
+- `3.2.x` Releases - [3.2.0](#320)
 - `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) | [3.1.2](#312)
 - `3.0.x` Releases - [3.0.0](#300)
 
@@ -17,6 +18,11 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100)
 
 ---
+
+## [3.2.0](https://github.com/LucianoPolit/Leash/releases/tag/3.2.0)
+Released on 2020-08-20.
+
+- Addition of [Swift Package Manager](https://swift.org/package-manager) support.
 
 ## [3.1.2](https://github.com/LucianoPolit/Leash/releases/tag/3.1.2)
 Released on 2020-06-28.

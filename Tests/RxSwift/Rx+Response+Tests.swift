@@ -10,6 +10,9 @@ import Foundation
 import RxSwift
 import XCTest
 @testable import Leash
+#if !COCOAPODS
+@testable import RxLeash
+#endif
 
 // MARK: - Utils
 

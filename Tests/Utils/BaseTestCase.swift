@@ -67,7 +67,7 @@ extension BaseTestCase {
 
 extension BaseTestCase {
     
-    func isEndpoint(_ endpoint: Leash.Endpoint) -> OHHTTPStubsTestBlock {
+    func isEndpoint(_ endpoint: Leash.Endpoint) -> HTTPStubsTestBlock {
         return {
             return $0.url?.absoluteString == "\(self.baseURL)\(endpoint.path)"
                 && $0.httpMethod == endpoint.method.rawValue

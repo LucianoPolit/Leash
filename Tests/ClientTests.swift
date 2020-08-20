@@ -11,6 +11,9 @@ import Alamofire
 import XCTest
 import OHHTTPStubs
 @testable import Leash
+#if !COCOAPODS
+import OHHTTPStubsSwift
+#endif
 
 class ClientTests: BaseTestCase { }
 
@@ -210,7 +213,7 @@ extension ClientTests {
         let endpoint = Endpoint(path: "response/123")
         let json = ["some": "123"]
         stub(condition: isEndpoint(endpoint)) { _ in
-            return OHHTTPStubsResponse(jsonObject: json, statusCode: 200, headers: nil)
+            return HTTPStubsResponse(jsonObject: json, statusCode: 200, headers: nil)
         }
         client.execute(endpoint) { (response: Result<[String: String], Swift.Error>) in
             guard case .success(let result) = response else {

@@ -12,6 +12,10 @@ import RxSwift
 import XCTest
 import OHHTTPStubs
 @testable import Leash
+#if !COCOAPODS
+import OHHTTPStubsSwift
+@testable import RxLeash
+#endif
 
 // MARK: - Interceptors
 
@@ -109,7 +113,7 @@ extension AlamofireLeashTests {
         let disposeBag = DisposeBag()
         let undecodableEndpoint = Endpoint(path: "decoding/error")
         stub(condition: isEndpoint(undecodableEndpoint)) { _ in
-            return OHHTTPStubsResponse(jsonObject: ["some": "some"], statusCode: 200, headers: nil)
+            return HTTPStubsResponse(jsonObject: ["some": "some"], statusCode: 200, headers: nil)
         }
         rx.executeRequest(builder: builder, endpoint: undecodableEndpoint)?
             .subscribe(onError: { error in

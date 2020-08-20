@@ -9,6 +9,9 @@
 import Foundation
 import XCTest
 @testable import Leash
+#if !COCOAPODS
+@testable import LeashInterceptors
+#endif
 
 class BodyValidatorTests: BaseTestCase {
 
