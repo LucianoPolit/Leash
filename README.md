@@ -1,10 +1,27 @@
-# Leash
+<p align="center">
+    <img src="./Leash.svg"/>
+</p>
 
-[![Build](https://api.travis-ci.org/LucianoPolit/Leash.svg)](https://travis-ci.org/LucianoPolit/Leash)
-[![Coverage](https://codecov.io/gh/LucianoPolit/Leash/graph/badge.svg)](https://codecov.io/gh/LucianoPolit/Leash)
-[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://swift.org/package-manager)
-[![Cocoapods compatible](https://img.shields.io/cocoapods/v/Leash.svg)](http://cocoapods.org/pods/Leash)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-brightgreen.svg)](https://github.com/Carthage/Carthage)
+<p align="center">
+    <a href="https://travis-ci.org/LucianoPolit/Leash">
+        <img src="https://api.travis-ci.org/LucianoPolit/Leash.svg" alt="Build"/>
+    </a>
+    <a href="https://codecov.io/gh/LucianoPolit/Leash">
+        <img src="https://codecov.io/gh/LucianoPolit/Leash/graph/badge.svg" alt="Coverage"/>
+    </a>
+    <a href="https://swift.org/package-manager">
+        <img src="https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg" alt="Swift Package Manager compatible"/>
+    </a>
+    <a href="http://cocoapods.org/pods/Leash">
+        <img src="https://img.shields.io/cocoapods/v/Leash.svg" alt="CocoaPods compatible"/>
+    </a>
+    <a href="https://github.com/Carthage/Carthage">
+        <img src="https://img.shields.io/badge/Carthage-compatible-brightgreen.svg" alt="Carthage compatible"/>
+    </a>
+    <a href="https://gitter.im/LeashSwift/community">
+        <img src="https://badges.gitter.im/LeashSwift/community.svg" alt="Gitter chat"/>
+    </a>
+</p>
 
 ## Index
 
