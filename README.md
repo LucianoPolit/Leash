@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./Leash.svg"/>
+    <img src="./Resources/banner.svg"/>
 </p>
 
 <p align="center">
