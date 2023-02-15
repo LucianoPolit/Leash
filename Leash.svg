@@ -1,1 +1,58 @@
-<svg id="Capa_1" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 477 146.41"><defs><style>.cls-1{font-size:64px;fill:#1d1d1b;font-family:Noteworthy-Light, Noteworthy;font-weight:300;}.cls-2{letter-spacing:0.2em;}.cls-3{letter-spacing:0.12em;}.cls-4{letter-spacing:0.19em;}.cls-5{font-size:36px;}.cls-5,.cls-6{font-family:SavoyeLetPlain, Savoye LET;font-weight:400;}.cls-6{font-size:20px;}</style></defs><title>Leash</title><text class="cls-1" transform="translate(121.42 59.76)"><tspan class="cls-2">L</tspan><tspan class="cls-3" x="43.12" y="0">E</tspan><tspan class="cls-4" x="88.16" y="0">A</tspan><tspan class="cls-2" x="141.12" y="0">S</tspan><tspan x="189.84" y="0">H</tspan><tspan class="cls-5"><tspan x="9.46" y="55.2">A Networking Library</tspan></tspan><tspan class="cls-6"><tspan x="59.31" y="79.2">Powered by Alamofire</tspan></tspan></text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 477 146.41">
+  <defs>
+    <style>
+      .cls-1 {
+        font-size: 64px;
+        fill: black;
+        font-family: Noteworthy-Light, Noteworthy;
+        font-weight: 300;
+      }
+
+      .cls-2 {
+        letter-spacing: 0.2em;
+      }
+
+      .cls-3 {
+        letter-spacing: 0.12em;
+      }
+
+      .cls-4 {
+        letter-spacing: 0.19em;
+      }
+
+      .cls-5 {
+        font-size: 36px;
+      }
+
+      .cls-5,
+      .cls-6 {
+        font-family: SavoyeLetPlain, Savoye LET;
+        font-weight: 400;
+      }
+
+      .cls-6 {
+        font-size: 20px;
+      }
+      
+      @media (prefers-color-scheme: dark) {
+        .cls-1 {
+	    fill: white;
+	}
+      }
+    </style>
+  </defs>
+  <title>Leash</title>
+  <text class="cls-1" transform="translate(121.42 59.76)">
+    <tspan class="cls-2">L</tspan>
+    <tspan class="cls-3" x="43.12" y="0">E</tspan>
+    <tspan class="cls-4" x="88.16" y="0">A</tspan>
+    <tspan class="cls-2" x="141.12" y="0">S</tspan>
+    <tspan x="189.84" y="0">H</tspan>
+    <tspan class="cls-5">
+      <tspan x="9.46" y="55.2">A Networking Library</tspan>
+    </tspan>
+    <tspan class="cls-6">
+      <tspan x="59.31" y="79.2">Powered by Alamofire</tspan>
+    </tspan>
+  </text>
+</svg>
